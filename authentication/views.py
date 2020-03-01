@@ -4,6 +4,7 @@ import hashlib
 
 # Create your views here.
 def signup(request):
+	logoutStatus = True
 	try:
 		if request.session['email']:
 			if request.method == 'POST':
@@ -35,7 +36,8 @@ def signup(request):
 	except:
 		message = "You have been logged out. Please log in again!"
 		context = {
-			'message' : message
+			'message' : message,
+			'logoutStatus' : logoutStatus
 		}
 		return render(request,'authentication/login.html',context)
 
