@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% load static %}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+  <title>SIMS</title>
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="{% static 'home/plugins/fontawesome-free/css/all.min.css' %}">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{% static 'home/dist/css/adminlte.min.css' %}">
+  <!-- Google Font: Source Sans Pro -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+</head>
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+
+  <!-- Navbar -->
+  <nav class="main-header navbar navbar-expand navbar-light navbar-dark">
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+      </li>
+      <li class="nav-item d-none d-sm-inline-block">
+        <a href="{% url 'home' %}" class="nav-link" style="color:white">Home</a>
+      </li>
+    </ul>
+</nav>
+  <!-- Main Sidebar Container -->
+  <aside class="main-sidebar sidebar-dark-primary elevation-4" style="position: fixed;">
+    <!-- Brand Logo -->
+    <a href="{% url 'home' %}" class="brand-link">
+      <img src="{% static 'home/dist/img/logo.jpg' %}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+           style="opacity: .8">
+      <span class="brand-text font-weight-light" style="color:white"><b>SIMS</b></span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Sidebar user panel (optional) -->
+      {% if logoutStatus %}
+      {% else %}
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+          <div class="image">
+            <img src="{% static 'home/dist/img/user2-160x160.jpg' %}" class="img-circle elevation-2" alt="User Image">
+          </div>
+          <div class="info">
+            <a href="{% url 'home' %}" class="d-block"  style="color:yellow">{{name}}</a>
+          </div>
+        </div>
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+          <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            <!-- Add icons to the links using the .nav-icon class
+                 with font-awesome or any other icon font library -->
+            <li class="nav-item has-treeview">
+              <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-tasks"></i>
+                <p style="color:lightpink">
+                  Activities
+                  <i class="right fas fa-angle-left"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="{% url 'signup' %}" class="nav-link">
+                    <i class="fas fa-plus nav-icon"></i>
+                    <p style="color:lightblue">User</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{% url 'home' %}" class="nav-link">
+                    <i class="fas fa-plus nav-icon"></i>
+                    <p style="color:lightblue">Product</p>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'logout' %}" class="nav-link">
+                <i class="nav-icon fas fa-sign-out-alt"></i>
+                <p style="color:lightpink">
+                  Sign Out
+                </p>
+              </a>
+            </li>
+                  <section id="banner" class="major">
+            <div class="inner">     
+              <div class="content" style="font-family: 'Courier New';">
+                <br/><h8 id="text" style="color:white"></h8>
+              </div>
+            </div>
+          </section>
+          <script type="text/javascript">
+
+            // List of sentences
+            var _CONTENT = [ "" ];
+
+            // Current sentence being processed
+            var _PART = 0;
+
+            // Character number of the current sentence being processed 
+            var _PART_INDEX = 0;
+
+            // Holds the handle returned from setInterval
+            var _INTERVAL_VAL;
+
+            // Element that holds the text
+            var _ELEMENT = document.querySelector("#text");
+
+            // Implements typing effect
+            function Type() { 
+              var text =  _CONTENT[_PART].substring(0, _PART_INDEX + 1);
+              _ELEMENT.innerHTML = text;
+              _PART_INDEX++;
+
+              // If full sentence has been displayed then start to delete the sentence after some time
+              if(text === _CONTENT[_PART]) {
+                clearInterval(_INTERVAL_VAL);
+                setTimeout(function() {
+                  _INTERVAL_VAL = setInterval(Deletde, 100);              
+                }, 1000);
+              }
+            }
+
+            // Implements deleting effect
+            function Delete() {
+              var text =  _CONTENT[_PART].substring(0, _PART_INDEX - 1);
+              _ELEMENT.innerHTML = text;
+              _PART_INDEX--;
+
+              // If sentence has been deleted then start to display the next sentence
+              if(text === '') {
+                clearInterval(_INTERVAL_VAL);
+
+                // If last sentence then display the first one, else move to the next
+                if(_PART == (_CONTENT.length - 1))
+                  _PART = 0;
+                else
+                  _PART++;
+                _PART_INDEX = 0;
+
+                // Start to display the next sentence after some time
+                setTimeout(function() {
+                  _INTERVAL_VAL = setInterval(Type, 100);
+                }, 100);
+              }
+            }
+
+            // Start the typing effect on load
+            _INTERVAL_VAL = setInterval(Type, 50);
+
+            </script>
+        </nav>
+        {% endif %}
+    </div>
+    <!-- /.sidebar -->
+  </aside>
+ <div class="content-wrapper">    
+    {% block content %}
+    {% endblock content %}
+  </div>
+
+<!-- REQUIRED SCRIPTS -->
+
+<!-- jQuery -->
+<script src="{% static 'home/plugins/jquery/jquery.min.js' %}"></script>
+<!-- Bootstrap 4 -->
+<script src="{% static 'home/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'home/dist/js/adminlte.min.js' %}"></script>
+</body>
+</html>

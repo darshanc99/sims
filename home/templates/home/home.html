@@ -1,0 +1,8 @@
+{% extends 'home/base.html' %}
+{% block content %}
+{% if message %}
+	<div class="alert alert-info" role="alert">
+	  {{message}} 
+	</div>
+{% endif %}
+{% endblock %}
