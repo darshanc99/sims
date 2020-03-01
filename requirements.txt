@@ -1,0 +1,4 @@
+django
+postgresql
+postgresql-contrib
+psycopg2
