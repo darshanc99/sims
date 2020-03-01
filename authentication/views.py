@@ -20,15 +20,23 @@ def signup(request):
 				try:
 					if useraccounts.objects.get(email=email):
 						message = 'User already exists!'
+						currentEmail = request.session['email']
+						currentUser = useraccounts.objects.get(email=currentEmail)
+						currentName = currentUser.first_name+" "+currentUser.last_name
 						context = {
 							'message' : message,
+							'name' : currentName
 						}
 						return render(request,'authentication/signup.html',context)
 				except:
 					user.save()
 					message = "User Registered with SIMS!"
+					currentEmail = request.session['email']
+					currentUser = useraccounts.objects.get(email=currentEmail)
+					currentName = currentUser.first_name+" "+currentUser.last_name
 					context = {
 						'message' : message,
+						'name' : currentName
 					}
 					return render(request,'authentication/signup.html',context)
 			else:
