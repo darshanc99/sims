@@ -40,7 +40,13 @@ def signup(request):
 					}
 					return render(request,'authentication/signup.html',context)
 			else:
-				return render(request,'authentication/signup.html')
+				currentEmail = request.session['email']
+				currentUser = useraccounts.objects.get(email=currentEmail)
+				currentName = currentUser.first_name+" "+currentUser.last_name
+				context = {
+					'name' : currentName
+				}				
+				return render(request,'authentication/signup.html',context)
 	except:
 		message = "You have been logged out. Please log in again!"
 		context = {
