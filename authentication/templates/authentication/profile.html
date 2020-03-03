@@ -1,0 +1,42 @@
+{% extends 'home/home.html' %}
+{% block content %}
+{% if message %}
+	<div class="alert alert-info" role="alert">
+	  {{message}} 
+	</div>
+{% endif %}
+	<div class="container"><br>
+		<div class="jumbotron">
+			<b><u>BIO: </u></b>
+			<br><b>NAME: </b>{{name}}
+			<br><b>EMAIL: </b>{{email}}<br>
+			<b>PHONE: </b>{{phone}}<br>
+			<b>User Type: </b>{{user_type}}<br><br>
+			<div class="row center">
+				<div class="col-md-6">
+					<div class="card">
+						<header class="card-header">
+							<h4 class="card-title mt-2"><b>Update Password</b></h4>
+						</header>
+						<article class="card-body">
+							<form action="{% url 'updatepassword' %}" method="post">
+								{% csrf_token %}
+								<div class="form-group">
+									<label>Current Password</label>
+									<input type="password" class="form-control" placeholder="Enter Current Password" name="current_password">
+								</div> <!-- form-group end.// -->
+								<div class="form-group">
+									<label>New Password</label>
+								    <input class="form-control" type="password" name="new_password" placeholder="Enter New Password">
+								</div> <!-- form-group end.// -->  
+								<div class="form-group">
+								    <button type="submit" class="btn btn-primary btn-block"> Update  </button>
+								</div> <!-- form-group// -->      
+							</form>
+						</article> <!-- card-body end .// -->
+					</div> <!-- col.//-->
+				</div> <!-- row.//-->
+			</div>
+		</div>
+	</div>
+{% endblock %}

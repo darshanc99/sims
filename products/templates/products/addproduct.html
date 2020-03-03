@@ -1,0 +1,71 @@
+{% extends 'home/base.html' %}
+{% block content %}
+{% if message %}
+	<div class="alert alert-info" role="alert">
+	  {{message}} 
+	</div>
+{% endif %}
+<div class="container">
+	<br>
+	<div class="row justify-content-center">
+		<div class="col-md-6">
+			<div class="card">
+			<header class="card-header">
+				<h4 class="card-title mt-2">ADD PRODUCTS</h4>
+			</header>
+			<article class="card-body">
+				<form action="/product/addproduct/" method="post">
+					{% csrf_token %}
+					<div class="form-row">
+						<div class="col form-group">
+							<label>Product name </label>   
+						  	<input type="text" class="form-control" placeholder="Enter Product Name" name="product_name" required="">
+						</div> <!-- form-group end.// -->
+					</div><!-- form-row end.// -->
+					<div class="form-row">
+						<div class="form-group col-md-6">
+						  <label>Product Category</label>
+						  <select id="inputState" class="form-control" name="product_category" required="">
+						      <option>electronics</option>
+						      <option>stationery</option>
+						      <option>others</option>
+						  </select>
+						</div> <!-- form-group end.// -->
+						<div class="form-group col-md-6">
+						  <label>Product Type</label>
+						  <select id="inputState" class="form-control" name="product_type" required="">
+						      <option>consumable</option>
+						      <option>non-consumable</option>
+						     
+						  </select>
+						</div> <!-- form-group end.// -->
+					 </div>
+					<div class="form-group">
+						<label>Available quantity</label>
+						<input type="number" class="form-control" placeholder="Enter the available qunatity" name="avail_quantity" required="">
+					</div> <!-- form-group end.// -->
+					<div class="form-group">
+						  <label>Measurement Unit</label>
+						  <select id="inputState" class="form-control" name="measure_unit" required="">
+						      <option>kilogram</option>
+						      <option>metres</option>
+						      <option>inches</option>
+						      <option>units</option>
+						  </select>
+						</div>
+						 <!-- form-group end.// -->	
+						 <div class="form-group">
+						<label>Product description</label>
+						<input type="text" class="form-control" placeholder="Enter the description" name="description" >
+					</div>			
+					  
+				    <div class="form-group">
+				        <button type="submit" class="btn btn-primary btn-block"> Add Product </button>
+				    </div> <!-- form-group// -->      
+				</form>
+			</article> <!-- card-body end .// -->
+		</div> <!-- col.//-->
+	</div> <!-- row.//-->
+</div> 
+<!--container end.//-->
+{% endblock %}

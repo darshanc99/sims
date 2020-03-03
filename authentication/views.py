@@ -98,3 +98,145 @@ def logout(request):
 		'logoutStatus' : logoutStatus
 	}
 	return render(request,'authentication/logout.html',context)
+
+def profile(request):
+	logoutStatus = True
+	try:
+		if request.session['email']:
+			logoutStatus = False
+			print("INSIDE")
+			if request.method == 'POST':
+				print("HAVE A POST REQUEST")
+				current_password = request.POST.get('current_password')
+				new_password = request.POST.get('new_password')
+				currentEmail = request.session['email']
+				user = useraccounts.objects.get(email=currentEmail)
+				print("USER")
+				current_password = hashlib.sha256(current_password.encode()).hexdigest()
+				currentEmail = user.email
+				currentName = user.first_name + " " + user.last_name
+				currentPhone = user.phone
+				currentUserType = user.user_type
+				print(currentEmail,currentName,currentPhone,currentUserType,current_password)
+				print("All cool")
+				if current_password == user.userpassword:
+					print("PASSWORDS CHANGE")
+					new_password = hashlib.sha256(new_password.encode()).hexdigest()
+					user.userpassword = new_password
+					user.save()
+					logoutStatus = False
+					message = "Password updated!"
+					context = {
+						'message' : message,
+						'logoutStatus' : logoutStatus,
+						'name' : currentName,
+						'email' : currentEmail,
+						'phone' : currentPhone,
+						'user_type' : currentUserType
+					}
+					return render(request,'authentication/profile.html',context)
+				else:				
+					message = "Your current passwords do not match. Couldn't update your password!"
+					print(message)
+					logoutStatus = False
+					context = {
+						'message' : message,
+						'logoutStatus' : logoutStatus,
+						'name' : currentName,
+						'phone' : currentPhone,
+						'email' : currentEmail,
+						'user_type' : currentUserType
+					}
+					return render(request,'authentication/profile.html',context)
+			else:
+				currentEmail = request.session['email']
+				currentUser = useraccounts.objects.get(email=currentEmail)
+				currentName = currentUser.first_name+" "+currentUser.last_name
+				currentPhone = currentUser.phone
+				currentUserType = currentUser.user_type
+				context = {
+					'logoutStatus' : logoutStatus,
+					'name' : currentName,
+					'email' : currentEmail,
+					'phone' : currentPhone,
+					'user_type' : currentUserType
+				}
+				return render(request,'authentication/profile.html',context)
+	except:
+		message = "You have been logged out. Please log in again!"
+		logoutStatus = True
+		context = {
+			'message' : message,
+			'logoutStatus' : logoutStatus
+		}
+		return render(request,'authentication/login.html',context)			
+
+def updatepassword(request):
+	try:
+		if request.session['email']:
+			print("INSIDE")
+			if request.method == 'POST':
+				print("HAVE A POST REQUEST")
+				current_password = request.POST.get('current_password')
+				new_password = request.POST.get('new_password')
+				currentEmail = request.session['email']
+				user = useraccounts.objects.get(email=currentEmail)
+				print("USER")
+				current_password = hashlib.sha256(current_password.encode()).hexdigest()
+				currentEmail = user.email
+				currentName = user.first_name + " " + user.last_name
+				currentPhone = user.phone
+				currentUserType = user.user_type
+				print(currentEmail,currentName,currentPhone,currentUserType,current_password)
+				print("All cool")
+				if current_password == user.userpassword:
+					print("PASSWORDS CHANGE")
+					new_password = hashlib.sha256(new_password.encode()).hexdigest()
+					user.userpassword = new_password
+					user.save()
+					logoutStatus = False
+					message = "Password updated!"
+					context = {
+						'message' : message,
+						'logoutStatus' : logoutStatus,
+						'name' : currentName,
+						'email' : currentEmail,
+						'phone' : currentPhone,
+						'user_type' : currentUserType
+					}
+					return render(request,'authentication/profile.html',context)
+				else:				
+					message = "Your current passwords do not match. Couldn't update your password!"
+					print(message)
+					logoutStatus = False
+					context = {
+						'message' : message,
+						'logoutStatus' : logoutStatus,
+						'name' : currentName,
+						'phone' : currentPhone,
+						'email' : currentEmail,
+						'user_type' : currentUserType
+					}
+					return render(request,'authentication/profile.html',context)
+			else:
+				currentEmail = request.session['email']
+				currentUser = useraccounts.objects.get(email=currentEmail)
+				currentName = currentUser.first_name+" "+currentUser.last_name
+				currentPhone = currentUser.phone
+				currentUserType = currentUser.user_type
+				context = {
+					'logoutStatus' : logoutStatus,
+					'name' : currentName,
+					'email' : currentEmail,
+					'phone' : currentPhone,
+					'user_type' : currentUserType
+				}
+				return render(request,'authentication/profile.html',context)
+	except:
+		message = "You have been logged out. Please log in again!"
+		logoutStatus = True
+		context = {
+			'message' : message,
+			'logoutStatus' : logoutStatus
+		}
+		return render(request,'authentication/login.html',context)	
