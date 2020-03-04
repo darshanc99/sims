@@ -13,10 +13,10 @@ def addproduct(request):
 				product_category=request.POST.get('product_category')
 				product_type=request.POST.get('product_type')
 				available_quantity=request.POST.get('avail_quantity')
+				arrive=datetime.datetime.now()
 				measure_unit=request.POST.get('measure_unit')
-				
 				description=request.POST.get('description')
-				prod=productlist(product_name,product_category,product_type,available_quantity,measure_unit,description)
+				prod=productlist(product_name,product_category,product_type,available_quantity,arrive,measure_unit,description)
 				print(product_category)
 				print(prod)
 				try:

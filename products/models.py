@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+import  datetime
 CATEGORIES=(
 	("stationery","stationery"),
 	("electronics","electronics"),
@@ -21,7 +22,8 @@ class productlist(models.Model):
 	product_name=models.CharField(max_length=200,primary_key=True)
 	product_category=models.CharField(max_length=50,choices=CATEGORIES,default='others')
 	product_type=models.CharField(max_length=20,choices=PROD_TYPES)
-	available_quantity=models.BigIntegerField() 
+	available_quantity=models.BigIntegerField()
+	arrival_date=models.DateTimeField(default=datetime.datetime.now(),blank=True) 
 	measure_unit=models.CharField(max_length=20,choices=MEASUREMENT) 
 	description=models.CharField(max_length=300,blank=True)		
 	def __str__(self):
