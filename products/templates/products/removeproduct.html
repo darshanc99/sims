@@ -1,0 +1,48 @@
+{% extends 'home/base.html' %}
+{% block content %}
+{% if messages %}
+	<div class="alert alert-info" role="alert">
+	  {{messages}} 
+	</div>
+{% endif %}
+<div class="container">
+	<br>
+	<div class="row justify-content-center">
+		<div class="col-md-6">
+			<div class="card">
+			<header class="card-header">
+				<h4 class="card-title mt-2">REMOVE PRODUCT</h4>
+			</header>
+			<article class="card-body">
+				<form action="/product/removeproduct/" method="post">
+					{% csrf_token %}
+					<!-- form-row end.// -->
+					<div class="form-row">
+						<div class="col form-group">
+						  <label>PRODUCT LIST</label>
+						  <select id="inputState" class="form-control" name="product_list" placeholder="select product" required="">
+						  	<option disabled selected>Select Products</option>
+                              {% for data in all_products %}
+						      <option>{{data.product_name}}</option>
+                               {% endfor %}
+						  </select>
+						</div> <!-- form-group end.// -->
+						
+					 </div>
+					 <div class="form-row">
+						<div class="col form-group">
+							<label>Enter Your Password </label>   
+						  	<input type="password" class="form-control" placeholder="Enter Password" name="pass" required="">
+						</div> 
+					</div>
+					
+				    <div class="form-group">
+				        <button type="submit" class="btn btn-primary btn-block"> Remove Product </button>
+				    </div> <!-- form-group// -->      
+				</form>
+			</article> <!-- card-body end .// -->
+		</div> <!-- col.//-->
+	</div> <!-- row.//-->
+</div> 
+<!--container end.//-->
+{% endblock %}

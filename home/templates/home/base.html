@@ -72,12 +72,35 @@
                     <p style="color:lightblue">User</p>
                   </a>
                 </li>
+                <li class="nav-item has-treeview">
+              <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-tasks"></i>
+                <p style="color:lightpink">
+                  Products
+                  <i class="right fas fa-angle-left"></i>
+                </p>
+              </a>
+               <ul class="nav nav-treeview">
                 <li class="nav-item">
                   <a href="{% url 'addproduct' %}" class="nav-link">
                     <i class="fas fa-plus nav-icon"></i>
-                    <p style="color:lightblue">Product</p>
+                    <p style="color:lightblue">ADD Product</p>
                   </a>
                 </li>
+                 <li class="nav-item">
+                  <a href="{% url 'addquantity' %}" class="nav-link">
+                    <i class="fas fa-plus nav-icon"></i>
+                    <p style="color:lightblue">Update Quantity</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{% url 'removeproduct' %}" class="nav-link">
+                    <i class="fas fa-plus nav-icon"></i>
+                    <p style="color:lightblue">Remove Product</p>
+                  </a>
+                </li>
+              </ul>
+            </li>
               </ul>
             </li>
             <li class="nav-item">
