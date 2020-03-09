@@ -1,0 +1,43 @@
+{% extends 'home/base.html' %}
+{% block content %}
+{% if messages %}
+  <div class="alert alert-info" role="alert">
+    {{messages}} 
+  </div>
+  {% endif %}
+  <div class="container">
+ <div class="row" style="padding-top: 20px;">
+
+  {%for data in all_products %}
+          <div class="col-md-3" style="margin-right: 15px;">
+
+            
+            <div class="card card-primary card-outline">
+              <div class="card-body box-profile">
+                <h3 class="profile-username text-center">{{data.product_name}}</h3>
+                
+
+                <ul class="list-group list-group-unbordered mb-3">
+                  <li class="list-group-item">
+                    <b>Type</b> <a class="float-right">{{data.product_type}}</a>
+                  </li>
+                  <li class="list-group-item">
+                    <b>Quantity</b> <a class="float-right">{{data.available_quantity}}</a>
+                  </li>
+                  <li class="list-group-item">
+                    <b>Product Category</b> <a class="float-right">{{data.product_category}}</a>
+                  </li>
+                  <li class="list-group-item">
+                    <b>Measurement unit</b> <a class="float-right">{{data.measure_unit}}</a>
+                  </li>
+                </ul>
+
+                <a href="/product/routeproduct/" class="btn btn-danger btn-block" ><b>Edit details</b></a>
+              </div>
+              <!-- /.card-body -->
+            </div>
+          </div>
+          {% endfor %}    
+        </div>
+      </div>
+        {% endblock %}

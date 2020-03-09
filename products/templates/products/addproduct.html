@@ -7,7 +7,7 @@
 {% endif %}
 <div class="container">
 	<br>
-	<div class="row justify-content-center">
+	<div class="row">
 		<div class="col-md-6">
 			<div class="card">
 			<header class="card-header">
@@ -63,9 +63,41 @@
 				        <button type="submit" class="btn btn-primary btn-block"> Add Product </button>
 				    </div> <!-- form-group// -->      
 				</form>
-			</article> <!-- card-body end .// -->
+			</article> 
+			<!-- card-body end .// -->
+
 		</div> <!-- col.//-->
+	
 	</div> <!-- row.//-->
+
+	  <div class="card" style="margin-left: 30px;margin-bottom: auto;">
+	  	<div class="card-header">
+                <h3 class="card-title" style="color:blue"><b>Products Already Present</b></h3>
+              </div>
+ <div class="card-body p-2">
+                <table class="table">
+                  <thead>
+                    <tr>
+                     
+                      <th>Product</th>
+                      <th>Quantity</th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                  	{% for data in all_products %}
+                    <tr>
+                     <td>{{data.product_name}}
+                     <td>{{data.available_quantity}}</td>	
+                    </tr>
+                    {% endfor %}
+                    
+                    
+                  </tbody>
+                </table>
+              </div>
+          </div>
+              <!-- /.card-body -->
+            </div>
 </div> 
 <!--container end.//-->
 {% endblock %}

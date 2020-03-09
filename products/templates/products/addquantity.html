@@ -31,7 +31,7 @@
 					 </div>
 					 <div class="form-row">
 						<div class="col form-group">
-							<label>Product Quantity </label>   
+							<label>Product Quantity To Add </label>   
 						  	<input type="number" class="form-control" placeholder="Enter Quantity" name="quantity" required="">
 						</div> 
 					</div>
@@ -40,9 +40,37 @@
 				        <button type="submit" class="btn btn-primary btn-block"> Update quantity </button>
 				    </div> <!-- form-group// -->      
 				</form>
-			</article> <!-- card-body end .// -->
-		</div> <!-- col.//-->
-	</div> <!-- row.//-->
+			</article> 
+		</div> 
+
+	</div>
+	<div class="card" style="margin-left: 30px;margin-bottom: auto;">
+		<div class="card-header">
+                <h3 class="card-title" style="color:blue"><b>Products Already Present</b></h3>
+              </div>
+ <div class="card-body p-2">
+                <table class="table">
+                  <thead>
+                    <tr>
+                     
+                      <th>Product</th>
+                      <th>Quantity</th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                  	{% for data in all_products %}
+                    <tr>
+                     <td>{{data.product_name}}
+                     <td>{{data.available_quantity}}</td>	
+                    </tr>
+                    {% endfor %}
+                    
+                    
+                  </tbody>
+                </table>
+              </div>
+          </div>
 </div> 
-<!--container end.//-->
+</div>
+
 {% endblock %}

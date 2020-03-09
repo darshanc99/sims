@@ -32,24 +32,27 @@ def addproduct(request):
 							}
 						return render(request,'products/addproduct.html',context)
 				except:
-					print('now here')
+					
 					prod.save()
-					print('also here')
+					all_products=productlist.objects.all().order_by("product_name")
 					messages="Product added successfully"
 					currentEmail = request.session['email']
 					currentUser = useraccounts.objects.get(email=currentEmail)
 					currentName = currentUser.first_name+" "+currentUser.last_name
 					context = {
+						'all_products':all_products,
 						'message' : messages,
 						'name' : currentName
 						}
 
 					return render(request,'products/addproduct.html',context)		
 			else:
+				all_products=productlist.objects.all().order_by("product_name")
 				currentEmail = request.session['email']
 				currentUser = useraccounts.objects.get(email=currentEmail)
 				currentName = currentUser.first_name+" "+currentUser.last_name
 				context = {
+					'all_products':all_products,
 					'name' : currentName
 					}				
 				return render(request,'products/addproduct.html',context)
@@ -90,7 +93,7 @@ def addquantity(request):
 				return render(request,'products/addquantity.html',context)
 			else:
 				all_products=productlist.objects.all().order_by("product_name")
-				print(all_products)
+				
 				currentEmail = request.session['email']
 				currentUser = useraccounts.objects.get(email=currentEmail)
 				currentName = currentUser.first_name+" "+currentUser.last_name
@@ -171,6 +174,30 @@ def removeproduct(request):
 		'logoutStatus':logoutStatus
 			}
 		return render(request,'authentication/login.html',context)
+
+
+def viewproduct(request):
+	logoutStatus=True
+	if request.session['email']:
+		all_products=productlist.objects.all().order_by("product_name")
+		currentEmail = request.session['email']
+		currentUser = useraccounts.objects.get(email=currentEmail)
+		currentName = currentUser.first_name+" "+currentUser.last_name
+		context={
+			'name':currentName,
+			'all_products':all_products
+			}
+		return render(request,'products/products.html',context)
+	else:
+		message='you need to login first'
+			
+		context={
+				
+		'message':message,
+		'logoutStatus':logoutStatus
+			}
+		return render(request,'authentication/login.html',context)
+
 
 				
 
