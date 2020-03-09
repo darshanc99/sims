@@ -18,8 +18,8 @@ def addproduct(request):
 				measure_unit=request.POST.get('measure_unit')
 				description=request.POST.get('description')
 				prod=productlist(product_name,product_category,product_type,available_quantity,arrive,measure_unit,description)
-				print(product_category)
-				print(prod)
+				
+				
 				try:
 					if productlist.objects.get(product_name=product_name):
 						messages="Product is already present"
@@ -67,20 +67,20 @@ def addproduct(request):
 def addquantity(request):
 	logoutStatus=True
 	try:
-		print(request.session['email'])
+		
 		if request.session['email']:
 
-			print("alssoooo")
+			
 			if request.method=='POST':
-				print("here")
+				
 				names=request.POST.get('product_category')
 				quantity=request.POST.get('quantity')
 				details=productlist.objects.get(product_name=names)
 				
 				ans=int(details.available_quantity)+int(quantity)
-				print(ans)  
+				  
 				all_products=productlist.objects.all().order_by("product_name")
-				print(all_products)
+				
 				currentEmail = request.session['email']
 				currentUser = useraccounts.objects.get(email=currentEmail)
 				currentName = currentUser.first_name+" "+currentUser.last_name
@@ -119,51 +119,71 @@ def removeproduct(request):
 		if request.session['email']:
 			email=request.session['email']
 			if request.method=='POST':
-				print("herewego")
+				
 				names=request.POST.get('product_list')
-				print(names)
+				
 				password=request.POST.get('pass')
 				password = hashlib.sha256(password.encode()).hexdigest()
-				print("norttrfddf")
+				
 				if useraccounts.objects.get(email=email):
 						user = useraccounts.objects.get(email=email)
 						
 						if user.userpassword == password:
-							print('heereeeswres')
+							
 							productlist.objects.filter(product_name=names).delete()
 							
 							messages = "Product removed !"
 							all_products=productlist.objects.all().order_by("product_name")
+							currentEmail = request.session['email']
+							currentUser = useraccounts.objects.get(email=currentEmail)
+							currentName = currentUser.first_name+" "+currentUser.last_name
 							context={
-							'all_products': all_products,
-							'messages': messages
+							'messages':messages,
+							'name':currentName,
+							'all_products':all_products
 							}
+							
 
 							return render(request,'products/removeproduct.html',context)
 
 						else:
-							messages='password does not match'
+							messages = "Password do not match !"
 							all_products=productlist.objects.all().order_by("product_name")
+							currentEmail = request.session['email']
+							currentUser = useraccounts.objects.get(email=currentEmail)
+							currentName = currentUser.first_name+" "+currentUser.last_name
 							context={
-							'all_products':all_products,
-							'messages':messages
+							'messages':messages,
+							'name':currentName,
+							'all_products':all_products
 							}
 							return render(request,'products/removeproduct.html',context)
 				else:
 					messages='email does not match'
 					all_products=productlist.objects.all().order_by("product_name")
+					currentEmail = request.session['email']
+					currentUser = useraccounts.objects.get(email=currentEmail)
+					currentName = currentUser.first_name+" "+currentUser.last_name
 					context={
-					'all_products':all_products,
-					'messages':messages
-					}
+							
+						'name':currentName,
+						'all_products':all_products
+						}
+					
 					return render(request,'products/removeproduct.html',context)
 
 					
 			else:
 				all_products=productlist.objects.all().order_by("product_name")
+				currentEmail = request.session['email']
+				currentUser = useraccounts.objects.get(email=currentEmail)
+				currentName = currentUser.first_name+" "+currentUser.last_name
 				context={
-				'all_products':all_products
-				}
+							
+						'name':currentName,
+						'all_products':all_products
+						}
+				
 				return render(request,'products/removeproduct.html',context)
 	except:
 		message='you need to login first'
@@ -198,6 +218,86 @@ def viewproduct(request):
 			}
 		return render(request,'authentication/login.html',context)
 
-
+def routeproduct(request):
+	logoutStatus=True
+	try:
+		if request.session['email']:
+			if request.method=='POST':
+				print("fhghgf")
+				old_name=request.POST.get('product_list')
+				product_name=request.POST.get('product_name')
+				product_category=request.POST.get('product_category')
+				product_type=request.POST.get('product_type')
+				available_quantity=request.POST.get('avail_quantity')
+				measure_unit=request.POST.get('measure_unit')
+				print("fghghh222")
+				try:
+					if productlist.objects.get(product_name=product_name):
+						print("hola amigos")
+						message='Product with this name already exist'
+						all_products=productlist.objects.all().order_by("product_name")
+						currentEmail = request.session['email']
+						currentUser = useraccounts.objects.get(email=currentEmail)
+						currentName = currentUser.first_name+" "+currentUser.last_name
+						context={
+							'message':message,
+							'name':currentName,
+							'all_products':all_products
+							}
+						print("now here")	
+						return render(request,'products/editproduct.html',context)
+				except:
+					print("even here ppls")
+					if product_name=='':
+						print("whereeetr")
+						productlist.objects.filter(product_name=old_name).update(product_category=product_category,available_quantity=available_quantity,measure_unit=measure_unit,product_type=product_type)
+						message='Product details updated not changing name'
+						all_products=productlist.objects.all().order_by("product_name")
+						currentEmail = request.session['email']
+						currentUser = useraccounts.objects.get(email=currentEmail)
+						currentName = currentUser.first_name+" "+currentUser.last_name
+						context={
+							'message':message,
+							'name':currentName,
+							'all_products':all_products
+							}
+							
+						return render(request,'products/editproduct.html',context)
+					else:
+						print("whohooh")
+						productlist.objects.filter(product_name=old_name).update(product_name=product_name,product_category=product_category,available_quantity=available_quantity,measure_unit=measure_unit,product_type=product_type)
+						message='Product details updated with changing name'
+						all_products=productlist.objects.all().order_by("product_name")
+						currentEmail = request.session['email']
+						currentUser = useraccounts.objects.get(email=currentEmail)
+						currentName = currentUser.first_name+" "+currentUser.last_name
+						context={
+							'message':message,
+							'name':currentName,
+							'all_products':all_products
+							}
+							
+					return render(request,'products/editproduct.html',context)
+			else:
 				
+				all_products=productlist.objects.all().order_by("product_name")
+				currentEmail = request.session['email']
+				currentUser = useraccounts.objects.get(email=currentEmail)
+				currentName = currentUser.first_name+" "+currentUser.last_name
+				context={
+					'name':currentName,
+					'all_products':all_products
+					}
+					
+				return render(request,'products/editproduct.html',context)
+	except:
+		message='you need to login first'
+	
+			
+		context={
+		'logoutStatus':logoutStatus,
+		'message':message,
+		
+			}
+		return render(request,'authentication/login.html',context)
 

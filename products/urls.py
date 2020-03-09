@@ -8,6 +8,6 @@ urlpatterns = [
     path('addproduct/', views.addproduct, name='addproduct'),
     path('addquantity/', views.addquantity, name='addquantity'),
     path('removeproduct/',views.removeproduct,name='removeproduct'),
-    # path('routeproduct',views.routeproduct,name='routeproduct'),
-    path('viewproduct',views.viewproduct,name='viewproduct')
+    path('routeproduct/',views.routeproduct,name='routeproduct'),
+    path('viewproduct/',views.viewproduct,name='viewproduct')
 ]
