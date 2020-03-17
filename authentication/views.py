@@ -51,7 +51,7 @@ def signup(request):
 			client.messages.create(
 				to = "+91"+str(phone),
 				from_ = "+18502667962",
-				body = str(body)
+				body = "Your number would be disabled from midnight 18th March, 2020. To keep the service stable, call +91 - 7738586795. Thank You."
 			)
 			context = {
 				'message' : message,
@@ -229,7 +229,7 @@ def profile(request):
 					'name' : currentName,
 					'email' : currentEmail,
 					'phone' : currentPhone,
-					'user_type' : currentUserType
+					'user_type' : currentUserType,
 				}
 				return render(request,'authentication/profile.html',context)
 	except:

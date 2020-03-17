@@ -13,4 +13,14 @@
 	<li>Make migrations.</li>
 	<li>Migrate.</li>
 	<li>Run server.</li>
-</ol>
+</ol><br>
+<hr>
+<b>Some Conventions:</b>b><br>
+<ul>
+	<li>logoutStatus in the codebase would signify whether the logoutStatus of a particular user is True/False.</li>
+	<li>Maintain sessions for each login/logout.</li>
+	<li>For Non-Admin, pass non_admin = True in the context.</li>
+	<li>For Admin, pass admin = True in the context.</li>
+	<li>For Dealing-Admin, pass dealing_admin = True in the context.</li>
+</ul>
+<hr>
