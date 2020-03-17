@@ -11,27 +11,22 @@
 		<div class="col-md-6">
 			<div class="card">
 			<header class="card-header">
-				<h4 class="card-title mt-2">Sign In</h4>
+				<h4 class="card-title mt-2">Enter the One Time Password</h4>
 			</header>
 			<article class="card-body">
-				<form action="/user/login/" method="post">
+				<form action="{% url 'otp' %}" method="post">
 					{% csrf_token %}
 					<div class="form-group">
-						<label>Email address</label>
-						<input type="email" class="form-control" placeholder="Enter Email Address" name="email">
+						<label>OTP</label>
+						<input type="text" class="form-control" placeholder="Enter OTP" name="otp">
 					</div> <!-- form-group end.// -->
-					<div class="form-group">
-						<label>Password</label>
-					    <input class="form-control" type="password" name="password" placeholder="Enter User Password">
-					</div> <!-- form-group end.// -->  
 				    <div class="form-group">
-				        <button type="submit" class="btn btn-primary btn-block"> Sign In  </button>
+				        <button type="submit" class="btn btn-primary btn-block"> Enter  </button>
 				    </div> <!-- form-group// -->      
-				    <p>Don't have an account? <a href="{%  url 'signup' %}">Sign Up</a></p>
 				</form>
 			</article> <!-- card-body end .// -->
 		</div> <!-- col.//-->
 	</div> <!-- row.//-->
 </div> 
 <!--container end.//-->
-{% endblock %}
+{% endblock content %}

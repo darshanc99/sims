@@ -19,29 +19,29 @@
 					<div class="form-row">
 						<div class="col form-group">
 							<label>First name </label>   
-						  	<input type="text" class="form-control" placeholder="Enter First Name" name="first_name">
+						  	<input type="text" class="form-control" placeholder="Enter First Name" name="first_name" required>
 						</div> <!-- form-group end.// -->
 						<div class="col form-group">
 							<label>Last name</label>
-						  	<input type="text" class="form-control" placeholder="Enter Last Name" name="last_name">
+						  	<input type="text" class="form-control" placeholder="Enter Last Name" name="last_name" required>
 						</div> <!-- form-group end.// -->
 					</div> <!-- form-row end.// -->
 					<div class="form-group">
 						<label>Email address</label>
-						<input type="email" class="form-control" placeholder="Enter Email Address" name="email">
+						<input type="email" class="form-control" placeholder="Enter Email Address" name="email" required>
 					</div> <!-- form-group end.// -->
 					<div class="form-group">
 						<label>Phone Number</label>
-						<input type="text" maxlength="10" pattern="\d{10}" title="Please enter exactly 10 digits" class="form-control" placeholder="Enter 10 digit phone number" name="phone"s>
+						<input type="text" maxlength="10" pattern="\d{10}" title="Please enter exactly 10 digits" class="form-control" placeholder="Enter 10 digit phone number" name="phone" required>
 					</div> <!-- form-group end.// -->					
 					<div class="form-row">
 						<div class="form-group col-md-6">
 						  <label>User Role</label>
-						  <input type="text" class="form-control" name="user_role" placeholder="Enter User Designation">
+						  <input type="text" class="form-control" name="user_role" placeholder="Enter User Designation" required>
 						</div> <!-- form-group end.// -->
 						<div class="form-group col-md-6">
 						  <label>User Type</label>
-						  <select id="inputState" class="form-control" name="user_type">
+						  <select id="inputState" class="form-control" name="user_type" required>
 						      <option>Admin</option>
 						      <option>Dealing-Admin</option>
 						      <option>Non-Admin</option>
@@ -49,12 +49,13 @@
 						</div> <!-- form-group end.// -->
 					</div> <!-- form-row.// -->
 					<div class="form-group">
-						<label>Create password</label>
-					    <input class="form-control" type="password" name="password" placeholder="Enter User Password">
+						<label>Password</label>
+					    <input class="form-control" type="password" name="password" placeholder="Enter User Password" required>
 					</div> <!-- form-group end.// -->  
 				    <div class="form-group">
 				        <button type="submit" class="btn btn-primary btn-block"> Register  </button>
-				    </div> <!-- form-group// -->      
+				    </div> <!-- form-group// -->    
+				    <p>Already have an account? <a href="{% url 'login' %}">Log In</a></p>  
 				</form>
 			</article> <!-- card-body end .// -->
 		</div> <!-- col.//-->

@@ -1,59 +1,129 @@
 from django.shortcuts import render,redirect
 from .models import useraccounts
 import hashlib
+import os, random
+from twilio.rest import Client
+
+account_sid = "ACa724704a972c70089e7af50aec381049"
+auth_token = "cf4059a9461efced8fe78b355794fab3"
+client = Client(account_sid,auth_token)
 
 # Create your views here.
 def signup(request):
 	logoutStatus = True
-	try:
-		if request.session['email']:
-			if request.method == 'POST':
-				first_name = request.POST.get('first_name')
-				last_name = request.POST.get('last_name')
-				email = request.POST.get('email')
-				phone = request.POST.get('phone')
-				user_role = request.POST.get('user_role')
-				user_type = request.POST.get('user_type')
-				password = request.POST.get('password')
-				password = hashlib.sha256(password.encode()).hexdigest()
-				user = useraccounts(first_name,last_name,email,phone,user_type,password,user_role)
-				try:
-					if useraccounts.objects.get(email=email):
-						message = 'User already exists!'
-						currentEmail = request.session['email']
-						currentUser = useraccounts.objects.get(email=currentEmail)
-						currentName = currentUser.first_name+" "+currentUser.last_name
-						context = {
-							'message' : message,
-							'name' : currentName
-						}
-						return render(request,'authentication/signup.html',context)
-				except:
-					user.save()
-					message = "User Registered with SIMS!"
-					currentEmail = request.session['email']
-					currentUser = useraccounts.objects.get(email=currentEmail)
-					currentName = currentUser.first_name+" "+currentUser.last_name
-					context = {
-						'message' : message,
-						'name' : currentName
-					}
-					return render(request,'authentication/signup.html',context)
-			else:
-				currentEmail = request.session['email']
-				currentUser = useraccounts.objects.get(email=currentEmail)
-				currentName = currentUser.first_name+" "+currentUser.last_name
+	if request.method == 'POST':
+		first_name = request.POST.get('first_name')
+		last_name = request.POST.get('last_name')
+		email = request.POST.get('email')
+		phone = request.POST.get('phone')
+		user_role = request.POST.get('user_role')
+		user_type = request.POST.get('user_type')
+		password = request.POST.get('password')
+		password = hashlib.sha256(password.encode()).hexdigest()
+		request.session['first_name'] = first_name
+		request.session['last_name'] = last_name
+		request.session['email'] = email
+		request.session['phone'] = phone
+		request.session['user_role'] = user_role
+		request.session['user_type'] = user_type
+		request.session['password'] = password
+		print("PASSWORD:",password)
+		print("CHECK1")
+		try:
+			print("CHECK2")
+			if useraccounts.objects.get(email=email):
+				message = "User Already exists!"
+				print(message)
 				context = {
-					'name' : currentName
-				}				
+					'message' : message,
+					'logoutStatus' : logoutStatus
+				}
 				return render(request,'authentication/signup.html',context)
-	except:
-		message = "You have been logged out. Please log in again!"
+		except:
+			print("CHECK3")
+			body = random.randint(1000,9999)
+			print(body)
+			otp = str(body)
+			request.session['otp'] = otp
+			print("OTP:",otp)
+			message = "An OTP has been sent to your mobile. Kindly enter it to verify."
+			print("+91"+str(phone))
+			client.messages.create(
+				to = "+91"+str(phone),
+				from_ = "+18502667962",
+				body = str(body)
+			)
+			context = {
+				'message' : message,
+				'logoutStatus' : logoutStatus,
+				'body' : str(body)
+			}
+			return render(request,'authentication/otp.html',context)
+	else:
 		context = {
-			'message' : message,
 			'logoutStatus' : logoutStatus
 		}
-		return render(request,'authentication/login.html',context)
+		return render(request,'authentication/signup.html',context)
+
+def otp(request):
+	logoutStatus = True
+	try:
+		if request.method == 'POST':
+			inputotp = request.POST.get('otp')
+			inputotp = str(inputotp)
+			if inputotp == request.session['otp']:
+				print("CHECK4")
+				logoutStatus = False
+				message = "User Registered. User sent for Verification!"
+				print(message)
+
+				print(request.session['first_name'],
+					request.session['last_name'],
+					request.session['email'],
+					request.session['phone'],
+					request.session['user_type'],
+					request.session['password'],
+					request.session['user_role'])
+				user = useraccounts(request.session['first_name'],
+					request.session['last_name'],
+					request.session['email'],
+					request.session['phone'],
+					request.session['user_type'],
+					request.session['password'],
+					request.session['user_role']
+				)	
+				user.save()
+				print("USER ADDED")
+				request.session['email'] = request.session['email']
+				del request.session['otp']
+				del request.session['first_name']
+				del request.session['last_name']
+				del request.session['phone']
+				del request.session['user_type']
+				del request.session['password']
+				del request.session['user_role']
+				print("FINAL CHECK")
+				email = request.session['email']
+				user = useraccounts.objects.get(email=email)
+				name=user.first_name + " " + user.last_name
+				context = {
+					'logoutStatus' : logoutStatus,
+					'message' : message,
+					'name' : name
+				}
+				return render(request,'home/home.html',context)
+			else:
+				print("CHECK5")
+				logoutStatus = True
+				message = "Incorrect OTP. Please enter again."
+				context = {
+					'logoutStatus' : logoutStatus,
+					'message' : message
+				}	
+				return render(request,'authentication/otp.html',context)
+	except:
+		print("CHECK6")
+		return render(request,'home/home.html',context)
 
 def login(request):
 	logoutStatus = True
