@@ -6,7 +6,7 @@
 	</div>
 {% endif %}
 {% if admin %}
-<br><br><div class="container">
+<br><br><div class="" style="padding-left: 2%;padding-right: 2%">
   <h4><b>User Database</b></h4>
 <table class="table table-bordered">
   <thead class="table-dark">
@@ -17,8 +17,10 @@
       <th scope="col">User Type</th>
       <th scope="col">User Role</th>
       <th scope="col">Verified</th>
-      <th scope="col">Login Status</th>
+      <th scope="col">Status</th>
       <th scope="col">Registered On</th>
+      <th scope="col">Action</th>
+      <th scope="col">Edit</th>
     </tr>
   </thead>
   <tbody>
@@ -37,6 +39,9 @@
             <th scope="row" style="color:red">{{user.loginstatus}}</th>
           {% endif %}
           <th scope="row" style="color:red" >{{user.registered_at}}</th>
+          <th scope="row"><a href="/delete/{{user.email}}"><button type="submit" class="btn btn-sm btn-danger">Remove</button></a></th>
+          <th scope="row"><a href="{% url 'viewusers' %}"><button type="submit" class="btn btn-sm btn-secondary"><i class="fa fa-lock" aria-hidden="true"></i>
+</button></a></th>
         {% else %}
           <th scope="row" style="color:black">{{user.first_name}} {{user.last_name}}</th>
           <th scope="row" style="color:black"><a href="mailto: {{user.email}}">{{user.email}}</a></th>
@@ -45,12 +50,18 @@
           <th scope="row" style="color:black">{{user.userrole}}</th>
           <th scope="row" style="color:black">{{user.verified}}</th>
           {% if user.loginstatus == "Online" %}
-            <th scope="row" style="color:green">{{user.loginstatus}} *</th> 
+            <th scope="row" style="color:green">{{user.loginstatus}}*</th> 
           {% else %}
             <th scope="row" style="color:red">{{user.loginstatus}}</th>
           {% endif %}
-          <th scope="row" style="color:black">{{user.registered_at}}</th>
-        {% endif %}
+            <th scope="row" style="color:black">{{user.registered_at}}</th>
+          {% if user.accountstatus %}
+            <th scope="row"><a href="/freeze/{{user.email}}"><button type="submit" class="btn btn-sm btn-info">Freeze</button></a></th>
+          {% else %}
+            <th scope="row"><a href="/unfreeze/{{user.email}}"><button type="submit" class="btn btn-sm btn-info">Unfreeze</button></a></th>        
+          {% endif %}
+          <th scope="row"><a href="/verify/{{user.email}}"><button type="submit" class="btn btn-sm btn-secondary"><i class="fa fa-edit" aria-hidden="true"></i></button></a></th>
+          {% endif %}
       </tr>
     {% endfor %}
   </tbody>

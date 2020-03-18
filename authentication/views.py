@@ -152,7 +152,7 @@ def login(request):
 		try:
 			if useraccounts.objects.get(email=email):
 				user = useraccounts.objects.get(email=email)
-				if user.userpassword == password and user.loginstatus == False:
+				if user.userpassword == password and user.loginstatus == False and user.accountstatus == True:
 					message = "Log in successful!"
 					request.session['email'] = email	#Session Handler
 					print(request.session['email'],message)

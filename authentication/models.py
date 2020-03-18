@@ -18,6 +18,7 @@ class useraccounts(models.Model):
 	registered_at = models.DateTimeField(blank=True)
 	verified = models.BooleanField(default=False)
 	loginstatus = models.BooleanField(default=True)
+	accountstatus = models.BooleanField(default=True)
 
 	def __str__(self):
 		return self.email + "-" + self.user_type

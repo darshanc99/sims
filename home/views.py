@@ -4,6 +4,11 @@ from authentication.models import useraccounts
 from logs.models import sessionlogs
 import datetime, hashlib
 from django.utils import timezone
+from twilio.rest import Client
+
+account_sid = "ACa724704a972c70089e7af50aec381049"
+auth_token = "cf4059a9461efced8fe78b355794fab3"
+client = Client(account_sid,auth_token)
 
 def home(request):
 	admin = False
@@ -34,7 +39,17 @@ def home(request):
 				return render(request,'home/home.html',context)
 			elif user.user_type == 'Non-Admin':
 				non_admin = True
+				verified = user.verified
 				print("NONADMIN:",non_admin)
+				context = {
+					'name' : name,
+					'admin' : admin,
+					'non_admin' : non_admin,
+					'dealing_admin' : dealing_admin,
+					'verified' : verified,
+					'logoutStatus' : logoutStatus
+				}
+				return render(request,'home/home.html',context)
 			else:
 				dealing_admin = True
 				print("Dealing Admin:",dealing_admin)
@@ -174,7 +189,14 @@ def verify(request,email):
 		if user.user_type == 'Admin':
 			user = useraccounts.objects.get(email=email)
 			user.verified = True
+			to = "+91"+str(user.phone)
 			user.save()
+			message = "You are now a verified user. You can now enjoy the services of Smart Inventory Management System."
+			client.messages.create(
+				to = to,
+				from_ = "+18502667962",
+				body = message
+			)
 			return redirect('viewusers')
 		else:
 			user = useraccounts.objects.get(email=request.session['email'])
@@ -182,3 +204,76 @@ def verify(request,email):
 			user.save()
 			del request.session['email']
 			return redirect('login')
+	else:
+		return redirect('login')
+
+def deleteuser(request,email):
+	if request.session['email']:
+		user = useraccounts.objects.get(email=request.session['email'])
+		if user.user_type == 'Admin':
+			user = useraccounts.objects.get(email=email)
+			to = "+91"+str(user.phone)
+			user.delete()
+			message = "Your account with SIMS couldn't be verified, as your account details seemed suspicious. Your account is hence removed from the platform."
+			client.messages.create(
+				to = to,
+				from_ = "+18502667962",
+				body = message
+			)
+			return redirect('viewusers')
+		else:
+			user = useraccounts.objects.get(email=request.session['email'])
+			user.loginstatus = False
+			user.save()
+			del request.session['email']
+			return redirect('login')
+	else:
+		return redirect('login')
+
+def freezeuser(request,email):
+	if request.session['email']:
+		user = useraccounts.objects.get(email=request.session['email'])
+		if user.user_type == 'Admin':
+			user = useraccounts.objects.get(email=email)
+			to = "+91"+str(user.phone)
+			user.accountstatus = False
+			user.save()
+			message = "Your account with SIMS has been freezed. Please contact the Admin for further details."
+			client.messages.create(
+				to = to,
+				from_ = "+18502667962",
+				body = message
+			)
+			return redirect('viewusers')
+		else:
+			user = useraccounts.objects.get(email=request.session['email'])
+			user.loginstatus = False
+			user.save()
+			del request.session['email']
+			return redirect('login')
+	else:
+		return redirect('login')
+
+def unfreezeuser(request,email):
+	if request.session['email']:
+		user = useraccounts.objects.get(email=request.session['email'])
+		if user.user_type == 'Admin':
+			user = useraccounts.objects.get(email=email)
+			to = "+91"+str(user.phone)
+			user.accountstatus = True
+			user.save()
+			message = "Your account with SIMS has been unfreezed. You can now use the services of SIMS seamlessly."
+			client.messages.create(
+				to = to,
+				from_ = "+18502667962",
+				body = message
+			)
+			return redirect('viewusers')
+		else:
+			user = useraccounts.objects.get(email=request.session['email'])
+			user.loginstatus = False
+			user.save()
+			del request.session['email']
+			return redirect('login')
+	else:
+		return redirect('login')
