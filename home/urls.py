@@ -13,4 +13,5 @@ urlpatterns = [
     path(r'delete/<str:email>',views.deleteuser,name='deleteuser'),
     path(r'freeze/<str:email>',views.freezeuser,name='freezeuser'),
     path(r'unfreeze/<str:email>',views.unfreezeuser,name='unfreezeuser'),
+    path(r'edit/<str:email>',views.edituser,name='edituser'),
 ]

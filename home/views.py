@@ -116,7 +116,8 @@ def newuser(request):
 						'message' : message
 					}
 					print(context)
-					return render(request,'home/adduser.html',context)
+					return redirect('viewusers')
+					#return render(request,'home/viewusers.html',context)
 				else:
 					print("HELLO")
 					context = {
@@ -245,6 +246,20 @@ def freezeuser(request,email):
 				body = message
 			)
 			return redirect('viewusers')
+		elif user.user_type == 'Non-Admin':
+			user = useraccounts.objects.get(email=request.session['email'])
+			to = "+91"+str(user.phone)
+			user.accountstatus = False
+			user.loginstatus = False
+			user.save()
+			del request.session['email']
+			message = "Your account with SIMS has been freezed. Please contact the Admin for further details."
+			client.messages.create(
+				to = to,
+				from_ = "+18502667962",
+				body = message
+			)
+			return redirect('login')			
 		else:
 			user = useraccounts.objects.get(email=request.session['email'])
 			user.loginstatus = False
@@ -271,6 +286,56 @@ def unfreezeuser(request,email):
 			return redirect('viewusers')
 		else:
 			user = useraccounts.objects.get(email=request.session['email'])
+			user.loginstatus = False
+			user.save()
+			del request.session['email']
+			return redirect('login')
+	else:
+		return redirect('login')
+
+def edituser(request,email):
+	logoutStatus = True
+	admin = False
+	if request.session['email']:
+		user = useraccounts.objects.get(email=request.session['email'])
+		name = user.first_name + ' ' + user.last_name
+		if user.user_type == 'Admin':
+			admin = True
+			user = useraccounts.objects.get(email=email)
+			oldemail = user.email
+			if request.method == 'POST':
+				first_name = request.POST.get('first_name')
+				last_name = request.POST.get('last_name')
+				email = request.POST.get('email')
+				phone = request.POST.get('phone')
+				user_type = request.POST.get('user_type')
+				userrole = request.POST.get('user_role')
+				user.first_name = first_name
+				user.last_name = last_name
+				user.email = email
+				user.phone = phone
+				user.user_type = user_type
+				user.userrole = userrole
+				user.save()
+				logoutStatus = False
+				context = {
+					'name' : name,
+					'logoutStatus' : logoutStatus,
+					'admin' : admin,
+					'user' : user
+				}
+				return render(request,'home/edituser.html',context)
+			else:
+				logoutStatus = False
+				admin = True
+				context = {
+					'name' : name,
+					'logoutStatus' : logoutStatus,
+					'admin' : admin,
+					'user' : user
+				}
+				return render(request,'home/edituser.html',context)
+		else:
 			user.loginstatus = False
 			user.save()
 			del request.session['email']

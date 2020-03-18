@@ -1,0 +1,62 @@
+{% extends 'home/base.html' %}
+{% block content %}
+{% if message %}
+	<div class="alert alert-info" role="alert">
+	  {{message}} 
+	</div>
+{% endif %}
+  {% if admin %}
+  <br><br>
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <b>First Name: </b>{{user.first_name}}  <b>Last Name: </b>{{user.last_name}}<br>
+        <b>Email: </b>{{user.email}}<br>
+        <b>Phone: </b>{{user.phone}}<br>
+        <b>User Type: </b>{{user.user_type}}  <b>User Role: </b>{{user.userrole}}
+      </div>
+      <div class="col continer">
+        <form action="/edit/{{user.email}}" method="post">
+          {% csrf_token %}
+          <div class="form-row">
+            <div class="col form-group">
+              <label>First name </label>   
+                <input type="text" class="form-control" value="{{user.first_name}}" name="first_name" required>
+            </div> <!-- form-group end.// -->
+            <div class="col form-group">
+              <label>Last name</label>
+                <input type="text" class="form-control" value="{{user.last_name}}" name="last_name" required>
+            </div> <!-- form-group end.// -->
+          </div> <!-- form-row end.// -->
+          <div class="form-group">
+            <label>Email address</label>
+            <input type="email" class="form-control" value="{{user.email}}" name="email" required>
+          </div> <!-- form-group end.// -->
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="text" maxlength="10" pattern="\d{10}" title="Please enter exactly 10 digits" class="form-control" value="{{user.phone}}" name="phone" required>
+          </div> <!-- form-group end.// -->         
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label>User Role</label>
+              <input type="text" class="form-control" name="user_role" value="{{user.userrole}}" required>
+            </div> <!-- form-group end.// -->
+            <div class="form-group col-md-6">
+              <label>User Type</label>
+              <select id="inputState" class="form-control" name="user_type" required>
+                  <option>Admin</option>
+                  <option>Dealing-Admin</option>
+                  <option>Non-Admin</option>
+              </select>
+            </div> <!-- form-group end.// -->
+          </div> <!-- form-row.// -->
+          <!-- form-group end.// -->  
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-block"> Update  </button>
+            </div> <!-- form-group// --> 
+        </form>
+      </div>
+    </div>
+  </div>
+{% endif %}
+{% endblock %}
