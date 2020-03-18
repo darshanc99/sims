@@ -15,7 +15,9 @@ class useraccounts(models.Model):
 	user_type = models.CharField(max_length=15,choices=USER_TYPES)
 	userpassword = models.CharField(max_length=1000)
 	userrole = models.CharField(max_length=25,blank=True)
+	registered_at = models.DateTimeField(blank=True)
 	verified = models.BooleanField(default=False)
+	loginstatus = models.BooleanField(default=True)
 
 	def __str__(self):
 		return self.email + "-" + self.user_type

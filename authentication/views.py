@@ -1,8 +1,10 @@
 from django.shortcuts import render,redirect
 from .models import useraccounts
+from logs.models import sessionlogs
 import hashlib
-import os, random
+import os, random, datetime
 from twilio.rest import Client
+from django.utils import timezone
 
 account_sid = "ACa724704a972c70089e7af50aec381049"
 auth_token = "cf4059a9461efced8fe78b355794fab3"
@@ -51,7 +53,7 @@ def signup(request):
 			client.messages.create(
 				to = "+91"+str(phone),
 				from_ = "+18502667962",
-				body = "Your number would be disabled from midnight 18th March, 2020. To keep the service stable, call +91 - 7738586795. Thank You."
+				body = otp
 			)
 			context = {
 				'message' : message,
@@ -84,13 +86,16 @@ def otp(request):
 					request.session['user_type'],
 					request.session['password'],
 					request.session['user_role'])
+				now = datetime.datetime.now()
+				print(now)
 				user = useraccounts(request.session['first_name'],
 					request.session['last_name'],
 					request.session['email'],
 					request.session['phone'],
 					request.session['user_type'],
 					request.session['password'],
-					request.session['user_role']
+					request.session['user_role'],
+					now
 				)	
 				user.save()
 				print("USER ADDED")
@@ -123,9 +128,18 @@ def otp(request):
 				return render(request,'authentication/otp.html',context)
 	except:
 		print("CHECK6")
-		return render(request,'home/home.html',context)
+		logoutStatus = True
+		message = "Some error occured."
+		context = {
+			'message' : message,
+			'loginstatus' : logoutStatus
+		}
+		return render(request,'authentication/signup.html',context)
 
 def login(request):
+	admin = False
+	non_admin = False
+	dealing_admin = False
 	logoutStatus = True
 	if request.method == 'POST':
 		email = request.POST.get('email')
@@ -134,13 +148,38 @@ def login(request):
 		try:
 			if useraccounts.objects.get(email=email):
 				user = useraccounts.objects.get(email=email)
-				if user.userpassword == password:
+				if user.userpassword == password and user.loginstatus == False:
 					message = "Log in successful!"
 					request.session['email'] = email	#Session Handler
 					print(request.session['email'],message)
-					return redirect('home')
+					if user.user_type == 'Admin':
+						admin = True
+					elif user.user_type == 'Non-Admin':
+						non_admin = True
+					else:
+						dealing_admin = True
+					user.loginstatus = True
+					user.save()
+					now = datetime.datetime.now(tz=timezone.utc)
+					print(now)
+					#accounts = sessionlogs(email = email,login_on = now,logout_on = None)
+					accounts = sessionlogs(email = email,timestamp = now,message="Logged In.")
+					accounts.save()
+					logoutStatus = False
+					name = user.first_name + " " + user.last_name
+					print(name)
+					context = {
+						'logoutStatus' : logoutStatus,
+						'admin' : admin,
+						'non_admin' : non_admin,
+						'dealing_admin' : dealing_admin,
+						'message' : message,
+						'name' : name
+					}
+					print(context)
+					return render(request,'home/home.html',context)
 				else:
-					message = "Password does not match."
+					message = "Log in unsuccessful. Please make sure that the username and the passwords are correct. Please make sure that the account is not logged in elsewhere."
 					context = {
 						'message' : message,
 						'logoutStatus' : logoutStatus
@@ -161,7 +200,17 @@ def login(request):
 def logout(request):
 	logoutStatus = True
 	try:
+		user = useraccounts.objects.get(email=request.session['email'])
+		user.loginstatus = False
+		email = request.session['email']
+		user.save()
 		del request.session['email']
+		now = datetime.datetime.now(tz=timezone.utc)
+		print(email,None,now)
+		#accounts = sessionlogs(email = email,login_on = None,logout_on = now)
+		accounts = sessionlogs(email=email,timestamp=now,message="Logged Out.")
+		accounts.save()
+		print("logged out")
 	except:
 		pass
 	context = {

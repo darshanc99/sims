@@ -5,13 +5,27 @@
 	  {{message}} 
 	</div>
 {% endif %}
+{% if non_admin %}
+	{% if non_admin.verified %}
+	{% else %}
+		<div class="container">
+			{% if non_admin.verified %}
+			{% else %}
+				<div class="alert alert-danger" role="alert">
+				<h6 style="color:yellow"><b>The Account is currently being verified by the Admin.
+					In case of urgency, contact the Admin.<br><span style="color:black">Thank You for your co-operation!</span></b></h6>
+				</div>
+			{% endif %}
+		</div>
+	{% endif %}
+{% endif %}
 	<div class="container"><br>
 		<div class="jumbotron">
 			<b><u>BIO: </u></b>
 			<br><b>NAME: </b>{{name}}
 			<br><b>EMAIL: </b>{{email}}<br>
 			<b>PHONE: </b>{{phone}}<br>
-			<b>User Type: </b>{{user_type}}<br>
+			<b>User Type: </b>{{user_type}}<br><br>
 			<div class="row center">
 				<div class="col-md-6">
 					<div class="card">

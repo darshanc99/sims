@@ -5,4 +5,39 @@
 	  {{message}} 
 	</div>
 {% endif %}
+{% if admin %}
+<div class="container">
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th scope="col">SIMS Activity Log</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">ddc@somaiya.edu Logged in at so and so.</th>
+    </tr>
+    <tr>
+      <th scope="row">vora.s@somaiya.edu logged in at so and so.</th>
+    </tr>
+    <tr>
+      <th scope="row">meera.kjoshi@nic.in logged in at so and so.</th>
+    </tr>
+  </tbody>
+</table>
+</div>
+{% endif %}
+{% if non_admin %}
+	<div class="container">
+		{% if non_admin.verified %}
+		{% else %}
+			<div class="alert alert-danger" role="alert">
+			<h6 style="color:yellow"><b>The Account is currently being verified by the Admin.
+				In case of urgency, contact the Admin.<br><span style="color:black">Thank You for your co-operation!</span></b></h6>
+			</div>
+		{% endif %}
+	</div>
+{% endif %}
+{% if dealing_admin %}
+{% endif %}
 {% endblock %}

@@ -13,9 +13,9 @@
 	<li>Make migrations.</li>
 	<li>Migrate.</li>
 	<li>Run server.</li>
-</ol><br>
+</ol>
 <hr>
-<b>Some Conventions:</b>b><br>
+<b>Some Conventions:</b><br>
 <ul>
 	<li>logoutStatus in the codebase would signify whether the logoutStatus of a particular user is True/False.</li>
 	<li>Maintain sessions for each login/logout.</li>

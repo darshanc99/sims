@@ -113,7 +113,8 @@
 
             </script>
         </nav>
-      {% else %}
+
+        {% else %}
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
           <div class="image">
             <img src="{% static 'home/dist/img/user2-160x160.jpg' %}" class="img-circle elevation-2" alt="User Image">
@@ -122,6 +123,7 @@
             <a href="{% url 'profile' %}" class="d-block"  style="color:yellow">{{name}}</a>
           </div>
         </div>
+        {% if admin %}
         <!-- Sidebar Menu -->
         <nav class="mt-2">
           <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
@@ -142,7 +144,9 @@
                     <p style="color:lightblue">User</p>
                   </a>
                 </li>
-                <li class="nav-item has-treeview">
+              </ul>
+            </li>
+            <li class="nav-item has-treeview">
               <a href="#" class="nav-link">
                 <i class="nav-icon fas fa-tasks"></i>
                 <p style="color:lightpink">
@@ -150,14 +154,14 @@
                   <i class="right fas fa-angle-left"></i>
                 </p>
               </a>
-               <ul class="nav nav-treeview">
+              <ul class="nav nav-treeview">
                 <li class="nav-item">
                   <a href="{% url 'addproduct' %}" class="nav-link">
                     <i class="fas fa-plus nav-icon"></i>
                     <p style="color:lightblue">ADD Product</p>
                   </a>
                 </li>
-                 <li class="nav-item">
+                <li class="nav-item">
                   <a href="{% url 'addquantity' %}" class="nav-link">
                     <i class="fas fa-plus nav-icon"></i>
                     <p style="color:lightblue">Update Quantity</p>
@@ -168,17 +172,14 @@
                     <i class="fas fa-trash nav-icon"></i>
                     <p style="color:lightblue">Remove Product</p>
                   </a>
-                   <li class="nav-item">
+                <li class="nav-item">
                   <a href="{% url 'viewproduct' %}" class="nav-link">
                     <i class="fas fa-pen nav-icon"></i>
                     <p style="color:lightblue">View/Edit Product</p>
                   </a>
                 </li>
-                </li>
               </ul>
-            </li>
-              </ul>
-            </li>
+            </li>   
             <li class="nav-item">
               <a href="{% url 'logout' %}" class="nav-link">
                 <i class="nav-icon fas fa-sign-out-alt"></i>
@@ -187,8 +188,147 @@
                 </p>
               </a>
             </li>
+            </ul>
+            </li>
           </ul>
         </nav>
+        {% endif %}
+        {% if non_admin %}
+        <!-- Sidebar Menu -->
+          <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+              <!-- Add icons to the links using the .nav-icon class
+                   with font-awesome or any other icon font library -->
+              {% if non_admin.verified %}
+              <li class="nav-item has-treeview">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon fas fa-tasks"></i>
+                  <p style="color:lightpink">
+                    Inventory
+                    <i class="right fas fa-angle-left"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="" class="nav-link">
+                      <i class="fas fa-plus nav-icon"></i>
+                      <p style="color:lightblue">My Inventory</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="" class="nav-link">
+                      <i class="fas fa-plus nav-icon"></i>
+                      <p style="color:lightblue">Request Inventory</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="" class="nav-link">
+                      <i class="fas fa-trash nav-icon"></i>
+                      <p style="color:lightblue">Cancel Transaction</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>               
+              <li class="nav-item">
+                <a href="" class="nav-link">
+                  <i class="nav-icon fas fa-sign-out-alt"></i>
+                  <p style="color:lightpink">
+                    My Logs
+                  </p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="" class="nav-link">
+                  <i class="nav-icon fas fa-sign-out-alt"></i>
+                  <p style="color:lightpink">
+                    Messages
+                  </p>
+                </a>
+              </li> 
+            {% endif %}     
+              <li class="nav-item">
+                <a href="{% url 'logout' %}" class="nav-link">
+                  <i class="nav-icon fas fa-sign-out-alt"></i>
+                  <p style="color:lightpink">
+                    Sign Out
+                  </p>
+                </a>
+              </li>
+              </ul>
+              </li>
+            </ul>
+          </nav>
+        {% endif %}
+        {% if dealing_admin %}
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+          <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            <!-- Add icons to the links using the .nav-icon class
+                 with font-awesome or any other icon font library -->
+            <li class="nav-item has-treeview">
+              <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-tasks"></i>
+                <p style="color:lightpink">
+                  Activities
+                  <i class="right fas fa-angle-left"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="{% url 'signup' %}" class="nav-link">
+                    <i class="fas fa-plus nav-icon"></i>
+                    <p style="color:lightblue">User</p>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item has-treeview">
+              <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-tasks"></i>
+                <p style="color:lightpink">
+                  Products
+                  <i class="right fas fa-angle-left"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="{% url 'addproduct' %}" class="nav-link">
+                    <i class="fas fa-plus nav-icon"></i>
+                    <p style="color:lightblue">ADD Product</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{% url 'addquantity' %}" class="nav-link">
+                    <i class="fas fa-plus nav-icon"></i>
+                    <p style="color:lightblue">Update Quantity</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{% url 'removeproduct' %}" class="nav-link">
+                    <i class="fas fa-trash nav-icon"></i>
+                    <p style="color:lightblue">Remove Product</p>
+                  </a>
+                <li class="nav-item">
+                  <a href="{% url 'viewproduct' %}" class="nav-link">
+                    <i class="fas fa-pen nav-icon"></i>
+                    <p style="color:lightblue">View/Edit Product</p>
+                  </a>
+                </li>
+              </ul>
+            </li>   
+            <li class="nav-item">
+              <a href="{% url 'logout' %}" class="nav-link">
+                <i class="nav-icon fas fa-sign-out-alt"></i>
+                <p style="color:lightpink">
+                  Sign Out
+                </p>
+              </a>
+            </li>
+            </ul>
+            </li>
+          </ul>
+        </nav>
+        {% endif %}
         {% endif %}
     </div>
     <!-- /.sidebar -->
