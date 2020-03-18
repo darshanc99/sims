@@ -166,3 +166,19 @@ def viewusers(request):
 		user.save()
 		del request.session['email']
 		return redirect('login')
+
+def verify(request,email):
+	if request.session['email']:
+		currentEmail = request.session['email']
+		user = useraccounts.objects.get(email=currentEmail)
+		if user.user_type == 'Admin':
+			user = useraccounts.objects.get(email=email)
+			user.verified = True
+			user.save()
+			return redirect('viewusers')
+		else:
+			user = useraccounts.objects.get(email=request.session['email'])
+			user.loginstatus = False
+			user.save()
+			del request.session['email']
+			return redirect('login')

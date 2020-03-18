@@ -30,7 +30,7 @@
           <th scope="row" style="color:red">{{user.phone}}</th>
           <th scope="row" style="color:red">{{user.user_type}}</th>
           <th scope="row" style="color:red">{{user.userrole}}</th>
-          <th scope="row" style="color:red">{{user.verified}} <button class="btn btn-sm btn-success">Accept</button></th>
+          <th scope="row" style="color:red">{{user.verified}}<a href="/verify/{{user.email}}"><button type="submit" class="btn btn-sm btn-success">Verify</button></a></th>
           {% if user.loginstatus == "Online" %}
             <th scope="row" style="color:green">{{user.loginstatus}} *</th> 
           {% else %}

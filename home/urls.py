@@ -9,4 +9,5 @@ urlpatterns = [
     path('', views.home, name='home'),
     path(r'adduser/',views.newuser,name='newuser'),
     path(r'viewusers/',views.viewusers,name='viewusers'),
+    path(r'verify/<str:email>',views.verify,name='verify'),
 ]
