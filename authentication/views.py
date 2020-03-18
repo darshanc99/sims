@@ -111,12 +111,16 @@ def otp(request):
 				email = request.session['email']
 				user = useraccounts.objects.get(email=email)
 				name=user.first_name + " " + user.last_name
+				message = "User created for " + name
+				user.loginstatus = False
+				user.save()
+				del request.session['email']
+				logoutStatus = True
 				context = {
 					'logoutStatus' : logoutStatus,
-					'message' : message,
-					'name' : name
+					'message' : message
 				}
-				return render(request,'home/home.html',context)
+				return render(request,'authentication/login.html',context)
 			else:
 				print("CHECK5")
 				logoutStatus = True
