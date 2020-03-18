@@ -123,3 +123,46 @@ def newuser(request):
 		user.save()
 		del request.session['email']
 		return redirect('login')
+
+def viewusers(request):
+	admin = False
+	non_admin = False
+	dealing_admin = False
+	logoutStatus = True
+	try:
+		if request.session['email']:
+			currentUser = useraccounts.objects.get(email=request.session['email'])
+			if currentUser.user_type == 'Admin':
+				admin = True
+				all_users = useraccounts.objects.all().order_by('email')
+				for user in all_users:
+					if user.verified == True:
+						user.verified = 'Yes'
+					if user.verified == False:
+						user.verified = 'No'
+					if user.loginstatus == True:
+						user.loginstatus = 'Online'
+					if user.loginstatus == False:
+						user.loginstatus = 'Offline'
+				logoutStatus = False
+				name = currentUser.first_name + ' ' + currentUser.last_name
+				context = {
+					'name' : name,
+					'admin' : admin,
+					'non_admin' : non_admin,
+					'dealing_admin' : dealing_admin,
+					'logoutStatus' : logoutStatus,
+					'all_users' : all_users
+				}
+				return render(request,'home/viewusers.html',context)
+			else:
+				currentUser.loginstatus = False
+				currentUser.save()
+				del request.session['email']
+				return redirect('login')
+	except:
+		user = useraccounts.objects.get(email=request.session['email'])
+		user.loginstatus = False
+		user.save()
+		del request.session['email']
+		return redirect('login')

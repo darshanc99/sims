@@ -1,0 +1,64 @@
+{% extends 'home/base.html' %}
+{% block content %}
+{% if message %}
+	<div class="alert alert-info" role="alert">
+	  {{message}} 
+	</div>
+{% endif %}
+{% if admin %}
+<br><br><div class="container">
+  <h4><b>User Database</b></h4>
+<table class="table table-bordered">
+  <thead class="table-dark">
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Email</th>
+      <th scope="col">Phone</th>
+      <th scope="col">User Type</th>
+      <th scope="col">User Role</th>
+      <th scope="col">Verified</th>
+      <th scope="col">Login Status</th>
+      <th scope="col">Registered On</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for user in all_users %}
+      <tr>
+        {% if user.verified == "No" %}
+          <th scope="row" style="color:red">{{user.first_name}} {{user.last_name}}</th>
+          <th scope="row" style="color:red"><a href="mailto: {{user.email}}">{{user.email}}</a></th>
+          <th scope="row" style="color:red">{{user.phone}}</th>
+          <th scope="row" style="color:red">{{user.user_type}}</th>
+          <th scope="row" style="color:red">{{user.userrole}}</th>
+          <th scope="row" style="color:red">{{user.verified}} <button class="btn btn-sm btn-success">Accept</button></th>
+          {% if user.loginstatus == "Online" %}
+            <th scope="row" style="color:green">{{user.loginstatus}} *</th> 
+          {% else %}
+            <th scope="row" style="color:red">{{user.loginstatus}}</th>
+          {% endif %}
+          <th scope="row" style="color:red" >{{user.registered_at}}</th>
+        {% else %}
+          <th scope="row" style="color:green">{{user.first_name}} {{user.last_name}}</th>
+          <th scope="row" style="color:green"><a href="mailto: {{user.email}}">{{user.email}}</a></th>
+          <th scope="row" style="color:green">{{user.phone}}</th>
+          <th scope="row" style="color:green">{{user.user_type}}</th>
+          <th scope="row" style="color:green">{{user.userrole}}</th>
+          <th scope="row" style="color:green">{{user.verified}}</th>
+          {% if user.loginstatus == "Online" %}
+            <th scope="row" style="color:green">{{user.loginstatus}} *</th> 
+          {% else %}
+            <th scope="row" style="color:red">{{user.loginstatus}}</th>
+          {% endif %}
+          <th scope="row" style="color:green">{{user.registered_at}}</th>
+        {% endif %}
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+{% if non_admin %}
+{% endif %}
+{% if dealing_admin %}
+{% endif %}
+{% endblock %}
