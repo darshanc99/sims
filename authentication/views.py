@@ -181,7 +181,8 @@ def login(request):
 						'name' : name
 					}
 					print(context)
-					return render(request,'home/home.html',context)
+					return redirect('home')
+					#return render(request,'home/home.html',context)
 				else:
 					message = "Log in unsuccessful. Please make sure that the username and the passwords are correct. Please make sure that the account is not logged in elsewhere."
 					context = {

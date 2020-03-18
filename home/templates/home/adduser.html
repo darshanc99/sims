@@ -14,7 +14,7 @@
 				<h4 class="card-title mt-2">Register with SIMS!</h4>
 			</header>
 			<article class="card-body">
-				<form action="/user/register/" method="post">
+				<form action="{% url 'newuser' %}" method="post">
 					{% csrf_token %}
 					<div class="form-row">
 						<div class="col form-group">
@@ -54,11 +54,7 @@
 					</div> <!-- form-group end.// -->  
 				    <div class="form-group">
 				        <button type="submit" class="btn btn-primary btn-block"> Register  </button>
-				    </div> <!-- form-group// -->    
-				    {% if logoutStatus %}
-				    	<p>Already have an account? <a href="{% url 'login' %}">Log In</a></p>
-				    {% else %}       
-			    	{% endif %}
+				    </div> <!-- form-group// --> 
 				</form>
 			</article> <!-- card-body end .// -->
 		</div> <!-- col.//-->

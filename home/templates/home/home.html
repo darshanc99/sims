@@ -6,23 +6,24 @@
 	</div>
 {% endif %}
 {% if admin %}
-<div class="container">
+<br><br><div class="container">
+  <h4><b>SIMS Activity Log</b></h4>
 <table class="table table-bordered">
-  <thead>
+  <thead class="table-dark">
     <tr>
-      <th scope="col">SIMS Activity Log</th>
+      <th scope="col">Email</th>
+      <th scope="col">Timestamp</th>
+      <th scope="col">Log</th>
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <th scope="row">ddc@somaiya.edu Logged in at so and so.</th>
-    </tr>
-    <tr>
-      <th scope="row">vora.s@somaiya.edu logged in at so and so.</th>
-    </tr>
-    <tr>
-      <th scope="row">meera.kjoshi@nic.in logged in at so and so.</th>
-    </tr>
+    {% for log in all_logs %}
+      <tr>
+        <th scope="row"><a href="mailto: {{log.email}}">{{log.email}}</a></th>
+        <th scope="row">{{log.timestamp}}</th>
+        <th scope="row" style="color:red">{{log.message}}</th>
+      </tr>
+    {% endfor %}
   </tbody>
 </table>
 </div>
