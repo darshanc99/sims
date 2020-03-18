@@ -38,18 +38,18 @@
           {% endif %}
           <th scope="row" style="color:red" >{{user.registered_at}}</th>
         {% else %}
-          <th scope="row" style="color:green">{{user.first_name}} {{user.last_name}}</th>
-          <th scope="row" style="color:green"><a href="mailto: {{user.email}}">{{user.email}}</a></th>
-          <th scope="row" style="color:green">{{user.phone}}</th>
-          <th scope="row" style="color:green">{{user.user_type}}</th>
-          <th scope="row" style="color:green">{{user.userrole}}</th>
-          <th scope="row" style="color:green">{{user.verified}}</th>
+          <th scope="row" style="color:black">{{user.first_name}} {{user.last_name}}</th>
+          <th scope="row" style="color:black"><a href="mailto: {{user.email}}">{{user.email}}</a></th>
+          <th scope="row" style="color:black">{{user.phone}}</th>
+          <th scope="row" style="color:black">{{user.user_type}}</th>
+          <th scope="row" style="color:black">{{user.userrole}}</th>
+          <th scope="row" style="color:black">{{user.verified}}</th>
           {% if user.loginstatus == "Online" %}
             <th scope="row" style="color:green">{{user.loginstatus}} *</th> 
           {% else %}
             <th scope="row" style="color:red">{{user.loginstatus}}</th>
           {% endif %}
-          <th scope="row" style="color:green">{{user.registered_at}}</th>
+          <th scope="row" style="color:black">{{user.registered_at}}</th>
         {% endif %}
       </tr>
     {% endfor %}
