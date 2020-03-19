@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'authentication.apps.AuthenticationConfig',
     'home.apps.HomeConfig',
     'products.apps.ProductsConfig',
-    'logs.apps.LogsConfig'
+    'logs.apps.LogsConfig',
+    'simchat.apps.SimchatConfig'
 ]
 
 MIDDLEWARE = [

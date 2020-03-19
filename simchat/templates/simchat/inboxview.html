@@ -1,0 +1,20 @@
+{% extends 'home/base.html' %}
+{% block content %}
+{% if message %}
+	<div class="alert alert-info" role="alert">
+	  {{message}} 
+	</div>
+{% endif %}
+<br><br><br>
+<div class="container"> 
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title"><b>Subject: </b>{{msg.subject}}</h5>
+      <p class="card-text">{{msg.body | safe}}</p>
+    </div>
+    <div class="card-footer">Sent by {{msg.sender}} on {{msg.timestamp}}</div>
+  </div>
+  <a href="/simchat/in/reply/{{msg.id}}/" class="btn btn-secondary"><i class="fa fa-reply" aria-hidden="true"></i> Reply</a>
+  <a href="/simchat/deleteinbox/{{msg.id}}"><button type="submit" class="btn btn btn-secondary"><i class="fa fa-trash" aria-hidden="true"> Delete</i>
+</div>
+{% endblock %}
