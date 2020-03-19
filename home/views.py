@@ -198,6 +198,11 @@ def verify(request,email):
 				from_ = "+18502667962",
 				body = message
 			)
+			now = datetime.datetime.now(tz=timezone.utc)
+			message = "Verified for "+email
+			print(message)
+			session = sessionlogs(email=request.session['email'],timestamp=now,message=message)
+			session.save()
 			return redirect('viewusers')
 		else:
 			user = useraccounts.objects.get(email=request.session['email'])
@@ -221,6 +226,11 @@ def deleteuser(request,email):
 				from_ = "+18502667962",
 				body = message
 			)
+			now = datetime.datetime.now(tz=timezone.utc)
+			message = email + " deleted."
+			print(message)
+			session = sessionlogs(email=request.session['email'],timestamp=now,message=message)
+			session.save()
 			return redirect('viewusers')
 		else:
 			user = useraccounts.objects.get(email=request.session['email'])
@@ -239,6 +249,11 @@ def freezeuser(request,email):
 			to = "+91"+str(user.phone)
 			user.accountstatus = False
 			user.save()
+			now = datetime.datetime.now(tz=timezone.utc)
+			message = "Account freezed for "+email
+			print(message)
+			session = sessionlogs(email=request.session['email'],timestamp=now,message=message)
+			session.save()
 			message = "Your account with SIMS has been freezed. Please contact the Admin for further details."
 			client.messages.create(
 				to = to,
@@ -246,22 +261,9 @@ def freezeuser(request,email):
 				body = message
 			)
 			return redirect('viewusers')
-		elif user.user_type == 'Non-Admin':
-			user = useraccounts.objects.get(email=request.session['email'])
-			to = "+91"+str(user.phone)
-			user.accountstatus = False
-			user.loginstatus = False
-			user.save()
-			del request.session['email']
-			message = "Your account with SIMS has been freezed. Please contact the Admin for further details."
-			client.messages.create(
-				to = to,
-				from_ = "+18502667962",
-				body = message
-			)
-			return redirect('login')			
 		else:
 			user = useraccounts.objects.get(email=request.session['email'])
+			to = "+91"+str(user.phone)
 			user.loginstatus = False
 			user.save()
 			del request.session['email']
@@ -277,6 +279,11 @@ def unfreezeuser(request,email):
 			to = "+91"+str(user.phone)
 			user.accountstatus = True
 			user.save()
+			now = datetime.datetime.now(tz=timezone.utc)
+			message = "Account unfreezed for "+email
+			print(message)
+			session = sessionlogs(email=request.session['email'],timestamp=now,message=message)
+			session.save()
 			message = "Your account with SIMS has been unfreezed. You can now use the services of SIMS seamlessly."
 			client.messages.create(
 				to = to,
@@ -324,6 +331,11 @@ def edituser(request,email):
 					'admin' : admin,
 					'user' : user
 				}
+				now = datetime.datetime.now(tz=timezone.utc)
+				message = "Account edited for "+email
+				print(message)
+				session = sessionlogs(email=request.session['email'],timestamp=now,message=message)
+				session.save()
 				return render(request,'home/edituser.html',context)
 			else:
 				logoutStatus = False
