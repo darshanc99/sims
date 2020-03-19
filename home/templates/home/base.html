@@ -212,6 +212,35 @@
                   </a>
                 </li>
               </ul>
+            </li>
+            <li class="nav-item has-treeview">
+              <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-tasks"></i>
+                <p style="color:lightpink">
+                  Messages
+                  <i class="right fas fa-angle-left"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="" class="nav-link">
+                    <i class="fas fa-plus nav-icon"></i>
+                    <p style="color:lightblue">Compose</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="" class="nav-link">
+                    <i class="fas fa-plus nav-icon"></i>
+                    <p style="color:lightblue">Inbox</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="" class="nav-link">
+                    <i class="fas fa-plus nav-icon"></i>
+                    <p style="color:lightblue">Sent</p>
+                  </a>
+                </li>
+              </ul>
             </li>   
             <li class="nav-item">
               <a href="{% url 'logout' %}" class="nav-link">
@@ -270,13 +299,34 @@
                   </p>
                 </a>
               </li>
-              <li class="nav-item">
-                <a href="" class="nav-link">
-                  <i class="nav-icon fas fa-sign-out-alt"></i>
+              <li class="nav-item has-treeview">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon fas fa-tasks"></i>
                   <p style="color:lightpink">
                     Messages
+                    <i class="right fas fa-angle-left"></i>
                   </p>
                 </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="" class="nav-link">
+                      <i class="fas fa-plus nav-icon"></i>
+                      <p style="color:lightblue">Compose</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="" class="nav-link">
+                      <i class="fas fa-plus nav-icon"></i>
+                      <p style="color:lightblue">Inbox</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="" class="nav-link">
+                      <i class="fas fa-plus nav-icon"></i>
+                      <p style="color:lightblue">Sent</p>
+                    </a>
+                  </li>
+                </ul>
               </li> 
             {% endif %}     
               <li class="nav-item">
@@ -298,23 +348,6 @@
           <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
-            <li class="nav-item has-treeview">
-              <a href="#" class="nav-link">
-                <i class="nav-icon fas fa-tasks"></i>
-                <p style="color:lightpink">
-                  Activities
-                  <i class="right fas fa-angle-left"></i>
-                </p>
-              </a>
-              <ul class="nav nav-treeview">
-                <li class="nav-item">
-                  <a href="{% url 'signup' %}" class="nav-link">
-                    <i class="fas fa-plus nav-icon"></i>
-                    <p style="color:lightblue">User</p>
-                  </a>
-                </li>
-              </ul>
-            </li>
             <li class="nav-item has-treeview">
               <a href="#" class="nav-link">
                 <i class="nav-icon fas fa-tasks"></i>
@@ -345,6 +378,35 @@
                   <a href="{% url 'viewproduct' %}" class="nav-link">
                     <i class="fas fa-pen nav-icon"></i>
                     <p style="color:lightblue">View/Edit Product</p>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item has-treeview">
+              <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-tasks"></i>
+                <p style="color:lightpink">
+                  Messages
+                  <i class="right fas fa-angle-left"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="" class="nav-link">
+                    <i class="fas fa-plus nav-icon"></i>
+                    <p style="color:lightblue">Compose</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="" class="nav-link">
+                    <i class="fas fa-plus nav-icon"></i>
+                    <p style="color:lightblue">Inbox</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="" class="nav-link">
+                    <i class="fas fa-plus nav-icon"></i>
+                    <p style="color:lightblue">Sent</p>
                   </a>
                 </li>
               </ul>
