@@ -291,13 +291,30 @@
                   </li>
                 </ul>
               </li>               
-              <li class="nav-item">
-                <a href="" class="nav-link">
-                  <i class="nav-icon fas fa-sign-out-alt"></i>
+              <li class="nav-item has-treeview">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon fas fa-tasks"></i>
                   <p style="color:lightpink">
-                    My Logs
+                    Logs
+                    <i class="right fas fa-angle-left"></i>
                   </p>
                 </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="{% url 'home' %}" class="nav-link">
+                      <i class="fas fa-plus nav-icon"></i>
+                      <p style="color:lightblue">Sessions</p>
+                    </a>
+                  </li>
+                </ul>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="{% url 'home' %}" class="nav-link">
+                      <i class="fas fa-plus nav-icon"></i>
+                      <p style="color:lightblue">Transactions</p>
+                    </a>
+                  </li>
+                </ul> 
               </li>
               <li class="nav-item has-treeview">
                 <a href="#" class="nav-link">
@@ -348,6 +365,31 @@
           <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
+            <li class="nav-item has-treeview">
+              <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-tasks"></i>
+                <p style="color:lightpink">
+                  Logs
+                  <i class="right fas fa-angle-left"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="{% url 'home' %}" class="nav-link">
+                    <i class="fas fa-plus nav-icon"></i>
+                    <p style="color:lightblue">Sessions</p>
+                  </a>
+                </li>
+              </ul>
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="{% url 'home' %}" class="nav-link">
+                    <i class="fas fa-plus nav-icon"></i>
+                    <p style="color:lightblue">Transactions</p>
+                  </a>
+                </li>
+              </ul> 
+            </li>
             <li class="nav-item has-treeview">
               <a href="#" class="nav-link">
                 <i class="nav-icon fas fa-tasks"></i>

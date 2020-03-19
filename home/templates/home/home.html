@@ -31,7 +31,27 @@
 {% if non_admin %}
 	<div class="container">
 		{% if verified %}
-    <h6>YO</h6>
+      <br><br><div class="container">
+        <h4><b>SIMS Activity Log</b></h4>
+      <table class="table table-bordered">
+        <thead class="table-dark">
+          <tr>
+            <th scope="col">Email</th>
+            <th scope="col">Timestamp</th>
+            <th scope="col">Log</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in all_logs %}
+            <tr>
+              <th scope="row"><a href="mailto: {{log.email}}">{{log.email}}</a></th>
+              <th scope="row">{{log.timestamp}}</th>
+              <th scope="row" style="color:red">{{log.message}}</th>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      </div>
 		{% else %}
 			<div class="alert alert-danger" role="alert">
 			<h6 style="color:yellow"><b>The Account is currently being verified by the Admin.
@@ -41,5 +61,26 @@
 	</div>
 {% endif %}
 {% if dealing_admin %}
+  <br><br><div class="container">
+    <h4><b>SIMS Activity Log</b></h4>
+  <table class="table table-bordered">
+    <thead class="table-dark">
+      <tr>
+        <th scope="col">Email</th>
+        <th scope="col">Timestamp</th>
+        <th scope="col">Log</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for log in all_logs %}
+        <tr>
+          <th scope="row"><a href="mailto: {{log.email}}">{{log.email}}</a></th>
+          <th scope="row">{{log.timestamp}}</th>
+          <th scope="row" style="color:red">{{log.message}}</th>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
 {% endif %}
 {% endblock %}

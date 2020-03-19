@@ -40,6 +40,11 @@ def home(request):
 			elif user.user_type == 'Non-Admin':
 				non_admin = True
 				verified = user.verified
+				all_logs = sessionlogs.objects.all().order_by('timestamp').reverse()
+				my_logs = []
+				for log in all_logs:
+					if log.email == request.session['email']:
+						my_logs.append(log)
 				print("NONADMIN:",non_admin)
 				context = {
 					'name' : name,
@@ -47,22 +52,40 @@ def home(request):
 					'non_admin' : non_admin,
 					'dealing_admin' : dealing_admin,
 					'verified' : verified,
-					'logoutStatus' : logoutStatus
+					'logoutStatus' : logoutStatus,
+					'all_logs' : my_logs
 				}
 				return render(request,'home/home.html',context)
-			else:
+			elif user.user_type == 'Dealing-Admin':
 				dealing_admin = True
-				print("Dealing Admin:",dealing_admin)
-			print("OUT")
-			context = {
-				'name' : name,
-				'admin' : admin,
-				'non_admin' : non_admin,
-				'dealing_admin' : dealing_admin,
-				'logoutStatus' : logoutStatus
-			}
-			print(context)
-			return render(request,'home/home.html',context)
+				print(dealing_admin)
+				all_logs = sessionlogs.objects.all().order_by('timestamp').reverse()
+				my_logs = []
+				for log in all_logs:
+					if log.email == request.session['email']:
+						my_logs.append(log)
+				print(my_logs)
+				context = {
+					'name' : name,
+					'admin' : admin,
+					'non_admin' : non_admin,
+					'dealing_admin' : dealing_admin,
+					'logoutStatus' : logoutStatus,
+					'all_logs' : my_logs
+				}
+				print(context)
+				return render(request,'home/home.html',context)
+			else:
+				print("OUT")
+				context = {
+					'name' : name,
+					'admin' : admin,
+					'non_admin' : non_admin,
+					'dealing_admin' : dealing_admin,
+					'logoutStatus' : logoutStatus
+				}
+				print(context)
+				return render(request,'home/home.html',context)
 	except:
 		return redirect('login')
 
