@@ -1,43 +1,54 @@
 {% extends 'home/base.html' %}
 {% block content %}
+
 {% if messages %}
   <div class="alert alert-info" role="alert">
     {{messages}} 
   </div>
   {% endif %}
   <div class="container">
- <div class="row" style="padding-top: 20px;">
-    
-  {%for data in all_products %}
+ 
+ <p style="color:red;text-align: center;">
+  <b>
+  PENDING REQUEST
+  </b>
+</p>
+ 
+  
+   <div class="row" style="padding-top: 20px;">
+   
+  {% for content in all_products %}
           <div class="col-md-3" style="margin-right: 15px;">
 
             
             <div class="card card-primary card-outline">
               <div class="card-body box-profile">
-                <h3 class="profile-username text-center" style="color:brown"><b>{{data.product_name}}</b></h3>
+                <h3 class="profile-username text-center" style="color:brown"><b>{{content.product_name}}</b></h3>
                 
 
                 <ul class="list-group list-group-unbordered mb-3">
                   <li class="list-group-item">
-                    <b>Type</b> <a class="float-right">{{data.product_type}}</a>
+                    <b>Request id </b> <a class="float-right">{{content.email}}</a>
                   </li>
                   <li class="list-group-item">
-                    <b>Quantity</b> <a class="float-right">{{data.available_quantity}}</a>
+                    <b>Quantity</b> <a class="float-right">{{content.quantity}}</a>
                   </li>
                   <li class="list-group-item">
-                    <b>Product Category</b> <a class="float-right">{{data.product_category}}</a>
+                    <b>Date</b> <a class="float-right">{{content.timestamp}}</a>
                   </li>
+                  
                   <li class="list-group-item">
-                    <b>Measurement unit</b> <a class="float-right">{{data.measure_unit}}</a>
+                    <b>status</b> <a class="float-right">{{content.status}}</a>
                   </li>
                 </ul>
 
-                <a href="/product/routeproduct/" class="btn btn-link btn-block" ><b>Edit details</b></a>
+                <a href="/product/canceltransaction/{{content.id}}" type="submit" class="btn btn-link btn-block" ><b>Cancel Transaction</b></a>
+               
               </div>
               <!-- /.card-body -->
             </div>
           </div>
-          {% endfor %}    
-        </div>
-      </div>
-        {% endblock %}
+ {% endfor %} 
+ </div>
+</div>
+{% endblock %}

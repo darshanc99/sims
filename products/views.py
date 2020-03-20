@@ -1,6 +1,8 @@
 from django.shortcuts import render,redirect
-from .models import productlist
+from .models import productlist,productlog
 from authentication.models import useraccounts
+from logs.models import sessionlogs
+from django.utils import timezone
 import datetime
 import hashlib
 # Create your views here.
@@ -8,6 +10,30 @@ def addproduct(request):
 	logoutStatus= True
 	try:
 		if request.session['email']:
+			admin=False
+			non_admin=False
+			dealing_admin=False
+			all_products=productlist.objects.all().order_by("product_name")
+			user=useraccounts.objects.get(email=request.session['email'])
+			currentName = user.first_name+" "+user.last_name
+			if user.user_type == 'Admin':
+					admin = True
+			elif user.user_type == 'Dealing-Admin':
+				dealing_admin = True
+				print("fngfifdfjbnfg")
+			else:
+				context = {
+					'logoutStatus' : False,
+					'admin' : admin,
+					'non_admin' : True,
+					'dealing_admin' : dealing_admin,
+					'verified':True,
+					
+					'name' : currentName
+						}
+				return render(request,'home/base.html',context)
+
+
 			print('here')
 			if request.method=='POST':
 				product_name=request.POST.get('product_name')
@@ -27,23 +53,36 @@ def addproduct(request):
 						currentUser = useraccounts.objects.get(email=currentEmail)
 						currentName = currentUser.first_name+" "+currentUser.last_name
 						context = {
+							'admin':admin,
+							'dealing_admin':dealing_admin,
+							'non_admin':non_admin,
 							'message' : messages,
+							'verified':True,
 							'name' : currentName
 							}
 						return render(request,'products/addproduct.html',context)
 				except:
 					
 					prod.save()
+					print("hererer")
 					all_products=productlist.objects.all().order_by("product_name")
 					messages="Product added successfully"
 					currentEmail = request.session['email']
 					currentUser = useraccounts.objects.get(email=currentEmail)
 					currentName = currentUser.first_name+" "+currentUser.last_name
 					context = {
+						'admin':True,
+						'dealing_admin':False,
+						'non_admin':False,
 						'all_products':all_products,
+						'verified':True,
 						'message' : messages,
 						'name' : currentName
 						}
+					now = datetime.datetime.now(tz=timezone.utc)
+					email=request.session['email']
+					accounts = sessionlogs(email =email,timestamp = now,message="New Product added "+" ("+ product_name+ ")")	
+					accounts.save()
 
 					return render(request,'products/addproduct.html',context)		
 			else:
@@ -52,6 +91,11 @@ def addproduct(request):
 				currentUser = useraccounts.objects.get(email=currentEmail)
 				currentName = currentUser.first_name+" "+currentUser.last_name
 				context = {
+					'admin':admin,
+					'dealing_admin':dealing_admin,
+					'verified':True,
+					'non_admin':non_admin,
+
 					'all_products':all_products,
 					'name' : currentName
 					}				
@@ -69,6 +113,28 @@ def addquantity(request):
 	try:
 		
 		if request.session['email']:
+			admin=False
+			non_admin=False
+			dealing_admin=False
+			all_products=productlist.objects.all().order_by("product_name")
+			user=useraccounts.objects.get(email=request.session['email'])
+			currentName = user.first_name+" "+user.last_name
+			if user.user_type == 'Admin':
+					admin = True
+			elif user.user_type == 'Dealing-Admin':
+				dealing_admin = True
+				print("fngfifdfjbnfg")
+			else:
+				context = {
+					'logoutStatus' : False,
+					'admin' : admin,
+					'verified':True,
+					'non_admin' : True,
+					'dealing_admin' : dealing_admin,
+					
+					'name' : currentName
+						}
+				return render(request,'home/base.html',context)
 
 			
 			if request.method=='POST':
@@ -81,26 +147,33 @@ def addquantity(request):
 				  
 				all_products=productlist.objects.all().order_by("product_name")
 				
-				currentEmail = request.session['email']
-				currentUser = useraccounts.objects.get(email=currentEmail)
-				currentName = currentUser.first_name+" "+currentUser.last_name
+				
 				productlist.objects.filter(product_name=names).update(available_quantity=ans)
 				context = {
+					'admin':admin,
+					'dealing_admin':dealing_admin,
+					'non_admin':non_admin,
 					'messages':'the product quantity is updated',
 					'name' : currentName,
 					'all_products':all_products
-					}				
+					}
+				now = datetime.datetime.now(tz=timezone.utc)
+				email=request.session['email']
+				accounts = sessionlogs(email =email,timestamp = now,message="product ("+names +")" + " quantity increased (+"+quantity+")")	
+				accounts.save()				
 				return render(request,'products/addquantity.html',context)
 			else:
 				all_products=productlist.objects.all().order_by("product_name")
 				
-				currentEmail = request.session['email']
-				currentUser = useraccounts.objects.get(email=currentEmail)
-				currentName = currentUser.first_name+" "+currentUser.last_name
+				
 				context = {
+					'admin':admin,
+					'dealing_admin':dealing_admin,
+					'non_admin':non_admin,
 					'name' : currentName,
 					'all_products':all_products
-					}				
+					}
+									
 				return render(request,'products/addquantity.html',context)
 	except:
 		
@@ -117,16 +190,40 @@ def removeproduct(request):
 	try:
 
 		if request.session['email']:
-			email=request.session['email']
+			
+			admin=False
+			non_admin=False
+			dealing_admin=False
+			all_products=productlist.objects.all().order_by("product_name")
+			user=useraccounts.objects.get(email=request.session['email'])
+			currentName = user.first_name+" "+user.last_name
+			if user.user_type == 'Admin':
+					admin = True
+			elif user.user_type == 'Dealing-Admin':
+				dealing_admin = True
+				print("fngfifdfjbnfg")
+			else:
+				context = {
+					'logoutStatus' : False,
+					'admin' : admin,
+					'non_admin' : True,
+					'dealing_admin' : dealing_admin,
+					'verified':True,
+					
+					'name' : currentName
+						}
+				return render(request,'home/base.html',context)
 			if request.method=='POST':
-				
+				print("herenow")
 				names=request.POST.get('product_list')
 				
 				password=request.POST.get('pass')
+				print("here")
 				password = hashlib.sha256(password.encode()).hexdigest()
-				
-				if useraccounts.objects.get(email=email):
-						user = useraccounts.objects.get(email=email)
+				print("herethere")
+				if useraccounts.objects.get(email=request.session['email']):
+						
+						print("yahoo")
 						
 						if user.userpassword == password:
 							
@@ -134,38 +231,45 @@ def removeproduct(request):
 							
 							messages = "Product removed !"
 							all_products=productlist.objects.all().order_by("product_name")
-							currentEmail = request.session['email']
-							currentUser = useraccounts.objects.get(email=currentEmail)
-							currentName = currentUser.first_name+" "+currentUser.last_name
+							
 							context={
+							'admin':admin,
+							'dealing_admin':dealing_admin,
+							'non_admin':non_admin,
 							'messages':messages,
 							'name':currentName,
-							'all_products':all_products
+							'all_products':all_products,
+							'verified':True
 							}
-							
+							now = datetime.datetime.now(tz=timezone.utc)
+							email=request.session['email']
+							accounts = sessionlogs(email =email,timestamp = now,message="Product Removed ("+names+")")	
+							accounts.save()
 
 							return render(request,'products/removeproduct.html',context)
 
 						else:
 							messages = "Password do not match !"
 							all_products=productlist.objects.all().order_by("product_name")
-							currentEmail = request.session['email']
-							currentUser = useraccounts.objects.get(email=currentEmail)
-							currentName = currentUser.first_name+" "+currentUser.last_name
+							
 							context={
+							'admin':admin,
+							'dealing_admin':dealing_admin,
+							'non_admin':non_admin,
 							'messages':messages,
 							'name':currentName,
+							'verified':True,
 							'all_products':all_products
 							}
 							return render(request,'products/removeproduct.html',context)
 				else:
 					messages='email does not match'
-					all_products=productlist.objects.all().order_by("product_name")
-					currentEmail = request.session['email']
-					currentUser = useraccounts.objects.get(email=currentEmail)
-					currentName = currentUser.first_name+" "+currentUser.last_name
+					
 					context={
-							
+						'admin':admin,
+						'dealing_admin':dealing_admin,
+						'non_admin':non_admin,
+						'verified':True,	
 						'name':currentName,
 						'all_products':all_products
 						}
@@ -174,13 +278,13 @@ def removeproduct(request):
 
 					
 			else:
-				all_products=productlist.objects.all().order_by("product_name")
-				currentEmail = request.session['email']
-				currentUser = useraccounts.objects.get(email=currentEmail)
-				currentName = currentUser.first_name+" "+currentUser.last_name
+				
 				context={
-							
+						'admin':admin,
+						'dealing_admin':dealing_admin,
+						'non_admin':non_admin,	
 						'name':currentName,
+						'verified':True,
 						'all_products':all_products
 						}
 				
@@ -199,11 +303,17 @@ def removeproduct(request):
 def viewproduct(request):
 	logoutStatus=True
 	if request.session['email']:
+
+
 		all_products=productlist.objects.all().order_by("product_name")
 		currentEmail = request.session['email']
 		currentUser = useraccounts.objects.get(email=currentEmail)
 		currentName = currentUser.first_name+" "+currentUser.last_name
 		context={
+			'admin':True,
+			'dealing_admin':False,
+			'non_admin':False,
+			'verified':True,
 			'name':currentName,
 			'all_products':all_products
 			}
@@ -212,7 +322,10 @@ def viewproduct(request):
 		message='you need to login first'
 			
 		context={
-				
+		'admin':True,
+		'dealing_admin':False,
+		'non_admin':False,
+		'verified':True,		
 		'message':message,
 		'logoutStatus':logoutStatus
 			}
@@ -222,6 +335,28 @@ def routeproduct(request):
 	logoutStatus=True
 	try:
 		if request.session['email']:
+			admin=False
+			non_admin=False
+			dealing_admin=False
+			all_products=productlist.objects.all().order_by("product_name")
+			user=useraccounts.objects.get(email=request.session['email'])
+			currentName = user.first_name+" "+user.last_name
+			if user.user_type == 'Admin':
+					admin = True
+			elif user.user_type == 'Dealing-Admin':
+				dealing_admin = True
+				print("fngfifdfjbnfg")
+			else:
+				context = {
+					'logoutStatus' : False,
+					'admin' : admin,
+					'non_admin' : True,
+					'dealing_admin' : dealing_admin,
+					'verified':True,
+					
+					'name' : currentName
+						}
+				return render(request,'home/base.html',context)
 			if request.method=='POST':
 				print("fhghgf")
 				old_name=request.POST.get('product_list')
@@ -236,12 +371,14 @@ def routeproduct(request):
 						print("hola amigos")
 						message='Product with this name already exist'
 						all_products=productlist.objects.all().order_by("product_name")
-						currentEmail = request.session['email']
-						currentUser = useraccounts.objects.get(email=currentEmail)
-						currentName = currentUser.first_name+" "+currentUser.last_name
+						
 						context={
+							'admin':admin,
+							'dealing_admin':dealing_admin,
+							'non_admin':non_admin,
 							'message':message,
 							'name':currentName,
+							'verified':True,
 							'all_products':all_products
 							}
 						print("now here")	
@@ -253,14 +390,20 @@ def routeproduct(request):
 						productlist.objects.filter(product_name=old_name).update(product_category=product_category,available_quantity=available_quantity,measure_unit=measure_unit,product_type=product_type)
 						message='Product details updated not changing name'
 						all_products=productlist.objects.all().order_by("product_name")
-						currentEmail = request.session['email']
-						currentUser = useraccounts.objects.get(email=currentEmail)
-						currentName = currentUser.first_name+" "+currentUser.last_name
+						
 						context={
+							'admin':admin,
+							'dealing_admin':dealing_admin,
+							'non_admin':non_admin,
 							'message':message,
+							'verified':True,
 							'name':currentName,
 							'all_products':all_products
 							}
+						now = datetime.datetime.now(tz=timezone.utc)
+						email=request.session['email']
+						accounts = sessionlogs(email =email,timestamp = now,message="Product details Updated "+old_name)	
+						accounts.save()
 							
 						return render(request,'products/editproduct.html',context)
 					else:
@@ -268,26 +411,34 @@ def routeproduct(request):
 						productlist.objects.filter(product_name=old_name).update(product_name=product_name,product_category=product_category,available_quantity=available_quantity,measure_unit=measure_unit,product_type=product_type)
 						message='Product details updated with changing name'
 						all_products=productlist.objects.all().order_by("product_name")
-						currentEmail = request.session['email']
-						currentUser = useraccounts.objects.get(email=currentEmail)
-						currentName = currentUser.first_name+" "+currentUser.last_name
+						
 						context={
+							'admin':admin,
+							'dealing_admin':dealing_admin,
+							'non_admin':non_admin,
 							'message':message,
+							'verified':True,
 							'name':currentName,
 							'all_products':all_products
 							}
-							
+						now = datetime.datetime.now(tz=timezone.utc)
+						email=request.session['email']
+						accounts = sessionlogs(email =email,timestamp = now,message="Product details/name changed from "+old_name +" to "+product_name)	
+						accounts.save()	
 					return render(request,'products/editproduct.html',context)
 			else:
 				
 				all_products=productlist.objects.all().order_by("product_name")
-				currentEmail = request.session['email']
-				currentUser = useraccounts.objects.get(email=currentEmail)
-				currentName = currentUser.first_name+" "+currentUser.last_name
+				
 				context={
+					'admin':admin,
+					'dealing_admin':dealing_admin,
+					'non_admin':non_admin,
+					'verified':True,
 					'name':currentName,
 					'all_products':all_products
 					}
+
 					
 				return render(request,'products/editproduct.html',context)
 	except:
@@ -300,4 +451,461 @@ def routeproduct(request):
 		
 			}
 		return render(request,'authentication/login.html',context)
+
+def requestproduct(request):
+	admin=False
+	non_admin=False
+	dealing_admin=False
+	try:
+		if request.session['email']:
+			all_products=productlist.objects.all().order_by("product_name")
+			user=useraccounts.objects.get(email=request.session['email'])
+			currentName = user.first_name+" "+user.last_name
+			if user.user_type == 'Admin':
+					admin = True
+			elif user.user_type == 'Non-Admin':
+				non_admin = True
+				print("fngfifdfjbnfg")
+			else:
+				dealing_admin = True
+			print("grrieo")
+			
+			if request.method=='POST':
+				print("ssaasarere")
+				product_name=request.POST.get('product_category')
+				quantity=request.POST.get('quantity')
+				print(int(quantity))
+				proddetails=productlist.objects.get(product_name=product_name)
+				if(int(quantity)>int(proddetails.available_quantity)):
+					context={
+					'admin':admin,
+					'non_admin':non_admin,
+					'dealing_admin':dealing_admin,
+					'all_products':all_products,
+					'verified':True,
+					'messages':'Cannot demand more quantity than available',
+					'name':currentName,
+					'logoutStatus':False
+							}	
+					return render(request,'products/requestproduct.html',context)	
+				else:
+					print("hersidmssdmind")
+					times=datetime.datetime.now(tz=timezone.utc)
+					datas=productlog(product_name=product_name,email=request.session['email'],quantity=quantity,timestamp=times,status='pending')
+					datas.save()
+					accounts = sessionlogs(email =request.session['email'],timestamp = times,message="Product requested " +product_name)	
+					accounts.save()
+					context={
+					'admin':admin,
+					'non_admin':non_admin,
+					'dealing_admin':dealing_admin,
+					'all_products':all_products,
+					'verified':True,
+					'messages':'The request is sent you wll be notified once product is approved',
+					'name':currentName,
+					'logoutStatus':False
+							}	
+					return render(request,'products/requestproduct.html',context)
+			else:
+				logoutStatus=False
+				print("heree")
+				
+				
+				print("also here")
+				
+				
+				
+				print("ssosfndfnd")
+				context={
+				'admin':admin,
+				'non_admin':non_admin,
+				'dealing_admin':dealing_admin,
+				'all_products':all_products,
+				'verified':True,
+				
+				'name':currentName,
+				'logoutStatus':False
+					}	
+				
+				return render(request,'products/requestproduct.html',context)		
+	except:
+		message='you need to login first'
+	
+			
+		context={
+		'logoutStatus':True,
+		'message':message,
+		
+			}
+		return render(request,'authentication/login.html',context)
+
+
+
+def approveproduct(request):
+	try:
+		if request.session['email']:
+			admin=False
+			non_admin=False
+			dealing_admin=False
+			all_products=productlist.objects.all().order_by("product_name")
+			user=useraccounts.objects.get(email=request.session['email'])
+			currentName = user.first_name+" "+user.last_name
+			if user.user_type == 'Admin':
+					admin = True
+			elif user.user_type == 'Dealing-Admin':
+				dealing_admin = True
+				print("fngfifdfjbnfg")
+			else:
+				context = {
+					'logoutStatus' : False,
+					'admin' : admin,
+					'non_admin' : True,
+					'verified':True,
+					'dealing_admin' : dealing_admin,
+					
+					'name' : currentName
+						}
+				return render(request,'home/base.html',context)
+			
+			print("djvdhucdie")
+			user=useraccounts.objects.get(email=request.session['email'])
+			currentName = user.first_name+" "+user.last_name
+			all_products=productlog.objects.filter(status='pending')
+			data2=productlog.objects.filter(status='approved')
+			print(all_products)
+			context={
+			'dealing_admin':dealing_admin,
+			'admin':admin,
+			'non_admin':non_admin,
+			'name':currentName,
+			'verified':True,
+			
+			'all_products':all_products,
+			'data2':data2
+				
+			}
+					
+			print('now')
+			return render(request,'products/approveproduct.html',context)
+	except:
+		messages='login first'
+		context = {
+				'logoutStatus' : True,
+					
+				'message' : messages,
+					
+					}
+		return render(request,'authentication/login.html',context)
+
+def productconfirm(request,id,quantity):
+	try:
+		if request.session['email']:
+			admin=False
+			non_admin=False
+			dealing_admin=False
+			all_products=productlist.objects.all().order_by("product_name")
+			user=useraccounts.objects.get(email=request.session['email'])
+			currentName = user.first_name+" "+user.last_name
+			if user.user_type == 'Admin':
+					admin = True
+			elif user.user_type == 'Dealing-Admin':
+				dealing_admin = True
+				print("fngfifdfjbnfg")
+			else:
+				context={
+					'logoutStatus' : False,
+					'admin' : admin,
+					'non_admin' : True,
+					'verified':True,
+					'dealing_admin' : dealing_admin,
+						
+					'name' : currentName}
+				return render(request,'home/base.html',context)
+			print("ayaa")
+
+			dummy=productlog.objects.get(id=id)
+
+			print(dummy)
+			product_name=dummy.product_name
+			email=dummy.email
+			message="Product "+product_name+" approved to  "+email
+			
+
+			productlog.objects.filter(id=id).update(status='approved',timestamp=datetime.datetime.now(tz=timezone.utc),quantity=quantity)
+			print("ollaa")
+
+			all_products=productlog.objects.filter(status='pending')
+			data2=productlog.objects.filter(status='approved')
+
+			prod=productlist.objects.get(product_name=product_name)
+			sizes=prod.available_quantity
+			productlist.objects.filter(product_name=product_name).update(available_quantity=sizes-int(quantity))
+			print(all_products)
+			context={
+			'dealing_admin':dealing_admin,
+			'admin':admin,
+			'non_admin':non_admin,
+			'name':currentName,
+			'verified':True,
+			'messages':'The product is approved',
+			'all_products':all_products,
+			'data2':data2
+				
+			}
+			now = datetime.datetime.now(tz=timezone.utc)
+			emails=request.session['email']
+			accounts = sessionlogs(email =emails,timestamp = now,message=message)	
+			accounts.save()
+					
+			print('now')
+			return render(request,'products/approveproduct.html',context)
+
+	except:
+		message='you need to login first'
+	
+			
+		context={
+		'logoutStatus':logoutStatus,
+		'message':message,
+		
+			}
+		return render(request,'authentication/login.html',context)
+
+def myproduct(request):
+	try:
+
+		if request.session['email']:
+				admin=False
+				non_admin=False
+				dealing_admin=False
+				all_products=productlist.objects.all().order_by("product_name")
+				user=useraccounts.objects.get(email=request.session['email'])
+				currentName = user.first_name+" "+user.last_name
+				if user.user_type == 'Admin':
+						admin = True
+				elif user.user_type == 'Dealing-Admin':
+					dealing_admin = True
+					
+				else:
+					non_admin=True
+				
+				
+				
+				all_products=productlog.objects.filter(status='pending').filter(email=request.session['email'])
+				data2=productlog.objects.filter(status='approved').filter(email=request.session['email'])
+				print(all_products)
+				context={
+				'dealing_admin':dealing_admin,
+				'admin':admin,
+				'non_admin':non_admin,
+				'name':currentName,
+				'verified':True,
+				
+				'all_products':all_products,
+				'data2':data2,
+				'name':currentName
+					
+				}
+						
+				print('now')
+				return render(request,'products/listproduct.html',context)
+	except:
+		messages='login first'
+		context = {
+				'logoutStatus' : True,
+					
+				'message' : messages,
+					
+					}
+		return render(request,'authentication/login.html',context)
+
+def partialconfirm(request,id):
+	try:
+		if request.session['email']:
+			admin=False
+			non_admin=False
+			dealing_admin=False
+			all_products=productlist.objects.all().order_by("product_name")
+			user=useraccounts.objects.get(email=request.session['email'])
+			currentName = user.first_name+" "+user.last_name
+			if user.user_type == 'Admin':
+					admin = True
+			elif user.user_type == 'Dealing-Admin':
+				dealing_admin = True
+				print("fngfifdfjbnfg")
+			else:
+				context={
+					'logoutStatus' : False,
+					'admin' : admin,
+					'non_admin' : True,
+					'verified':True,
+					'dealing_admin' : dealing_admin,
+						
+					'name' : currentName}
+				return render(request,'home/base.html',context)
+			
+
+			dummy=productlog.objects.get(id=id)
+
+			print(dummy)
+			product_name=dummy.product_name
+			email=dummy.email
+			
+			if request.method=='GET':
+
+				
+				quantity=str(request.GET['quant'])
+				message="Product "+product_name+" partly given to  "+email
+
+			productlog.objects.filter(id=id).update(status='approved',timestamp=datetime.datetime.now(tz=timezone.utc),quantity=quantity)
+			
+
+			all_products=productlog.objects.filter(status='pending')
+			data2=productlog.objects.filter(status='approved')
+
+			prod=productlist.objects.get(product_name=product_name)
+			sizes=prod.available_quantity
+			productlist.objects.filter(product_name=product_name).update(available_quantity=sizes-int(quantity))
+			print(all_products)
+			context={
+			'dealing_admin':dealing_admin,
+			'admin':admin,
+			'non_admin':non_admin,
+			'name':currentName,
+			'verified':True,
+			'messages':'The product is approved',
+			'all_products':all_products,
+			'data2':data2
+				
+			}
+			now = datetime.datetime.now(tz=timezone.utc)
+			emails=request.session['email']
+			accounts = sessionlogs(email =emails,timestamp = now,message=message)	
+			accounts.save()
+					
+			print('now')
+			return render(request,'products/approveproduct.html',context)
+
+	except:
+		message='you need to login first'
+	
+			
+		context={
+		'logoutStatus':True,
+		'message':message,
+		
+			}
+		return render(request,'authentication/login.html',context)
+
+
+def pendingprods(request):
+	try:
+
+		if request.session['email']:
+				admin=False
+				non_admin=False
+				dealing_admin=False
+				all_products=productlist.objects.all().order_by("product_name")
+				user=useraccounts.objects.get(email=request.session['email'])
+				currentName = user.first_name+" "+user.last_name
+				if user.user_type == 'Admin':
+						admin = True
+				elif user.user_type == 'Dealing-Admin':
+					dealing_admin = True
+					
+				else:
+					non_admin=True
+				
+				
+				
+				all_products=productlog.objects.filter(status='pending').filter(email=request.session['email'])
+				
+				print(all_products)
+				context={
+				'dealing_admin':dealing_admin,
+				'admin':admin,
+				'non_admin':non_admin,
+				'name':currentName,
+				'verified':True,
+				
+				'all_products':all_products,
+				
+				'name':currentName
+					
+				}
+						
+				print('now')
+				return render(request,'products/canceltransaction.html',context)
+	except:
+		messages='login first'
+		context = {
+				'logoutStatus' : True,
+					
+				'message' : messages,
+					
+					}
+		return render(request,'authentication/login.html',context)
+
+def canceltransaction(request,id):
+	try:
+		if request.session['email']:
+			admin=False
+			non_admin=False
+			dealing_admin=False
+			all_products=productlist.objects.all().order_by("product_name")
+			user=useraccounts.objects.get(email=request.session['email'])
+			currentName = user.first_name+" "+user.last_name
+			if user.user_type == 'Admin':
+					admin = True
+			elif user.user_type == 'Dealing-Admin':
+				dealing_admin = True
+				print("fngfifdfjbnfg")
+			else:
+				non_admin=True
+			
+
+			dummy=productlog.objects.get(id=id)
+
+			names=dummy.product_name 
+
+			print(dummy)
+			
+			productlog.objects.filter(id=id).filter(status='pending').delete()
+			
+
+			all_products=productlog.objects.filter(status='pending')
+			
+
+			
+			print(all_products)
+			context={
+			'dealing_admin':dealing_admin,
+			'admin':admin,
+			'non_admin':non_admin,
+			'name':currentName,
+			'verified':True,
+			'messages':'The Transaction is cancelled',
+			'all_products':all_products
+			
+				
+			}
+			now = datetime.datetime.now(tz=timezone.utc)
+			emails=request.session['email']
+			accounts = sessionlogs(email =emails,timestamp = now,message="cancelled transaction for " + names)	
+			accounts.save()
+					
+			print('now')
+			return render(request,'products/canceltransaction.html',context)
+
+	except:
+		message='you need to login first'
+	
+			
+		context={
+		'logoutStatus':logoutStatus,
+		'message':message,
+		
+			}
+		return render(request,'authentication/login.html',context)
+
 

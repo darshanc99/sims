@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 import  datetime
 from authentication.models import useraccounts
+from products.models import productlist 
 
 # Create your models here.
 class sessionlogs(models.Model):

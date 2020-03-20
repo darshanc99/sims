@@ -9,5 +9,13 @@ urlpatterns = [
     path('addquantity/', views.addquantity, name='addquantity'),
     path('removeproduct/',views.removeproduct,name='removeproduct'),
     path('routeproduct/',views.routeproduct,name='routeproduct'),
-    path('viewproduct/',views.viewproduct,name='viewproduct')
+    path('viewproduct/',views.viewproduct,name='viewproduct'),
+    path('requestproduct/',views.requestproduct,name='requestproduct'),
+    path('approveproduct/',views.approveproduct,name='approveproduct'),
+    path(r'productconfirm/<int:id>,<str:quantity>',views.productconfirm,name='productconfirm'),
+    path(r'partialconfirm/<int:id>',views.partialconfirm,name='partialconfirm'),
+    path(r'canceltransaction/<int:id>',views.canceltransaction,name='canceltransaction'),
+    path('pendingprods/',views.pendingprods,name='pendingprods'),
+    path('myproduct/',views.myproduct,name='myproduct')
+
 ]

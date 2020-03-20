@@ -28,3 +28,12 @@ class productlist(models.Model):
 	description=models.CharField(max_length=300,blank=True)		
 	def __str__(self):
 		return self.product_name + "-" + self.product_category  
+
+class productlog(models.Model):
+	product_name=models.CharField(max_length=200)
+	email=models.CharField(max_length=200)
+	quantity=models.BigIntegerField()
+	timestamp=models.DateTimeField(blank=True)
+	status=models.CharField(max_length=50)
+	def __str__(self):
+		return self.product_name + "-" + self.status

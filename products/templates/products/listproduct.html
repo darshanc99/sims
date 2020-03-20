@@ -1,0 +1,89 @@
+{% extends 'home/base.html' %}
+{% block content %}
+
+{% if messages %}
+  <div class="alert alert-info" role="alert">
+    {{messages}} 
+  </div>
+  {% endif %}
+  <div class="container">
+
+ 
+  <p style="color:red;text-align: center;" >
+    <b>
+   PENDING REQUEST
+   </b>
+   </p>
+   <div class="row" style="padding-top: 20px;">
+  {% for content in all_products %}
+          <div class="col-md-3" style="margin-right: 15px;">
+
+            
+            <div class="card card-primary card-outline">
+              <div class="card-body box-profile">
+                <h3 class="profile-username text-center" style="color:brown"><b>{{content.product_name}}</b></h3>
+                
+
+                <ul class="list-group list-group-unbordered mb-3">
+                  <li class="list-group-item">
+                    <b>Request id </b> <a class="float-right">{{content.email}}</a>
+                  </li>
+                  <li class="list-group-item">
+                    <b>Quantity</b> <a class="float-right">{{content.quantity}}</a>
+                  </li>
+                  <li class="list-group-item">
+                    <b>Date</b> <a class="float-right">{{content.timestamp}}</a>
+                  </li>
+                  <li class="list-group-item">
+                    <b>status</b> <a class="float-right">{{content.status}}</a>
+                  </li>
+                </ul>
+
+               
+              </div>
+              <!-- /.card-body -->
+            </div>
+          </div>
+ {% endfor %} 
+ </div>
+ <p style="color: green; text-align: center;">
+  <b>
+  APPROVED REQUEST
+  </b>
+</p>
+  <div class="row">
+ {% for content in data2 %}
+          <div class="col-md-3" style="margin-right: 15px;">
+
+            
+            <div class="card card-primary card-outline">
+              <div class="card-body box-profile">
+                <h3 class="profile-username text-center" style="color:brown"><b>{{content.product_name}}</b></h3>
+                
+
+                <ul class="list-group list-group-unbordered mb-3">
+                  <li class="list-group-item">
+                    <b>Request id</b> <a class="float-right">{{content.email}}</a>
+                  </li>
+                  <li class="list-group-item">
+                    <b>Quantity</b> <a class="float-right">{{content.quantity}}</a>
+                  </li>
+                   <li class="list-group-item">
+                    <b>Date</b> <a class="float-right">{{content.timestamp}}</a>
+                  </li>
+                  
+                  <li class="list-group-item">
+                    <b>status</b> <a class="float-right">{{content.status}}</a>
+                  </li>
+                </ul>
+
+              
+              </div>
+              <!-- /.card-body -->
+            </div>
+          </div>
+ {% endfor %} 
+           
+        </div>
+      </div>
+        {% endblock %}
