@@ -1,0 +1,35 @@
+{% extends 'home/base.html' %}
+{% block content %}
+{% if message %}
+	<div class="alert alert-info" role="alert">
+	  {{message}} 
+	</div>
+{% endif %}
+<br><br><br>
+<div class="container card">
+  <div class="card-header">
+    <h5><b>Compose Message</b></h5>
+    <span><b>Note: </b><span style="color:red">The message should not be longer than 1000 words. Avoid spam messages.</span></span>
+  </div>
+  <form class="container" action="/simchat/out/reply/{{msg.id}}/" method="post"><br>
+    {% csrf_token %}
+    <div class="form-group row">
+      <label for="inputEmail3" class="col-sm-2 col-form-label">Send to: </label>
+      <div class="col-sm-10">
+        <input type = "email" class = "form-control" 
+            id = "exampleInputEmail1" aria-describedby = "emailHelp" 
+            placeholder = "Enter your email" name="email" value="{{to}}" disabled>
+      </div>
+    </div>
+    <div class = "form-group">
+       <label for = "exampleInputEmail1">Subject</label>
+       <input type="text" maxlength="100" minlength="5" title="Enter the Subject" class="form-control" placeholder="Enter the Subject" name="subject" value="{{subject}}" disabled>
+    </div>
+    <div class = "form-group">
+       <label for = "exampleInputEmail1">Message</label>
+       <textarea type="textarea" maxlength="1000" minlength="20" title="Enter the Message" class="form-control" placeholder="Enter the Message" name="message" required></textarea>
+    </div>        
+    <button type = "submit" class = "btn btn-primary">Send</button><br><br>
+   </form>
+</div>
+{% endblock %}

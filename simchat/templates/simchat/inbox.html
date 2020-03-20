@@ -1,0 +1,36 @@
+{% extends 'home/base.html' %}
+{% block content %}
+{% if message %}
+	<div class="alert alert-info" role="alert">
+	  {{message}} 
+	</div>
+{% endif %}
+<br><br><br> 
+<div class="container">
+  <b><h4>INBOX</h4></b><hr>
+  <table class="table table-bordered">
+    <thead class="table-dark">
+      <tr>
+        <th scope="col">SENDER</th>
+        <th scope="col">SUBJECT</th>
+        <th scope="col">READ</th>
+        <th scope="col">RECEIVED</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for message in messages %}
+        <tr>
+          <th scope="row">{{message.sender}}</th>
+          <th scope="row"><a href="{{message.id}}"> {{message.subject}}</a></th>
+          {% if message.read %}
+            <th scope="row">YES</th>
+          {% else %}
+            <th scope="row" style="color:red">NO</th>           
+          {% endif %}
+          <th scope="row">{{message.timestamp}}</th>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -5,6 +5,7 @@ from logs.models import sessionlogs
 import datetime, hashlib
 from django.utils import timezone
 from twilio.rest import Client
+from simchat.models import simmessage
 
 account_sid = "ACa724704a972c70089e7af50aec381049"
 auth_token = "cf4059a9461efced8fe78b355794fab3"
@@ -23,6 +24,13 @@ def home(request):
 			print(name)
 			logoutStatus = False
 			print("Into the homepage")
+			all_msg = simmessage.objects.all()
+			msg_count = 0
+			for msgs in all_msg:
+				if msgs.receiver == request.session['email'] and msgs.read == False:
+					msg_count+=1
+			print(msg_count)
+
 			if user.user_type == 'Admin':
 				admin = True
 				all_logs = sessionlogs.objects.all().order_by('timestamp').reverse()
@@ -34,12 +42,18 @@ def home(request):
 					'non_admin' : non_admin,
 					'dealing_admin' : dealing_admin,
 					'logoutStatus' : logoutStatus,
-					'all_logs' : all_logs
+					'all_logs' : all_logs,
+					'msg_count' : msg_count
 				}
 				return render(request,'home/home.html',context)
 			elif user.user_type == 'Non-Admin':
 				non_admin = True
 				verified = user.verified
+				all_logs = sessionlogs.objects.all().order_by('timestamp').reverse()
+				my_logs = []
+				for log in all_logs:
+					if log.email == request.session['email']:
+						my_logs.append(log)
 				print("NONADMIN:",non_admin)
 				context = {
 					'name' : name,
@@ -47,22 +61,43 @@ def home(request):
 					'non_admin' : non_admin,
 					'dealing_admin' : dealing_admin,
 					'verified' : verified,
-					'logoutStatus' : logoutStatus
+					'logoutStatus' : logoutStatus,
+					'all_logs' : my_logs,
+					'msg_count' : msg_count
 				}
 				return render(request,'home/home.html',context)
-			else:
+			elif user.user_type == 'Dealing-Admin':
 				dealing_admin = True
-				print("Dealing Admin:",dealing_admin)
-			print("OUT")
-			context = {
-				'name' : name,
-				'admin' : admin,
-				'non_admin' : non_admin,
-				'dealing_admin' : dealing_admin,
-				'logoutStatus' : logoutStatus
-			}
-			print(context)
-			return render(request,'home/home.html',context)
+				print(dealing_admin)
+				all_logs = sessionlogs.objects.all().order_by('timestamp').reverse()
+				my_logs = []
+				for log in all_logs:
+					if log.email == request.session['email']:
+						my_logs.append(log)
+				print(my_logs)
+				context = {
+					'name' : name,
+					'admin' : admin,
+					'non_admin' : non_admin,
+					'dealing_admin' : dealing_admin,
+					'logoutStatus' : logoutStatus,
+					'all_logs' : my_logs,
+					'msg_count' : msg_count
+				}
+				print(context)
+				return render(request,'home/home.html',context)
+			else:
+				print("OUT")
+				context = {
+					'name' : name,
+					'admin' : admin,
+					'non_admin' : non_admin,
+					'dealing_admin' : dealing_admin,
+					'logoutStatus' : logoutStatus,
+					'msg_count' : msg_count
+				}
+				print(context)
+				return render(request,'home/home.html',context)
 	except:
 		return redirect('login')
 
