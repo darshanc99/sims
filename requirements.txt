@@ -1,6 +1,4 @@
 django
-postgresql
-postgresql-contrib
 psycopg2
 twilio
 pytz
