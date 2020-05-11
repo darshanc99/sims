@@ -15,10 +15,10 @@
 </p>
  
   
-   <div class="row" style="padding-top: 20px;">
+   <div class="row" style="padding-top: 20px;" >
    
   {% for content in all_products %}
-          <div class="col-md-3" style="margin-right: 15px;">
+          <div class="col-md-3" style="margin-right: 10px;">
 
             
             <div class="card card-primary card-outline">
@@ -56,9 +56,40 @@
               </div>
               <!-- /.card-body -->
             </div>
-          </div>
- {% endfor %} 
+          
+ 
  </div>
+ {% endfor %} 
+ <div class="row" style="position:fixed;margin-left:830px ">
+        <div class="card" style="margin-left: 10px;margin-bottom: auto;">
+      <div class="card-header">
+                <h3 class="card-title" style="color:blue"><b>Products Already Present</b></h3>
+              </div>
+ <div class="card-body p-2">
+                <table class="table">
+                  <thead>
+                    <tr>
+                     
+                      <th>Product</th>
+                      <th>Quantity</th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                    {% for data in prodnew %}
+                    <tr>
+                     <td>{{data.product_name}}</td>
+                     <td>{{data.available_quantity}}</td> 
+                    </tr>
+                    {% endfor %}
+                    
+                    
+                  </tbody>
+                </table>
+              </div>
+          </div>
+ </div>
+ 
+ </div>      
  <p style="color:green;text-align: center;">
   <b>
   APPROVED REQUEST
@@ -67,7 +98,7 @@
   <br>
   <div class="row">
  {% for content in data2 %}
-          <div class="col-md-3" style="margin-right: 15px;">
+          <div class="col-md-3" style="margin-right: 10px;">
 
             
             <div class="card card-primary card-outline">
@@ -96,8 +127,9 @@
             </div>
           </div>
  {% endfor %} 
-           
+       
         </div>
+ 
       </div>
 
         {% endblock %}

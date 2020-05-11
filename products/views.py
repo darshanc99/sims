@@ -360,8 +360,11 @@ def routeproduct(request):
 			if request.method=='POST':
 				print("fhghgf")
 				old_name=request.POST.get('product_list')
+				print(old_name)
 				product_name=request.POST.get('product_name')
+				print(product_name)
 				product_category=request.POST.get('product_category')
+				print(product_category)
 				product_type=request.POST.get('product_type')
 				available_quantity=request.POST.get('avail_quantity')
 				measure_unit=request.POST.get('measure_unit')
@@ -405,11 +408,12 @@ def routeproduct(request):
 						accounts = sessionlogs(email =email,timestamp = now,message="Product details Updated "+old_name)	
 						accounts.save()
 							
-						return render(request,'products/editproduct.html',context)
+						return render(request,'products/products.html',context)
 					else:
-						print("whohooh")
+						
 						productlist.objects.filter(product_name=old_name).update(product_name=product_name,product_category=product_category,available_quantity=available_quantity,measure_unit=measure_unit,product_type=product_type)
 						message='Product details updated with changing name'
+						
 						all_products=productlist.objects.all().order_by("product_name")
 						
 						context={
@@ -423,24 +427,74 @@ def routeproduct(request):
 							}
 						now = datetime.datetime.now(tz=timezone.utc)
 						email=request.session['email']
+						
 						accounts = sessionlogs(email =email,timestamp = now,message="Product details/name changed from "+old_name +" to "+product_name)	
 						accounts.save()	
-					return render(request,'products/editproduct.html',context)
+						print("even here")
+					return render(request,'products/products.html',context)
 			else:
+				print("doool")
 				
-				all_products=productlist.objects.all().order_by("product_name")
+	except:
+		message="not working"
+		context={
+					'admin':admin,
+					'dealing_admin':dealing_admin,
+					'non_admin':non_admin,
+					'message':message,
+					'verified':True,
+					'name':currentName,
+					'all_products':all_products
+				}
+		now = datetime.datetime.now(tz=timezone.utc)
+		email=request.session['email']
+		
+						
+		return render(request,'products/products.html',context)
+
+def edprod(request,name):
+	logoutStatus=True
+	try:
+		if request.session['email']:
+			admin=False
+			non_admin=False
+			dealing_admin=False
+			all_products=productlist.objects.all().order_by("product_name")
+			user=useraccounts.objects.get(email=request.session['email'])
+			currentName = user.first_name+" "+user.last_name
+			if user.user_type == 'Admin':
+					admin = True
+			elif user.user_type == 'Dealing-Admin':
+				dealing_admin = True
+				print("fngfifdfjbnfg")
+			else:
+				context = {
+					'logoutStatus' : False,
+					'admin' : admin,
+					'non_admin' : True,
+					'dealing_admin' : dealing_admin,
+					'verified':True,
+					
+					'name' : currentName
+						}
+				return render(request,'home/base.html',context)
+			
+			print("doool")
+			all_products=productlist.objects.filter(product_name=name)
 				
-				context={
+
+				
+			context={
 					'admin':admin,
 					'dealing_admin':dealing_admin,
 					'non_admin':non_admin,
 					'verified':True,
 					'name':currentName,
 					'all_products':all_products
-					}
+				}
 
 					
-				return render(request,'products/editproduct.html',context)
+			return render(request,'products/editproduct.html',context)
 	except:
 		message='you need to login first'
 	
@@ -448,7 +502,7 @@ def routeproduct(request):
 		context={
 		'logoutStatus':logoutStatus,
 		'message':message,
-		
+
 			}
 		return render(request,'authentication/login.html',context)
 
@@ -476,7 +530,7 @@ def requestproduct(request):
 				quantity=request.POST.get('quantity')
 				print(int(quantity))
 				proddetails=productlist.objects.get(product_name=product_name)
-				if(int(quantity)>int(proddetails.available_quantity)):
+				if(int(quantity)>int(proddetails.available_quantity) and user.verified):
 					context={
 					'admin':admin,
 					'non_admin':non_admin,
@@ -571,6 +625,7 @@ def approveproduct(request):
 			user=useraccounts.objects.get(email=request.session['email'])
 			currentName = user.first_name+" "+user.last_name
 			all_products=productlog.objects.filter(status='pending')
+			prodnew=productlist.objects.all().order_by("product_name")
 			data2=productlog.objects.filter(status='approved')
 			print(all_products)
 			context={
@@ -581,8 +636,8 @@ def approveproduct(request):
 			'verified':True,
 			
 			'all_products':all_products,
-			'data2':data2
-				
+			'data2':data2,
+			'prodnew':prodnew	
 			}
 					
 			print('now')
@@ -639,6 +694,7 @@ def productconfirm(request,id,quantity):
 
 			prod=productlist.objects.get(product_name=product_name)
 			sizes=prod.available_quantity
+			prodnew=productlist.objects.all().order_by("product_name")
 			productlist.objects.filter(product_name=product_name).update(available_quantity=sizes-int(quantity))
 			print(all_products)
 			context={
@@ -649,7 +705,8 @@ def productconfirm(request,id,quantity):
 			'verified':True,
 			'messages':'The product is approved',
 			'all_products':all_products,
-			'data2':data2
+			'data2':data2,
+			'prodnew':prodnew
 				
 			}
 			now = datetime.datetime.now(tz=timezone.utc)
@@ -693,6 +750,7 @@ def myproduct(request):
 				
 				all_products=productlog.objects.filter(status='pending').filter(email=request.session['email'])
 				data2=productlog.objects.filter(status='approved').filter(email=request.session['email'])
+				prodnew=productlist.objects.all().order_by("product_name")
 				print(all_products)
 				context={
 				'dealing_admin':dealing_admin,
@@ -703,6 +761,7 @@ def myproduct(request):
 				
 				'all_products':all_products,
 				'data2':data2,
+				'prodnew':prodnew,
 				'name':currentName
 					
 				}
@@ -761,6 +820,7 @@ def partialconfirm(request,id):
 			
 
 			all_products=productlog.objects.filter(status='pending')
+			prodnew=productlist.objects.all().order_by("product_name")
 			data2=productlog.objects.filter(status='approved')
 
 			prod=productlist.objects.get(product_name=product_name)
@@ -775,7 +835,8 @@ def partialconfirm(request,id):
 			'verified':True,
 			'messages':'The product is approved',
 			'all_products':all_products,
-			'data2':data2
+			'data2':data2,
+			'prodnew':prodnew
 				
 			}
 			now = datetime.datetime.now(tz=timezone.utc)
