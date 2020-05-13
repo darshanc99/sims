@@ -1,8 +1,10 @@
 {% extends 'home/base.html' %}
 {% block content %}
-{% if message %}
-	<div class="alert alert-info" role="alert">
-	  {{message}} 
+{% if messages %}
+	<div class="alert alert-danger" role="alert">
+		{% for message in messages %}
+			<b style="color:yellow">{{message}}</b><br>
+		{% endfor %}
 	</div>
 {% endif %}
 <div class="container">
@@ -23,15 +25,15 @@
 					<div class="form-group">
 						<label>Password</label>
 					    <input class="form-control" type="password" name="password" placeholder="Enter User Password">
-					</div> <!-- form-group end.// -->  
+					</div> <!-- form-group end.// -->
 				    <div class="form-group">
 				        <button type="submit" class="btn btn-primary btn-block"> Sign In  </button>
-				    </div> <!-- form-group// -->      
+				    </div> <!-- form-group// -->
 				    <p>Don't have an account? <a href="{%  url 'signup' %}">Sign Up</a></p>
 				</form>
 			</article> <!-- card-body end .// -->
 		</div> <!-- col.//-->
 	</div> <!-- row.//-->
-</div> 
+</div>
 <!--container end.//-->
 {% endblock %}

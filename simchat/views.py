@@ -10,10 +10,13 @@ def compose(request):
 	admin = False
 	non_admin = False
 	dealing_admin = False
+	verified = False
 	try:
 		if request.session['email']:
 			logoutStatus = False
 			user = useraccounts.objects.get(email=request.session['email'])
+			if user.verified == True:
+				verified = True
 			name = user.first_name + ' ' + user.last_name
 			if request.method == "POST":
 				if user.user_type == 'Admin':
@@ -58,7 +61,8 @@ def compose(request):
 					'non_admin' : non_admin,
 					'dealing_admin' : dealing_admin,
 					'logoutStatus' : logoutStatus,
-					'message' : message
+					'message' : message,
+					'verified' : verified
 				}
 				return render(request,'simchat/compose.html',context)
 			else:
@@ -70,6 +74,7 @@ def compose(request):
 						'dealing_admin' : dealing_admin,
 						'name' : name,
 						'logoutStatus' : logoutStatus,
+						'verified' : verified
 					}
 					return render(request,'simchat/compose.html',context)
 				elif user.user_type == 'Dealing-Admin' and user.verified == True:
@@ -80,6 +85,7 @@ def compose(request):
 						'dealing_admin' : dealing_admin,
 						'name' : name,
 						'logoutStatus' : logoutStatus,
+						'verified' : verified
 					}
 					return render(request,'simchat/compose.html',context)
 				elif user.user_type == 'Non-Admin' and user.verified == True:
@@ -91,6 +97,7 @@ def compose(request):
 						'dealing_admin' : dealing_admin,
 						'name' : name,
 						'logoutStatus' : logoutStatus,
+						'verified' : verified
 					}
 					return render(request,'simchat/compose.html',context)
 				else:
@@ -112,6 +119,7 @@ def inbox(request):
 	admin = False
 	non_admin = False
 	dealing_admin = False
+	verified = False
 	if request.session['email']:
 		user = useraccounts.objects.get(email=request.session['email'])
 		name = user.first_name + ' ' + user.last_name
@@ -126,7 +134,8 @@ def inbox(request):
 			user.save()
 			del request.session['email']
 			return redirect('login')
-		
+		if user.verified == True:
+			verified = True
 		logoutStatus = False
 
 		all_messages = simmessage.objects.all()
@@ -141,8 +150,9 @@ def inbox(request):
 			'admin' : admin,
 			'non_admin' : non_admin,
 			'dealing_admin' : dealing_admin,
-			'messages' : my_messages
-		}	
+			'messages' : my_messages,
+			'verified' : verified
+		}
 		return render(request,'simchat/inbox.html',context)
 	else:
 		return redirect('login')
@@ -152,6 +162,7 @@ def sent(request):
 	admin = False
 	non_admin = False
 	dealing_admin = False
+	verified = False
 	if request.session['email']:
 		user = useraccounts.objects.get(email=request.session['email'])
 		name = user.first_name + ' ' + user.last_name
@@ -166,7 +177,9 @@ def sent(request):
 			user.save()
 			del request.session['email']
 			return redirect('login')
-		
+
+		if user.verified == True:
+			verified = True
 		logoutStatus = False
 
 		all_messages = simmessage.objects.all()
@@ -181,8 +194,9 @@ def sent(request):
 			'admin' : admin,
 			'non_admin' : non_admin,
 			'dealing_admin' : dealing_admin,
-			'messages' : my_messages
-		}	
+			'messages' : my_messages,
+			'verified' : verified
+		}
 		return render(request,'simchat/sent.html',context)
 	else:
 		return redirect('login')
@@ -194,8 +208,10 @@ def inboxview(request,id):
 		admin = False
 		non_admin = False
 		dealing_admin = False
+		verified = False
 		user = useraccounts.objects.get(email=request.session['email'])
 		if user.verified:
+			verified = True
 			name = user.first_name + ' ' + user.last_name
 			msg = simmessage.objects.get(id=id)
 			if msg.receiver == request.session['email']:
@@ -213,7 +229,8 @@ def inboxview(request,id):
 					'non_admin' : non_admin,
 					'dealing_admin' : dealing_admin,
 					'logoutStatus' : logoutStatus,
-					'name' : name
+					'name' : name,
+					'verified' : verified
 				}
 				return render(request,'simchat/inboxview.html',context)
 			else:
@@ -233,8 +250,10 @@ def sentview(request,id):
 		admin = False
 		non_admin = False
 		dealing_admin = False
+		verified = False
 		user = useraccounts.objects.get(email=request.session['email'])
 		if user.verified:
+			verified = True
 			name = user.first_name + ' ' + user.last_name
 			msg = simmessage.objects.get(id=id)
 			if msg.sender == request.session['email']:
@@ -250,7 +269,8 @@ def sentview(request,id):
 					'non_admin' : non_admin,
 					'dealing_admin' : dealing_admin,
 					'logoutStatus' : logoutStatus,
-					'name' : name
+					'name' : name,
+					'verified' : verified
 				}
 				return render(request,'simchat/sentview.html',context)
 			else:
@@ -293,15 +313,18 @@ def deleteoutbox(request,id):
 			del request.session['email']
 			return redirect('login')
 	else:
-		return redirect('login')	
+		return redirect('login')
 
 def replyin(request,id):
 	logoutStatus = True
 	admin = False
 	non_admin = False
 	dealing_admin = False
+	verified = False
 	if request.session['email']:
 		user = useraccounts.objects.get(email=request.session['email'])
+		if user.verified == True:
+			verified = True
 		msg = simmessage.objects.get(id=id)
 		if user.email == msg.receiver:
 			if user.user_type == 'Admin':
@@ -332,7 +355,8 @@ def replyin(request,id):
 					'logoutStatus' : logoutStatus,
 					'subject' : subject,
 					'to' : to,
-					'msg' : msg
+					'msg' : msg,
+					'verified' : verified
 				}
 				return render(request,'simchat/replyin.html',context)
 		else:
@@ -347,8 +371,11 @@ def replyout(request,id):
 	admin = False
 	non_admin = False
 	dealing_admin = False
+	verified = False
 	if request.session['email']:
 		user = useraccounts.objects.get(email=request.session['email'])
+		if user.verified == True:
+			verified = True
 		msg = simmessage.objects.get(id=id)
 		if user.email == msg.sender:
 			if user.user_type == 'Admin':
@@ -379,7 +406,8 @@ def replyout(request,id):
 					'logoutStatus' : logoutStatus,
 					'subject' : subject,
 					'to' : to,
-					'msg' : msg
+					'msg' : msg,
+					'verified' : verified
 				}
 				return render(request,'simchat/replyout.html',context)
 		else:

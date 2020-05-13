@@ -277,6 +277,7 @@ def deleteuser(request,email):
 		return redirect('login')
 
 def freezeuser(request,email):
+	print("Freezing")
 	if request.session['email']:
 		user = useraccounts.objects.get(email=request.session['email'])
 		if user.user_type == 'Admin':
@@ -300,7 +301,13 @@ def freezeuser(request,email):
 			user = useraccounts.objects.get(email=request.session['email'])
 			to = "+91"+str(user.phone)
 			user.loginstatus = False
+			user.accountstatus = False
 			user.save()
+			now = datetime.datetime.now(tz=timezone.utc)
+			message = "Freezed self."
+			print(message)
+			session = sessionlogs(email=request.session['email'],timestamp=now,message=message)
+			session.save()
 			del request.session['email']
 			return redirect('login')
 	else:

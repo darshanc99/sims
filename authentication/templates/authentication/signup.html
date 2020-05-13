@@ -2,7 +2,7 @@
 {% block content %}
 {% if message %}
 	<div class="alert alert-info" role="alert">
-	  {{message}} 
+	  {{message}}
 	</div>
 {% endif %}
 <div class="container">
@@ -18,7 +18,7 @@
 					{% csrf_token %}
 					<div class="form-row">
 						<div class="col form-group">
-							<label>First name </label>   
+							<label>First name </label>
 						  	<input type="text" class="form-control" placeholder="Enter First Name" name="first_name" required>
 						</div> <!-- form-group end.// -->
 						<div class="col form-group">
@@ -33,7 +33,7 @@
 					<div class="form-group">
 						<label>Phone Number</label>
 						<input type="text" maxlength="10" pattern="\d{10}" title="Please enter exactly 10 digits" class="form-control" placeholder="Enter 10 digit phone number" name="phone" required>
-					</div> <!-- form-group end.// -->					
+					</div> <!-- form-group end.// -->
 					<div class="form-row">
 						<div class="form-group col-md-6">
 						  <label>User Role</label>
@@ -51,19 +51,19 @@
 					</div> <!-- form-row.// -->
 					<div class="form-group">
 						<label>Password</label>
-					    <input class="form-control" type="password" name="password" placeholder="Enter User Password" required>
-					</div> <!-- form-group end.// -->  
+					    <input class="form-control" type="password" name="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" placeholder="Enter User Password" required title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters">
+					</div> <!-- form-group end.// -->
 				    <div class="form-group">
 				        <button type="submit" class="btn btn-primary btn-block"> Register  </button>
-				    </div> <!-- form-group// -->    
+				    </div> <!-- form-group// -->
 				    {% if logoutStatus %}
 				    	<p>Already have an account? <a href="{% url 'login' %}">Log In</a></p>
-				    {% else %}       
+				    {% else %}
 			    	{% endif %}
 				</form>
 			</article> <!-- card-body end .// -->
 		</div> <!-- col.//-->
 	</div> <!-- row.//-->
-</div> 
+</div>
 <!--container end.//-->
 {% endblock %}

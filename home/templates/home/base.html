@@ -56,7 +56,7 @@
         <!-- Sidebar Menu -->
         <nav class="mt-2">
           <section id="banner" class="major">
-            <div class="inner">     
+            <div class="inner">
               <div class="content" style="font-family: 'Courier New';">
                 <br/><h8 id="text" style="color:white"></h8>
               </div>
@@ -70,7 +70,7 @@
             // Current sentence being processed
             var _PART = 0;
 
-            // Character number of the current sentence being processed 
+            // Character number of the current sentence being processed
             var _PART_INDEX = 0;
 
             // Holds the handle returned from setInterval
@@ -80,7 +80,7 @@
             var _ELEMENT = document.querySelector("#text");
 
             // Implements typing effect
-            function Type() { 
+            function Type() {
               var text =  _CONTENT[_PART].substring(0, _PART_INDEX + 1);
               _ELEMENT.innerHTML = text;
               _PART_INDEX++;
@@ -89,7 +89,7 @@
               if(text === _CONTENT[_PART]) {
                 clearInterval(_INTERVAL_VAL);
                 setTimeout(function() {
-                  _INTERVAL_VAL = setInterval(Deletde, 100);              
+                  _INTERVAL_VAL = setInterval(Deletde, 100);
                 }, 1000);
               }
             }
@@ -140,29 +140,12 @@
             <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
             <li class="nav-item has-treeview">
-              <a href="#" class="nav-link">
+              <a href="{% url 'home' %}" class="nav-link">
                 <i class="nav-icon fas fa-tasks"></i>
                 <p style="color:lightpink">
                   Logs
-                  <i class="right fas fa-angle-left"></i>
                 </p>
               </a>
-              <ul class="nav nav-treeview">
-                <li class="nav-item">
-                  <a href="{% url 'home' %}" class="nav-link">
-                    <i class="fas fa-plus nav-icon"></i>
-                    <p style="color:lightblue">Sessions</p>
-                  </a>
-                </li>
-              </ul>
-              <ul class="nav nav-treeview">
-                <li class="nav-item">
-                  <a href="{% url 'home' %}" class="nav-link">
-                    <i class="fas fa-plus nav-icon"></i>
-                    <p style="color:lightblue">Transactions</p>
-                  </a>
-                </li>
-              </ul> 
             </li>
             <li class="nav-item has-treeview">
               <a href="#" class="nav-link">
@@ -263,7 +246,7 @@
                   </a>
                 </li>
               </ul>
-            </li>   
+            </li>
             <li class="nav-item">
               <a href="{% url 'logout' %}" class="nav-link">
                 <i class="nav-icon fas fa-sign-out-alt"></i>
@@ -284,6 +267,14 @@
               <!-- Add icons to the links using the .nav-icon class
                    with font-awesome or any other icon font library -->
               {% if verified %}
+              <li class="nav-item has-treeview">
+                <a href="{% url 'home' %}" class="nav-link">
+                  <i class="nav-icon fas fa-tasks"></i>
+                  <p style="color:lightpink">
+                    Logs
+                  </p>
+                </a>
+              </li>
               <li class="nav-item has-treeview">
                 <a href="#" class="nav-link">
                   <i class="nav-icon fas fa-tasks"></i>
@@ -312,31 +303,6 @@
                     </a>
                   </li>
                 </ul>
-              </li>               
-              <li class="nav-item has-treeview">
-                <a href="#" class="nav-link">
-                  <i class="nav-icon fas fa-tasks"></i>
-                  <p style="color:lightpink">
-                    Logs
-                    <i class="right fas fa-angle-left"></i>
-                  </p>
-                </a>
-                <ul class="nav nav-treeview">
-                  <li class="nav-item">
-                    <a href="{% url 'home' %}" class="nav-link">
-                      <i class="fas fa-plus nav-icon"></i>
-                      <p style="color:lightblue">Sessions</p>
-                    </a>
-                  </li>
-                </ul>
-                <ul class="nav nav-treeview">
-                  <li class="nav-item">
-                    <a href="{% url 'home' %}" class="nav-link">
-                      <i class="fas fa-plus nav-icon"></i>
-                      <p style="color:lightblue">Transactions</p>
-                    </a>
-                  </li>
-                </ul> 
               </li>
               <li class="nav-item has-treeview">
                 <a href="#" class="nav-link">
@@ -366,8 +332,8 @@
                     </a>
                   </li>
                 </ul>
-              </li> 
-            {% endif %}     
+              </li>
+            {% endif %}
               <li class="nav-item">
                 <a href="{% url 'logout' %}" class="nav-link">
                   <i class="nav-icon fas fa-sign-out-alt"></i>
@@ -392,25 +358,8 @@
                 <i class="nav-icon fas fa-tasks"></i>
                 <p style="color:lightpink">
                   Logs
-                  <i class="right fas fa-angle-left"></i>
                 </p>
               </a>
-              <ul class="nav nav-treeview">
-                <li class="nav-item">
-                  <a href="{% url 'home' %}" class="nav-link">
-                    <i class="fas fa-plus nav-icon"></i>
-                    <p style="color:lightblue">Sessions</p>
-                  </a>
-                </li>
-              </ul>
-              <ul class="nav nav-treeview">
-                <li class="nav-item">
-                  <a href="{% url 'home' %}" class="nav-link">
-                    <i class="fas fa-plus nav-icon"></i>
-                    <p style="color:lightblue">Transactions</p>
-                  </a>
-                </li>
-              </ul> 
             </li>
             <li class="nav-item has-treeview">
               <a href="#" class="nav-link">
@@ -450,7 +399,7 @@
                     <p style="color:lightblue">Request Inventory</p>
                   </a>
                 </li>
-              
+
                  <li class="nav-item">
                   <a href="{% url 'approveproduct' %}" class="nav-link">
                     <i class="fas fa-pen nav-icon"></i>
@@ -487,7 +436,7 @@
                   </a>
                 </li>
               </ul>
-            </li>   
+            </li>
             <li class="nav-item">
               <a href="{% url 'logout' %}" class="nav-link">
                 <i class="nav-icon fas fa-sign-out-alt"></i>
@@ -505,7 +454,7 @@
     </div>
     <!-- /.sidebar -->
   </aside>
- <div class="content-wrapper">    
+ <div class="content-wrapper">
     {% block content %}
     {% endblock content %}
   </div>

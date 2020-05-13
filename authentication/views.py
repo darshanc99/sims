@@ -96,7 +96,7 @@ def otp(request):
 					request.session['password'],
 					request.session['user_role'],
 					now
-				)	
+				)
 				user.save()
 				print("USER ADDED")
 				request.session['email'] = request.session['email']
@@ -128,7 +128,7 @@ def otp(request):
 				context = {
 					'logoutStatus' : logoutStatus,
 					'message' : message
-				}	
+				}
 				return render(request,'authentication/otp.html',context)
 	except:
 		print("CHECK6")
@@ -184,12 +184,12 @@ def login(request):
 					return redirect('home')
 					#return render(request,'home/home.html',context)
 				else:
-					message = "Log in unsuccessful. Please make sure that the username and the passwords are correct. Please make sure that the account is not logged in elsewhere."
+					message = ["Log in unsuccessful. Please make sure that the username and the passwords are correct.", "Please make sure that the account is not logged in elsewhere.","Please make sure that your account is not freezed. In case your account is freezed, contact the Admin."]
 					context = {
-						'message' : message,
+						'messages' : message,
 						'logoutStatus' : logoutStatus
 					}
-					print(message)
+					print(context)
 					return render(request,'authentication/login.html',context)
 		except:
 			context = {
@@ -200,7 +200,7 @@ def login(request):
 		context = {
 			'logoutStatus' : logoutStatus
 		}
-		return render(request,'authentication/login.html',context)	
+		return render(request,'authentication/login.html',context)
 
 def logout(request):
 	logoutStatus = True
@@ -224,15 +224,29 @@ def logout(request):
 	return render(request,'authentication/logout.html',context)
 
 def profile(request):
+	admin = False
+	non_admin = False
+	dealing_admin = False
 	logoutStatus = True
+	verified = False
 	try:
 		if request.session['email']:
 			logoutStatus = False
+			user = useraccounts.objects.get(email=request.session['email'])
+			if user.user_type == 'Admin':
+				admin = True
+			if user.user_type == 'Non-Admin':
+				non_admin = True
+			if user.user_type == 'Dealing-Admin':
+				dealing_admin = True
+			if user.verified == True:
+				verified = True
 			print("INSIDE")
 			if request.method == 'POST':
 				print("HAVE A POST REQUEST")
 				current_password = request.POST.get('current_password')
 				new_password = request.POST.get('new_password')
+				confirm_password = request.POST.get('confirm_password')
 				currentEmail = request.session['email']
 				user = useraccounts.objects.get(email=currentEmail)
 				print("USER")
@@ -243,7 +257,7 @@ def profile(request):
 				currentUserType = user.user_type
 				print(currentEmail,currentName,currentPhone,currentUserType,current_password)
 				print("All cool")
-				if current_password == user.userpassword:
+				if current_password == user.userpassword and confirm_password == new_password:
 					print("PASSWORDS CHANGE")
 					new_password = hashlib.sha256(new_password.encode()).hexdigest()
 					user.userpassword = new_password
@@ -256,11 +270,15 @@ def profile(request):
 						'name' : currentName,
 						'email' : currentEmail,
 						'phone' : currentPhone,
-						'user_type' : currentUserType
+						'user_type' : currentUserType,
+						'admin' : admin,
+						'non_admin' : non_admin,
+						'dealing_admin' : dealing_admin,
+						'verified' : verified
 					}
 					return render(request,'authentication/profile.html',context)
-				else:				
-					message = "Your current passwords do not match. Couldn't update your password!"
+				else:
+					message = "Your current passwords do not match, or your confirm password didn't match. Couldn't update your password!"
 					print(message)
 					logoutStatus = False
 					context = {
@@ -269,7 +287,11 @@ def profile(request):
 						'name' : currentName,
 						'phone' : currentPhone,
 						'email' : currentEmail,
-						'user_type' : currentUserType
+						'user_type' : currentUserType,
+						'admin' : admin,
+						'non_admin' : non_admin,
+						'dealing_admin' : dealing_admin,
+						'verified' : verified
 					}
 					return render(request,'authentication/profile.html',context)
 			else:
@@ -284,6 +306,10 @@ def profile(request):
 					'email' : currentEmail,
 					'phone' : currentPhone,
 					'user_type' : currentUserType,
+					'admin' : admin,
+					'non_admin' : non_admin,
+					'dealing_admin' : dealing_admin,
+					'verified' : verified
 				}
 				return render(request,'authentication/profile.html',context)
 	except:
@@ -293,18 +319,33 @@ def profile(request):
 			'message' : message,
 			'logoutStatus' : logoutStatus
 		}
-		return render(request,'authentication/login.html',context)			
+		return render(request,'authentication/login.html',context)
 
 def updatepassword(request):
+	admin = False
+	non_admin = False
+	dealing_admin = False
+	verified = False
+	logoutStatus = True
 	try:
 		if request.session['email']:
 			print("INSIDE")
+			logoutStatus = False
 			if request.method == 'POST':
 				print("HAVE A POST REQUEST")
 				current_password = request.POST.get('current_password')
 				new_password = request.POST.get('new_password')
+				confirm_password = request.POST.get('confirm_password')
 				currentEmail = request.session['email']
 				user = useraccounts.objects.get(email=currentEmail)
+				if user.user_type == 'Admin':
+					admin = True
+				elif user.user_type == 'Non-Admin':
+					non_admin = True
+				else:
+					dealing_admin = True
+				if user.verified == True:
+					verified = True
 				print("USER")
 				current_password = hashlib.sha256(current_password.encode()).hexdigest()
 				currentEmail = user.email
@@ -313,7 +354,7 @@ def updatepassword(request):
 				currentUserType = user.user_type
 				print(currentEmail,currentName,currentPhone,currentUserType,current_password)
 				print("All cool")
-				if current_password == user.userpassword:
+				if current_password == user.userpassword and confirm_password == new_password:
 					print("PASSWORDS CHANGE")
 					new_password = hashlib.sha256(new_password.encode()).hexdigest()
 					user.userpassword = new_password
@@ -326,11 +367,15 @@ def updatepassword(request):
 						'name' : currentName,
 						'email' : currentEmail,
 						'phone' : currentPhone,
-						'user_type' : currentUserType
+						'user_type' : currentUserType,
+						'admin' : admin,
+						'non_admin' : non_admin,
+						'dealing_admin' : dealing_admin,
+						'verified' : verified
 					}
 					return render(request,'authentication/profile.html',context)
-				else:				
-					message = "Your current passwords do not match. Couldn't update your password!"
+				else:
+					message = "Your current passwords do not match, or your confirm password didn't match. Couldn't update your password!"
 					print(message)
 					logoutStatus = False
 					context = {
@@ -339,7 +384,11 @@ def updatepassword(request):
 						'name' : currentName,
 						'phone' : currentPhone,
 						'email' : currentEmail,
-						'user_type' : currentUserType
+						'user_type' : currentUserType,
+						'admin' : admin,
+						'dealing_admin' : dealing_admin,
+						'non_admin' : non_admin,
+						'verified' : verified
 					}
 					return render(request,'authentication/profile.html',context)
 			else:
@@ -363,4 +412,4 @@ def updatepassword(request):
 			'message' : message,
 			'logoutStatus' : logoutStatus
 		}
-		return render(request,'authentication/login.html',context)	
+		return render(request,'authentication/login.html',context)

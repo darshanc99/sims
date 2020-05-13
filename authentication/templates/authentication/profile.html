@@ -2,14 +2,12 @@
 {% block content %}
 {% if message %}
 	<div class="alert alert-info" role="alert">
-	  {{message}} 
+	  {{message}}
 	</div>
 {% endif %}
 {% if non_admin %}
-	{% if non_admin.verified %}
-	{% else %}
 		<div class="container">
-			{% if non_admin.verified %}
+			{% if verified %}
 			{% else %}
 				<div class="alert alert-danger" role="alert">
 				<h6 style="color:yellow"><b>The Account is currently being verified by the Admin.
@@ -17,15 +15,14 @@
 				</div>
 			{% endif %}
 		</div>
-	{% endif %}
 {% endif %}
 	<div class="container"><br>
 		<div class="jumbotron">
 			<form action="/freeze/{{email}}" method="post">
 				{% csrf_token %}
 				<div class="form-group">
-				    <button type="submit" class="btn btn-danger btn-block">Deactivate Profile</button>
-				</div> <!-- form-group// -->      
+				    <a href="/freeze/{{email}}"><button type="submit" class="btn btn-danger btn-block">Deactivate Profile</button></a>
+				</div> <!-- form-group// -->
 			</form>
 			<br>
 			<b><u>BIO: </u></b>
@@ -49,11 +46,15 @@
 								</div> <!-- form-group end.// -->
 								<div class="form-group">
 									<label>New Password</label>
-								    <input class="form-control" type="password" name="new_password" placeholder="Enter New Password">
-								</div> <!-- form-group end.// -->  
+								    <input class="form-control" type="password" name="new_password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" placeholder="Enter New Password" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters">
+								</div> <!-- form-group end.// -->
+								<div class="form-group">
+									<label>Confirm New Password</label>
+								    <input class="form-control" type="password" name="confirm_password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" placeholder="Re-Enter the New Password" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters">
+								</div> <!-- form-group end.// -->
 								<div class="form-group">
 								    <button type="submit" class="btn btn-primary btn-block"> Update  </button>
-								</div> <!-- form-group// -->      
+								</div> <!-- form-group// -->
 							</form>
 						</article> <!-- card-body end .// -->
 					</div> <!-- col.//-->
