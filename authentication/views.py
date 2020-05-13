@@ -192,7 +192,10 @@ def login(request):
 					print(context)
 					return render(request,'authentication/login.html',context)
 		except:
+			message = ['The user does not exist!']
+			print(message)
 			context = {
+				'messages' : message,
 				'logoutStatus' : logoutStatus
 			}
 			return render(request,'authentication/login.html',context)
@@ -413,3 +416,77 @@ def updatepassword(request):
 			'logoutStatus' : logoutStatus
 		}
 		return render(request,'authentication/login.html',context)
+
+def forgotpassword(request):
+	logoutStatus = True
+	if request.method == 'POST':
+		email = request.POST.get('email')
+		try:
+			if useraccounts.objects.get(email=email):
+				user = useraccounts.objects.get(email=email)
+				body = random.randint(1000,9999)
+				otp = str(body)
+				request.session['forgototp'] = otp
+				request.session['forgotemail'] = email
+				message = 'Here is the reset password OTP:',otp
+				otp = str(body)
+				print("OTP:",otp)
+				phone = user.phone
+				print("+91"+str(phone))
+				client.messages.create(
+					to = "+91"+str(phone),
+					from_ = "+18502667962",
+					body = message
+				)
+				context = {
+					'message' : "OTP sent to your phone. Kindly Enter it.",
+					'logoutStatus' : logoutStatus,
+					'body' : str(body)
+				}
+				return render(request,'authentication/forgotpassword2.html',context)
+		except:
+			message = 'There is no user registered with that email.'
+			context = {
+				'logoutStatus' : logoutStatus,
+				'message' : message
+			}
+			return render(request,'authentication/forgotpassword1.html',context)
+	else:
+		context = {
+			'logoutStatus' : logoutStatus
+		}
+		return render(request,'authentication/forgotpassword1.html',context)
+
+def resetpassword(request):
+	logoutStatus = True
+	if request.method == 'POST':
+		email = request.session['forgotemail']
+		user = useraccounts.objects.get(email=email)
+		otp = request.POST.get('otp')
+		new_password = request.POST.get('new_password')
+		confirm_password = request.POST.get('confirm_password')
+		if otp == request.session['forgototp'] and new_password == confirm_password:
+			print("All correct")
+			new_password = hashlib.sha256(new_password.encode()).hexdigest()
+			user.userpassword = new_password
+			user.save()
+			del request.session['forgototp']
+			del request.session['forgotemail']
+			message = ["Your Password Reset is successful!"]
+			context = {
+				'logoutStatus' : logoutStatus,
+				'messages' : message,
+			}
+			return render(request,'authentication/login.html',context)
+		else:
+			message = "The OTP or the passwords didn't match."
+			context = {
+				'message' : message,
+				'logoutStatus' : logoutStatus
+			}
+			return render(request,'authentication/forgotpassword2.html',context)
+	else:
+		context = {
+			'logoutStatus' : logoutStatus
+		}
+		return render(request,'authentication/forgotpassword2.html',context)
