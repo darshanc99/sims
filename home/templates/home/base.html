@@ -204,16 +204,34 @@
                     <p style="color:lightblue">View/Edit Product</p>
                   </a>
                 </li>
+                 <li class="nav-item">
+                    <a href="{% url 'myproduct' %}" class="nav-link">
+                      <i class="fas fa-plus nav-icon"></i>
+                      <p style="color:lightblue">My Inventory</p>
+                    </a>
+                  </li>
                 <li class="nav-item">
                   <a href="{%url 'requestproduct' %}" class="nav-link">
                     <i class="fas fa-plus nav-icon"></i>
                     <p style="color:lightblue">Request Inventory</p>
                   </a>
                 </li>
+                 <li class="nav-item">
+                    <a href="{% url 'pendingprods' %}" class="nav-link">
+                      <i class="fas fa-trash nav-icon"></i>
+                      <p style="color:lightblue">Cancel Request</p>
+                    </a>
+                  </li>
                 <li class="nav-item">
                   <a href="{% url 'approveproduct' %}" class="nav-link">
                     <i class="fas fa-pen nav-icon"></i>
                     <p style="color:lightblue">Approve product request</p>
+                  </a>
+                </li>
+                  <li class="nav-item">
+                  <a href="{% url 'returnproduct' %}" class="nav-link">
+                    <i class="fas fa-pen nav-icon"></i>
+                    <p style="color:lightblue">Return Product</p>
                   </a>
                 </li>
               </ul>
@@ -302,6 +320,12 @@
                       <p style="color:lightblue">Cancel Transaction</p>
                     </a>
                   </li>
+                    <li class="nav-item">
+                  <a href="{% url 'returnproduct' %}" class="nav-link">
+                    <i class="fas fa-pen nav-icon"></i>
+                    <p style="color:lightblue">Return Product</p>
+                  </a>
+                </li>
                 </ul>
               </li>
               <li class="nav-item has-treeview">
@@ -393,17 +417,34 @@
                     <p style="color:lightblue">View/Edit Product</p>
                   </a>
                 </li>
+                 <li class="nav-item">
+                    <a href="{% url 'myproduct' %}" class="nav-link">
+                      <i class="fas fa-plus nav-icon"></i>
+                      <p style="color:lightblue">My Inventory</p>
+                    </a>
+                  </li>
                 <li class="nav-item">
                   <a href="{%url 'requestproduct' %}" class="nav-link">
                     <i class="fas fa-plus nav-icon"></i>
                     <p style="color:lightblue">Request Inventory</p>
                   </a>
                 </li>
-
+                 <li class="nav-item">
+                    <a href="{% url 'pendingprods' %}" class="nav-link">
+                      <i class="fas fa-trash nav-icon"></i>
+                      <p style="color:lightblue">Cancel Request</p>
+                    </a>
+                  </li>
                  <li class="nav-item">
                   <a href="{% url 'approveproduct' %}" class="nav-link">
                     <i class="fas fa-pen nav-icon"></i>
                     <p style="color:lightblue">View/Approve product request</p>
+                  </a>
+                </li>
+                  <li class="nav-item">
+                  <a href="{% url 'returnproduct' %}" class="nav-link">
+                    <i class="fas fa-pen nav-icon"></i>
+                    <p style="color:lightblue">Return Product</p>
                   </a>
                 </li>
               </ul>

@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from .models import productlist,productlog
+from .models import productlist,productlog,nonconsumable_productlog
 from authentication.models import useraccounts
 from logs.models import sessionlogs
 from django.utils import timezone
@@ -27,7 +27,7 @@ def addproduct(request):
 					'admin' : admin,
 					'non_admin' : True,
 					'dealing_admin' : dealing_admin,
-					'verified':True,
+					'verified':user.verified,
 					
 					'name' : currentName
 						}
@@ -57,7 +57,7 @@ def addproduct(request):
 							'dealing_admin':dealing_admin,
 							'non_admin':non_admin,
 							'message' : messages,
-							'verified':True,
+							'verified':user.verified,
 							'name' : currentName
 							}
 						return render(request,'products/addproduct.html',context)
@@ -75,7 +75,7 @@ def addproduct(request):
 						'dealing_admin':False,
 						'non_admin':False,
 						'all_products':all_products,
-						'verified':True,
+						'verified':user.verified,
 						'message' : messages,
 						'name' : currentName
 						}
@@ -93,7 +93,7 @@ def addproduct(request):
 				context = {
 					'admin':admin,
 					'dealing_admin':dealing_admin,
-					'verified':True,
+					'verified':user.verified,
 					'non_admin':non_admin,
 
 					'all_products':all_products,
@@ -128,7 +128,7 @@ def addquantity(request):
 				context = {
 					'logoutStatus' : False,
 					'admin' : admin,
-					'verified':True,
+					'verified':user.verified,
 					'non_admin' : True,
 					'dealing_admin' : dealing_admin,
 					
@@ -208,7 +208,7 @@ def removeproduct(request):
 					'admin' : admin,
 					'non_admin' : True,
 					'dealing_admin' : dealing_admin,
-					'verified':True,
+					'verified':user.verified,
 					
 					'name' : currentName
 						}
@@ -239,7 +239,7 @@ def removeproduct(request):
 							'messages':messages,
 							'name':currentName,
 							'all_products':all_products,
-							'verified':True
+							'verified':user.verified
 							}
 							now = datetime.datetime.now(tz=timezone.utc)
 							email=request.session['email']
@@ -258,7 +258,7 @@ def removeproduct(request):
 							'non_admin':non_admin,
 							'messages':messages,
 							'name':currentName,
-							'verified':True,
+							'verified':user.verified,
 							'all_products':all_products
 							}
 							return render(request,'products/removeproduct.html',context)
@@ -269,7 +269,7 @@ def removeproduct(request):
 						'admin':admin,
 						'dealing_admin':dealing_admin,
 						'non_admin':non_admin,
-						'verified':True,	
+						'verified':user.verified,	
 						'name':currentName,
 						'all_products':all_products
 						}
@@ -284,7 +284,7 @@ def removeproduct(request):
 						'dealing_admin':dealing_admin,
 						'non_admin':non_admin,	
 						'name':currentName,
-						'verified':True,
+						'verified':user.verified,
 						'all_products':all_products
 						}
 				
@@ -303,8 +303,7 @@ def removeproduct(request):
 def viewproduct(request):
 	logoutStatus=True
 	if request.session['email']:
-
-
+		user=useraccounts.objects.get(email=request.session['email'])
 		all_products=productlist.objects.all().order_by("product_name")
 		currentEmail = request.session['email']
 		currentUser = useraccounts.objects.get(email=currentEmail)
@@ -313,7 +312,7 @@ def viewproduct(request):
 			'admin':True,
 			'dealing_admin':False,
 			'non_admin':False,
-			'verified':True,
+			'verified':user.verified,
 			'name':currentName,
 			'all_products':all_products
 			}
@@ -325,7 +324,7 @@ def viewproduct(request):
 		'admin':True,
 		'dealing_admin':False,
 		'non_admin':False,
-		'verified':True,		
+		'verified':user.verified,		
 		'message':message,
 		'logoutStatus':logoutStatus
 			}
@@ -352,7 +351,7 @@ def routeproduct(request):
 					'admin' : admin,
 					'non_admin' : True,
 					'dealing_admin' : dealing_admin,
-					'verified':True,
+					'verified':user.verified,
 					
 					'name' : currentName
 						}
@@ -381,7 +380,7 @@ def routeproduct(request):
 							'non_admin':non_admin,
 							'message':message,
 							'name':currentName,
-							'verified':True,
+							'verified':user.verified,
 							'all_products':all_products
 							}
 						print("now here")	
@@ -399,7 +398,7 @@ def routeproduct(request):
 							'dealing_admin':dealing_admin,
 							'non_admin':non_admin,
 							'message':message,
-							'verified':True,
+							'verified':user.verified,
 							'name':currentName,
 							'all_products':all_products
 							}
@@ -421,7 +420,7 @@ def routeproduct(request):
 							'dealing_admin':dealing_admin,
 							'non_admin':non_admin,
 							'message':message,
-							'verified':True,
+							'verified':user.verified,
 							'name':currentName,
 							'all_products':all_products
 							}
@@ -442,7 +441,7 @@ def routeproduct(request):
 					'dealing_admin':dealing_admin,
 					'non_admin':non_admin,
 					'message':message,
-					'verified':True,
+					'verified':user.verified,
 					'name':currentName,
 					'all_products':all_products
 				}
@@ -473,7 +472,7 @@ def edprod(request,name):
 					'admin' : admin,
 					'non_admin' : True,
 					'dealing_admin' : dealing_admin,
-					'verified':True,
+					'verified':user.verified,
 					
 					'name' : currentName
 						}
@@ -488,7 +487,7 @@ def edprod(request,name):
 					'admin':admin,
 					'dealing_admin':dealing_admin,
 					'non_admin':non_admin,
-					'verified':True,
+					'verified':user.verified,
 					'name':currentName,
 					'all_products':all_products
 				}
@@ -536,7 +535,7 @@ def requestproduct(request):
 					'non_admin':non_admin,
 					'dealing_admin':dealing_admin,
 					'all_products':all_products,
-					'verified':True,
+					'verified':user.verified,
 					'messages':'Cannot demand more quantity than available',
 					'name':currentName,
 					'logoutStatus':False
@@ -554,7 +553,7 @@ def requestproduct(request):
 					'non_admin':non_admin,
 					'dealing_admin':dealing_admin,
 					'all_products':all_products,
-					'verified':True,
+					'verified':user.verified,
 					'messages':'The request is sent you wll be notified once product is approved',
 					'name':currentName,
 					'logoutStatus':False
@@ -575,7 +574,7 @@ def requestproduct(request):
 				'non_admin':non_admin,
 				'dealing_admin':dealing_admin,
 				'all_products':all_products,
-				'verified':True,
+				'verified':user.verified,
 				
 				'name':currentName,
 				'logoutStatus':False
@@ -614,7 +613,7 @@ def approveproduct(request):
 					'logoutStatus' : False,
 					'admin' : admin,
 					'non_admin' : True,
-					'verified':True,
+					'verified':user.verified,
 					'dealing_admin' : dealing_admin,
 					
 					'name' : currentName
@@ -633,7 +632,7 @@ def approveproduct(request):
 			'admin':admin,
 			'non_admin':non_admin,
 			'name':currentName,
-			'verified':True,
+			'verified':user.verified,
 			
 			'all_products':all_products,
 			'data2':data2,
@@ -671,7 +670,7 @@ def productconfirm(request,id,quantity):
 					'logoutStatus' : False,
 					'admin' : admin,
 					'non_admin' : True,
-					'verified':True,
+					'verified':user.verified,
 					'dealing_admin' : dealing_admin,
 						
 					'name' : currentName}
@@ -682,7 +681,13 @@ def productconfirm(request,id,quantity):
 
 			print(dummy)
 			product_name=dummy.product_name
+			proddata=productlist.objects.get(product_name=dummy.product_name)
+
 			email=dummy.email
+			if(proddata.product_type=='non-consumable'):
+				adding=nonconsumable_productlog(product_name=dummy.product_name,issued_to=email,issued_by=request.session['email'],units=quantity,issue_date=datetime.datetime.now(tz=timezone.utc),return_status='false')
+				adding.save()
+				print("added successfully")
 			message="Product "+product_name+" approved to  "+email
 			
 
@@ -702,7 +707,7 @@ def productconfirm(request,id,quantity):
 			'admin':admin,
 			'non_admin':non_admin,
 			'name':currentName,
-			'verified':True,
+			'verified':user.verified,
 			'messages':'The product is approved',
 			'all_products':all_products,
 			'data2':data2,
@@ -749,6 +754,7 @@ def myproduct(request):
 				
 				
 				all_products=productlog.objects.filter(status='pending').filter(email=request.session['email'])
+				ncproduct=nonconsumable_productlog.objects.filter(issued_to=request.session['email']).filter(return_status='true')
 				data2=productlog.objects.filter(status='approved').filter(email=request.session['email'])
 				prodnew=productlist.objects.all().order_by("product_name")
 				print(all_products)
@@ -757,8 +763,8 @@ def myproduct(request):
 				'admin':admin,
 				'non_admin':non_admin,
 				'name':currentName,
-				'verified':True,
-				
+				'verified':user.verified,
+				'ncproduct':ncproduct,
 				'all_products':all_products,
 				'data2':data2,
 				'prodnew':prodnew,
@@ -797,7 +803,7 @@ def partialconfirm(request,id):
 					'logoutStatus' : False,
 					'admin' : admin,
 					'non_admin' : True,
-					'verified':True,
+					'verified':user.verified,
 					'dealing_admin' : dealing_admin,
 						
 					'name' : currentName}
@@ -832,7 +838,7 @@ def partialconfirm(request,id):
 			'admin':admin,
 			'non_admin':non_admin,
 			'name':currentName,
-			'verified':True,
+			'verified':user.verified,
 			'messages':'The product is approved',
 			'all_products':all_products,
 			'data2':data2,
@@ -887,7 +893,7 @@ def pendingprods(request):
 				'admin':admin,
 				'non_admin':non_admin,
 				'name':currentName,
-				'verified':True,
+				'verified':user.verified,
 				
 				'all_products':all_products,
 				
@@ -944,7 +950,7 @@ def canceltransaction(request,id):
 			'admin':admin,
 			'non_admin':non_admin,
 			'name':currentName,
-			'verified':True,
+			'verified':user.verified,
 			'messages':'The Transaction is cancelled',
 			'all_products':all_products
 			
@@ -970,3 +976,118 @@ def canceltransaction(request,id):
 		return render(request,'authentication/login.html',context)
 
 
+def returnproduct(request):
+	admin=False
+	non_admin=False
+	dealing_admin=False
+	try:
+		if request.session['email']:
+			all_products=productlist.objects.all().order_by("product_name")
+			user=useraccounts.objects.get(email=request.session['email'])
+			currentName = user.first_name+" "+user.last_name
+			if user.user_type == 'Admin':
+					admin = True
+			elif user.user_type == 'Non-Admin':
+				non_admin = True
+				print("fngfifdfjbnfg")
+			else:
+				dealing_admin = True
+			print("grrieo")
+			
+			
+			logoutStatus=False
+			
+			productdata=nonconsumable_productlog.objects.filter(return_status='false').filter(issued_to=request.session['email'])	
+				
+			print("ssosfndfnd")
+			context={
+			'admin':admin,
+			'non_admin':non_admin,
+			'dealing_admin':dealing_admin,
+			'all_products':all_products,
+			'verified':user.verified,
+			'productdata':productdata,	
+			'name':currentName,
+			'logoutStatus':False
+				}	
+				
+			return render(request,'products/returnproduct.html',context)		
+	except:
+		message="not working"
+		all_products=productlist.objects.all()
+		context={
+					'admin':admin,
+					'dealing_admin':dealing_admin,
+					'non_admin':non_admin,
+					'message':message,
+					'verified':user.verified,
+					'name':currentName,
+					'all_products':all_products
+				}
+		now = datetime.datetime.now(tz=timezone.utc)
+		email=request.session['email']
+		
+						
+		return render(request,'products/products.html',context)
+def returnconfirm(request,name,id):
+	admin=False
+	non_admin=False
+	dealing_admin=False
+	try:
+		if request.session['email']:
+			all_products=productlist.objects.all().order_by("product_name")
+			user=useraccounts.objects.get(email=request.session['email'])
+			currentName = user.first_name+" "+user.last_name
+			if user.user_type == 'Admin':
+					admin = True
+			elif user.user_type == 'Non-Admin':
+				non_admin = True
+				print("fngfifdfjbnfg")
+			else:
+				dealing_admin = True
+			print("grrieo")
+			
+			
+			logoutStatus=False
+			currtime=datetime.datetime.now(tz=timezone.utc)
+
+			nonconsumable_productlog.objects.filter(product_name=name).filter(id=id).update(return_date=currtime,return_status='true')
+			
+			productdata=nonconsumable_productlog.objects.filter(return_status='false').filter(issued_to=request.session['email'])	
+				
+			print("returned")
+			now = datetime.datetime.now(tz=timezone.utc)
+			emails=request.session['email']
+			accounts = sessionlogs(email =emails,timestamp = now,message="Product " + name+" returned by "+request.session['email'])	
+			accounts.save()
+			context={
+			'admin':admin,
+			'non_admin':non_admin,
+			'dealing_admin':dealing_admin,
+			'all_products':all_products,
+			'verified':user.verified,
+			'productdata':productdata,	
+			'name':currentName,
+			'logoutStatus':False
+				}	
+				
+			return render(request,'products/returnproduct.html',context)
+			
+
+	except:
+		message="not working"
+		all_products=productlist.objects.all()
+		context={
+					'admin':admin,
+					'dealing_admin':dealing_admin,
+					'non_admin':non_admin,
+					'message':message,
+					'verified':user.verified,
+					'name':currentName,
+					'all_products':all_products
+				}
+		now = datetime.datetime.now(tz=timezone.utc)
+		email=request.session['email']
+		
+						
+		return render(request,'products/products.html',context)

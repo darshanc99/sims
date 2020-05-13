@@ -37,3 +37,15 @@ class productlog(models.Model):
 	status=models.CharField(max_length=50)
 	def __str__(self):
 		return self.product_name + "-" + self.status
+
+class nonconsumable_productlog(models.Model):
+	product_name=models.CharField(max_length=200)
+	
+	issued_to=models.CharField(max_length=200,blank=True)
+	issued_by=models.CharField(max_length=200,blank=True)
+	units=models.BigIntegerField(blank=True)
+	issue_date=models.DateTimeField(blank=True)
+	return_date=models.DateTimeField(blank=True,null=True)
+	return_status=models.CharField(max_length=50)
+	def __str__(self):
+		return self.product_name+"-"+self.issue_date
