@@ -25,7 +25,7 @@ SECRET_KEY = 'osx*!bk_lkl-^wf&h2xwcqip(tq2z6!m@e4777s04@@yup)iux'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['e50a7304.ngrok.io']
 
 
 # Application definition

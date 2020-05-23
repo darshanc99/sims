@@ -1013,22 +1013,15 @@ def returnproduct(request):
 				
 			return render(request,'products/returnproduct.html',context)		
 	except:
-		message="not working"
-		all_products=productlist.objects.all()
-		context={
-					'admin':admin,
-					'dealing_admin':dealing_admin,
-					'non_admin':non_admin,
-					'message':message,
-					'verified':user.verified,
-					'name':currentName,
-					'all_products':all_products
-				}
-		now = datetime.datetime.now(tz=timezone.utc)
-		email=request.session['email']
+		message = "You have been logged out. Please log in again!"
+		logoutStatus = True
+
+		context = {
+			'message' : message,
+			'logoutStatus' : logoutStatus
+		}
+		return render(request,'authentication/login.html',context)
 		
-						
-		return render(request,'products/products.html',context)
 def returnconfirm(request,name,id):
 	admin=False
 	non_admin=False
@@ -1075,19 +1068,11 @@ def returnconfirm(request,name,id):
 			
 
 	except:
-		message="not working"
-		all_products=productlist.objects.all()
-		context={
-					'admin':admin,
-					'dealing_admin':dealing_admin,
-					'non_admin':non_admin,
-					'message':message,
-					'verified':user.verified,
-					'name':currentName,
-					'all_products':all_products
-				}
-		now = datetime.datetime.now(tz=timezone.utc)
-		email=request.session['email']
-		
-						
-		return render(request,'products/products.html',context)
+		message = "You have been logged out. Please log in again!"
+		logoutStatus = True
+
+		context = {
+			'message' : message,
+			'logoutStatus' : logoutStatus
+		}
+		return render(request,'authentication/login.html',context)
