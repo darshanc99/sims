@@ -33,9 +33,9 @@
 						  <label>Product Category</label>
 						  <select id="inputState" class="form-control" name="product_category" required="">
 						  	 <option selected>{{data.product_category}}</option>
-						      <option>electronics</option>
-						      <option>stationery</option>
-						      <option>others</option>
+						    {% for items in all_category%}
+						    <option>{{items.product_category}}</option>
+						    {% endfor %}
 						  </select>
 						</div> <!-- form-group end.// -->
 						<div class="form-group col-md-6">
@@ -56,10 +56,9 @@
 						  <label>Measurement Unit</label>
 						  <select id="inputState" class="form-control" name="measure_unit" required="">
 						  	 <option selected>{{data.measure_unit}}</option>
-						      <option>kilogram</option>
-						      <option>metres</option>
-						      <option>inches</option>
-						      <option>units</option>
+						      {% for items in all_units %}
+						    <option>{{items.measure_unit}}</option>
+						    {% endfor %}
 						  </select>
 						</div>
 						 <!-- form-group end.// -->	

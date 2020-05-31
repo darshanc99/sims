@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from .models import productlist,productlog,nonconsumable_productlog
+from .models import productlist,productlog,nonconsumable_productlog,master_units,master_category
 from authentication.models import useraccounts
 from logs.models import sessionlogs
 from django.utils import timezone
@@ -88,6 +88,10 @@ def addproduct(request):
 			else:
 				all_products=productlist.objects.all().order_by("product_name")
 				currentEmail = request.session['email']
+				all_units=master_units.objects.all()
+
+				all_category=master_category.objects.all()
+
 				currentUser = useraccounts.objects.get(email=currentEmail)
 				currentName = currentUser.first_name+" "+currentUser.last_name
 				context = {
@@ -95,7 +99,8 @@ def addproduct(request):
 					'dealing_admin':dealing_admin,
 					'verified':user.verified,
 					'non_admin':non_admin,
-
+					'all_units':all_units,
+					'all_category':all_category,
 					'all_products':all_products,
 					'name' : currentName
 					}				
@@ -481,12 +486,16 @@ def edprod(request,name):
 			print("doool")
 			all_products=productlist.objects.filter(product_name=name)
 				
+			all_units=master_units.objects.all()
 
+			all_category=master_category.objects.all()
 				
 			context={
 					'admin':admin,
 					'dealing_admin':dealing_admin,
 					'non_admin':non_admin,
+					'all_units':all_units,
+					'all_category':all_category,
 					'verified':user.verified,
 					'name':currentName,
 					'all_products':all_products
