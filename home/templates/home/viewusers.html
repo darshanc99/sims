@@ -32,15 +32,15 @@
           <th scope="row" style="color:red">{{user.phone}}</th>
           <th scope="row" style="color:red">{{user.user_type}}</th>
           <th scope="row" style="color:red">{{user.userrole}}</th>
-          <th scope="row" style="color:red">{{user.verified}}<a href="/verify/{{user.email}}"><button type="submit" class="btn btn-sm btn-success">Verify</button></a></th>
+          <th scope="row" style="color:red"><a href="/verify/{{user.email}}"><button type="submit" class="btn btn-sm btn-success">Verify</button></a></th>
           {% if user.loginstatus == "Online" %}
+            <th scope="row" style="color:black">{{user.loginstatus}}*</th>
           {% else %}
             <th scope="row" style="color:red">{{user.loginstatus}}</th>
           {% endif %}
           <th scope="row" style="color:red" >{{user.registered_at}}</th>
           <th scope="row"><a href="/delete/{{user.email}}"><button type="submit" class="btn btn-sm btn-danger">Remove</button></a></th>
           <th scope="row"><a href="{% url 'viewusers' %}"><button type="submit" class="btn btn-sm btn-secondary"><i class="fa fa-lock" aria-hidden="true"></i></button></a></th>
-          <th scope="row"><a href="/delete/{{user.email}}"><button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash" aria-hidden="true"></i></button></a></th>
         {% else %}
           <th scope="row" style="color:black">{{user.first_name}} {{user.last_name}}</th>
           <th scope="row" style="color:black"><a href="mailto: {{user.email}}">{{user.email}}</a></th>

@@ -36,6 +36,7 @@ def home(request):
 				all_logs = sessionlogs.objects.all().order_by('timestamp').reverse()
 				print(all_logs)
 				print("ADMIN:",admin)
+				verified = user.verified
 				context = {
 					'name' : name,
 					'admin' : admin,
@@ -43,7 +44,8 @@ def home(request):
 					'dealing_admin' : dealing_admin,
 					'logoutStatus' : logoutStatus,
 					'all_logs' : all_logs,
-					'msg_count' : msg_count
+					'msg_count' : msg_count,
+					'verified' : verified
 				}
 				return render(request,'home/home.html',context)
 			elif user.user_type == 'Non-Admin':
@@ -68,6 +70,7 @@ def home(request):
 				return render(request,'home/home.html',context)
 			elif user.user_type == 'Dealing-Admin':
 				dealing_admin = True
+				verified = user.verified
 				print(dealing_admin)
 				all_logs = sessionlogs.objects.all().order_by('timestamp').reverse()
 				my_logs = []
@@ -82,19 +85,8 @@ def home(request):
 					'dealing_admin' : dealing_admin,
 					'logoutStatus' : logoutStatus,
 					'all_logs' : my_logs,
-					'msg_count' : msg_count
-				}
-				print(context)
-				return render(request,'home/home.html',context)
-			else:
-				print("OUT")
-				context = {
-					'name' : name,
-					'admin' : admin,
-					'non_admin' : non_admin,
-					'dealing_admin' : dealing_admin,
-					'logoutStatus' : logoutStatus,
-					'msg_count' : msg_count
+					'msg_count' : msg_count,
+					'verified' : verified
 				}
 				print(context)
 				return render(request,'home/home.html',context)

@@ -138,133 +138,135 @@
         <nav class="mt-2">
           <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <!-- Add icons to the links using the .nav-icon class
-                 with font-awesome or any other icon font library -->
-            <li class="nav-item has-treeview">
-              <a href="{% url 'home' %}" class="nav-link">
-                <i class="nav-icon fas fa-tasks"></i>
-                <p style="color:lightpink">
-                  Logs
-                </p>
-              </a>
-            </li>
-            <li class="nav-item has-treeview">
-              <a href="#" class="nav-link">
-                <i class="nav-icon fas fa-tasks"></i>
-                <p style="color:lightpink">
-                  Users
-                  <i class="right fas fa-angle-left"></i>
-                </p>
-              </a>
-              <ul class="nav nav-treeview">
-                <li class="nav-item">
-                  <a href="{% url 'newuser' %}" class="nav-link">
-                    <i class="fas fa-plus nav-icon"></i>
-                    <p style="color:lightblue">Add Users</p>
-                  </a>
-                </li>
-              </ul>
-              <ul class="nav nav-treeview">
-                <li class="nav-item">
-                  <a href="{% url 'viewusers' %}" class="nav-link">
-                    <i class="fas fa-plus nav-icon"></i>
-                    <p style="color:lightblue">View Users</p>
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li class="nav-item has-treeview">
-              <a href="#" class="nav-link">
-                <i class="nav-icon fas fa-tasks"></i>
-                <p style="color:lightpink">
-                  Products
-                  <i class="right fas fa-angle-left"></i>
-                </p>
-              </a>
-              <ul class="nav nav-treeview">
-                <li class="nav-item">
-                  <a href="{% url 'addproduct' %}" class="nav-link">
-                    <i class="fas fa-plus nav-icon"></i>
-                    <p style="color:lightblue">ADD Product</p>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="{% url 'addquantity' %}" class="nav-link">
-                    <i class="fas fa-plus nav-icon"></i>
-                    <p style="color:lightblue">ADD Product Quantity</p>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="{% url 'removeproduct' %}" class="nav-link">
-                    <i class="fas fa-trash nav-icon"></i>
-                    <p style="color:lightblue">Remove Product</p>
-                  </a>
-                <li class="nav-item">
-                  <a href="{% url 'viewproduct' %}" class="nav-link">
-                    <i class="fas fa-pen nav-icon"></i>
-                    <p style="color:lightblue">View/Edit Product</p>
-                  </a>
-                </li>
-                 <li class="nav-item">
-                    <a href="{% url 'myproduct' %}" class="nav-link">
-                      <i class="fas fa-plus nav-icon"></i>
-                      <p style="color:lightblue">My Inventory</p>
-                    </a>
-                  </li>
-                <li class="nav-item">
-                  <a href="{%url 'requestproduct' %}" class="nav-link">
-                    <i class="fas fa-plus nav-icon"></i>
-                    <p style="color:lightblue">Request Inventory</p>
-                  </a>
-                </li>
-                 <li class="nav-item">
-                    <a href="{% url 'pendingprods' %}" class="nav-link">
-                      <i class="fas fa-trash nav-icon"></i>
-                      <p style="color:lightblue">Cancel Request</p>
-                    </a>
-                  </li>
-                <li class="nav-item">
-                  <a href="{% url 'approveproduct' %}" class="nav-link">
-                    <i class="fas fa-pen nav-icon"></i>
-                    <p style="color:lightblue">Approve product request</p>
-                  </a>
-                </li>
+                 with font-awesome or any other icon font library -->\
+            {% if verified %}
+              <li class="nav-item has-treeview">
+                <a href="{% url 'home' %}" class="nav-link">
+                  <i class="nav-icon fas fa-tasks"></i>
+                  <p style="color:lightpink">
+                    Logs
+                  </p>
+                </a>
+              </li>
+              <li class="nav-item has-treeview">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon fas fa-tasks"></i>
+                  <p style="color:lightpink">
+                    Users
+                    <i class="right fas fa-angle-left"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
                   <li class="nav-item">
-                  <a href="{% url 'returnproduct' %}" class="nav-link">
-                    <i class="fas fa-pen nav-icon"></i>
-                    <p style="color:lightblue">Return Product</p>
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li class="nav-item has-treeview">
-              <a href="#" class="nav-link">
-                <i class="nav-icon fas fa-tasks"></i>
-                <p style="color:lightpink">
-                  Messages
-                  <i class="right fas fa-angle-left"></i>
-                </p>
-              </a>
-              <ul class="nav nav-treeview">
-                <li class="nav-item">
-                  <a href="{% url 'compose' %}" class="nav-link">
-                    <i class="fas fa-plus nav-icon"></i>
-                    <p style="color:lightblue">Compose</p>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="{% url 'inbox' %}" class="nav-link">
-                    <i class="fas fa-plus nav-icon"></i>
-                    <p style="color:lightblue">Inbox</p>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="{% url 'sent' %}" class="nav-link">
-                    <i class="fas fa-plus nav-icon"></i>
-                    <p style="color:lightblue">Sent</p>
-                  </a>
-                </li>
-              </ul>
-            </li>
+                    <a href="{% url 'newuser' %}" class="nav-link">
+                      <i class="fas fa-plus nav-icon"></i>
+                      <p style="color:lightblue">Add Users</p>
+                    </a>
+                  </li>
+                </ul>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="{% url 'viewusers' %}" class="nav-link">
+                      <i class="fas fa-plus nav-icon"></i>
+                      <p style="color:lightblue">View Users</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <li class="nav-item has-treeview">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon fas fa-tasks"></i>
+                  <p style="color:lightpink">
+                    Products
+                    <i class="right fas fa-angle-left"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="{% url 'addproduct' %}" class="nav-link">
+                      <i class="fas fa-plus nav-icon"></i>
+                      <p style="color:lightblue">ADD Product</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{% url 'addquantity' %}" class="nav-link">
+                      <i class="fas fa-plus nav-icon"></i>
+                      <p style="color:lightblue">ADD Product Quantity</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{% url 'removeproduct' %}" class="nav-link">
+                      <i class="fas fa-trash nav-icon"></i>
+                      <p style="color:lightblue">Remove Product</p>
+                    </a>
+                  <li class="nav-item">
+                    <a href="{% url 'viewproduct' %}" class="nav-link">
+                      <i class="fas fa-pen nav-icon"></i>
+                      <p style="color:lightblue">View/Edit Product</p>
+                    </a>
+                  </li>
+                   <li class="nav-item">
+                      <a href="{% url 'myproduct' %}" class="nav-link">
+                        <i class="fas fa-plus nav-icon"></i>
+                        <p style="color:lightblue">My Inventory</p>
+                      </a>
+                    </li>
+                  <li class="nav-item">
+                    <a href="{%url 'requestproduct' %}" class="nav-link">
+                      <i class="fas fa-plus nav-icon"></i>
+                      <p style="color:lightblue">Request Inventory</p>
+                    </a>
+                  </li>
+                   <li class="nav-item">
+                      <a href="{% url 'pendingprods' %}" class="nav-link">
+                        <i class="fas fa-trash nav-icon"></i>
+                        <p style="color:lightblue">Cancel Request</p>
+                      </a>
+                    </li>
+                  <li class="nav-item">
+                    <a href="{% url 'approveproduct' %}" class="nav-link">
+                      <i class="fas fa-pen nav-icon"></i>
+                      <p style="color:lightblue">Approve product request</p>
+                    </a>
+                  </li>
+                    <li class="nav-item">
+                    <a href="{% url 'returnproduct' %}" class="nav-link">
+                      <i class="fas fa-pen nav-icon"></i>
+                      <p style="color:lightblue">Return Product</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <li class="nav-item has-treeview">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon fas fa-tasks"></i>
+                  <p style="color:lightpink">
+                    Messages
+                    <i class="right fas fa-angle-left"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="{% url 'compose' %}" class="nav-link">
+                      <i class="fas fa-plus nav-icon"></i>
+                      <p style="color:lightblue">Compose</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{% url 'inbox' %}" class="nav-link">
+                      <i class="fas fa-plus nav-icon"></i>
+                      <p style="color:lightblue">Inbox</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{% url 'sent' %}" class="nav-link">
+                      <i class="fas fa-plus nav-icon"></i>
+                      <p style="color:lightblue">Sent</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+            {% endif %}
             <li class="nav-item">
               <a href="{% url 'logout' %}" class="nav-link">
                 <i class="nav-icon fas fa-sign-out-alt"></i>
@@ -377,107 +379,109 @@
           <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
-            <li class="nav-item has-treeview">
-              <a href="#" class="nav-link">
-                <i class="nav-icon fas fa-tasks"></i>
-                <p style="color:lightpink">
-                  Logs
-                </p>
-              </a>
-            </li>
-            <li class="nav-item has-treeview">
-              <a href="#" class="nav-link">
-                <i class="nav-icon fas fa-tasks"></i>
-                <p style="color:lightpink">
-                  Products
-                  <i class="right fas fa-angle-left"></i>
-                </p>
-              </a>
-              <ul class="nav nav-treeview">
-                <li class="nav-item">
-                  <a href="{% url 'addproduct' %}" class="nav-link">
-                    <i class="fas fa-plus nav-icon"></i>
-                    <p style="color:lightblue">ADD Product</p>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="{% url 'addquantity' %}" class="nav-link">
-                    <i class="fas fa-plus nav-icon"></i>
-                    <p style="color:lightblue">ADD Product Quantity</p>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="{% url 'removeproduct' %}" class="nav-link">
-                    <i class="fas fa-trash nav-icon"></i>
-                    <p style="color:lightblue">Remove Product</p>
-                  </a>
-                <li class="nav-item">
-                  <a href="{% url 'viewproduct' %}" class="nav-link">
-                    <i class="fas fa-pen nav-icon"></i>
-                    <p style="color:lightblue">View/Edit Product</p>
-                  </a>
-                </li>
-                 <li class="nav-item">
-                    <a href="{% url 'myproduct' %}" class="nav-link">
-                      <i class="fas fa-plus nav-icon"></i>
-                      <p style="color:lightblue">My Inventory</p>
-                    </a>
-                  </li>
-                <li class="nav-item">
-                  <a href="{%url 'requestproduct' %}" class="nav-link">
-                    <i class="fas fa-plus nav-icon"></i>
-                    <p style="color:lightblue">Request Inventory</p>
-                  </a>
-                </li>
-                 <li class="nav-item">
-                    <a href="{% url 'pendingprods' %}" class="nav-link">
-                      <i class="fas fa-trash nav-icon"></i>
-                      <p style="color:lightblue">Cancel Request</p>
-                    </a>
-                  </li>
-                 <li class="nav-item">
-                  <a href="{% url 'approveproduct' %}" class="nav-link">
-                    <i class="fas fa-pen nav-icon"></i>
-                    <p style="color:lightblue">View/Approve product request</p>
-                  </a>
-                </li>
+            {% if verified %}
+              <li class="nav-item has-treeview">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon fas fa-tasks"></i>
+                  <p style="color:lightpink">
+                    Logs
+                  </p>
+                </a>
+              </li>
+              <li class="nav-item has-treeview">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon fas fa-tasks"></i>
+                  <p style="color:lightpink">
+                    Products
+                    <i class="right fas fa-angle-left"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
                   <li class="nav-item">
-                  <a href="{% url 'returnproduct' %}" class="nav-link">
-                    <i class="fas fa-pen nav-icon"></i>
-                    <p style="color:lightblue">Return Product</p>
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li class="nav-item has-treeview">
-              <a href="#" class="nav-link">
-                <i class="nav-icon fas fa-tasks"></i>
-                <p style="color:lightpink">
-                  Messages
-                  <i class="right fas fa-angle-left"></i>
-                </p>
-              </a>
-              <ul class="nav nav-treeview">
-                <li class="nav-item">
-                  <a href="{% url 'compose' %}" class="nav-link">
-                    <i class="fas fa-plus nav-icon"></i>
-                    <p style="color:lightblue">Compose</p>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="{% url 'inbox' %}" class="nav-link">
-                    <i class="fas fa-plus nav-icon"></i>
-                    <p style="color:lightblue">Inbox</p>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="{% url 'sent' %}" class="nav-link">
-                    <i class="fas fa-plus nav-icon"></i>
-                    <p style="color:lightblue">Sent</p>
-                  </a>
-                </li>
-              </ul>
-            </li>
+                    <a href="{% url 'addproduct' %}" class="nav-link">
+                      <i class="fas fa-plus nav-icon"></i>
+                      <p style="color:lightblue">ADD Product</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{% url 'addquantity' %}" class="nav-link">
+                      <i class="fas fa-plus nav-icon"></i>
+                      <p style="color:lightblue">ADD Product Quantity</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{% url 'removeproduct' %}" class="nav-link">
+                      <i class="fas fa-trash nav-icon"></i>
+                      <p style="color:lightblue">Remove Product</p>
+                    </a>
+                  <li class="nav-item">
+                    <a href="{% url 'viewproduct' %}" class="nav-link">
+                      <i class="fas fa-pen nav-icon"></i>
+                      <p style="color:lightblue">View/Edit Product</p>
+                    </a>
+                  </li>
+                   <li class="nav-item">
+                      <a href="{% url 'myproduct' %}" class="nav-link">
+                        <i class="fas fa-plus nav-icon"></i>
+                        <p style="color:lightblue">My Inventory</p>
+                      </a>
+                    </li>
+                  <li class="nav-item">
+                    <a href="{%url 'requestproduct' %}" class="nav-link">
+                      <i class="fas fa-plus nav-icon"></i>
+                      <p style="color:lightblue">Request Inventory</p>
+                    </a>
+                  </li>
+                   <li class="nav-item">
+                      <a href="{% url 'pendingprods' %}" class="nav-link">
+                        <i class="fas fa-trash nav-icon"></i>
+                        <p style="color:lightblue">Cancel Request</p>
+                      </a>
+                    </li>
+                   <li class="nav-item">
+                    <a href="{% url 'approveproduct' %}" class="nav-link">
+                      <i class="fas fa-pen nav-icon"></i>
+                      <p style="color:lightblue">View/Approve product request</p>
+                    </a>
+                  </li>
+                    <li class="nav-item">
+                    <a href="{% url 'returnproduct' %}" class="nav-link">
+                      <i class="fas fa-pen nav-icon"></i>
+                      <p style="color:lightblue">Return Product</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <li class="nav-item has-treeview">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon fas fa-tasks"></i>
+                  <p style="color:lightpink">
+                    Messages
+                    <i class="right fas fa-angle-left"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="{% url 'compose' %}" class="nav-link">
+                      <i class="fas fa-plus nav-icon"></i>
+                      <p style="color:lightblue">Compose</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{% url 'inbox' %}" class="nav-link">
+                      <i class="fas fa-plus nav-icon"></i>
+                      <p style="color:lightblue">Inbox</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{% url 'sent' %}" class="nav-link">
+                      <i class="fas fa-plus nav-icon"></i>
+                      <p style="color:lightblue">Sent</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+            {% endif %}
             <li class="nav-item">
               <a href="{% url 'logout' %}" class="nav-link">
                 <i class="nav-icon fas fa-sign-out-alt"></i>

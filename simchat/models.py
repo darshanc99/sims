@@ -10,6 +10,6 @@ class simmessage(models.Model):
 	intrashed = models.BooleanField(default=False)
 	outtrashed = models.BooleanField(default=False)
 	timestamp = models.DateTimeField(blank=True,default=None)
-	
+
 	def __str__(self):
-		return self.uid + ' - ' + self.subject	
+		return self.subject	

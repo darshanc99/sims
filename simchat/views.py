@@ -46,7 +46,6 @@ def compose(request):
 						email = adminmail
 					if email == 'Dealing-Admin':
 						email = dealingmail
-
 				subject = request.POST.get('subject')
 				body = request.POST.get('message')
 				now = datetime.datetime.now(tz=timezone.utc)

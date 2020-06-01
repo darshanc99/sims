@@ -20,5 +20,4 @@ urlpatterns = [
     path(r'canceltransaction/<int:id>',views.canceltransaction,name='canceltransaction'),
     path('pendingprods/',views.pendingprods,name='pendingprods'),
     path('myproduct/',views.myproduct,name='myproduct')
-
 ]
