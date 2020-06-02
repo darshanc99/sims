@@ -140,7 +140,8 @@ def newuser(request):
 						'dealing_admin' : dealing_admin,
 						'name' : name,
 						'logoutStatus' : logoutStatus,
-						'message' : message
+						'message' : message,
+						'verified' : currentUser.verified
 					}
 					print(context)
 					return redirect('viewusers')
@@ -152,7 +153,8 @@ def newuser(request):
 						'non_admin' : non_admin,
 						'dealing_admin' : dealing_admin,
 						'logoutStatus' : logoutStatus,
-						'name' : name
+						'name' : name,
+						'verified' : currentUser.verified
 					}
 					return render(request,'home/adduser.html',context)
 			else:
@@ -195,7 +197,8 @@ def viewusers(request):
 					'non_admin' : non_admin,
 					'dealing_admin' : dealing_admin,
 					'logoutStatus' : logoutStatus,
-					'all_users' : all_users
+					'all_users' : all_users,
+					'verified' : currentUser.verified
 				}
 				return render(request,'home/viewusers.html',context)
 			else:
@@ -363,7 +366,8 @@ def edituser(request,email):
 					'name' : name,
 					'logoutStatus' : logoutStatus,
 					'admin' : admin,
-					'user' : user
+					'user' : user,
+					'verified' : user.verified
 				}
 				now = datetime.datetime.now(tz=timezone.utc)
 				message = "Account edited for "+email
