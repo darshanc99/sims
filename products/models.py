@@ -8,32 +8,30 @@ PROD_TYPES=(("consumable","consumable"),
 	)
 
 
-	
+
 
 # Create your models here.
 class master_units(models.Model):
 	measure_unit=models.CharField(max_length=20)
-	unit_id=models.CharField(max_length=200,primary_key=True)
 	def __str__(self):
-		return self.measure_unit + "-" + self.unit_id
+		return self.measure_unit
 
 
 class master_category(models.Model):
 	product_category=models.CharField(max_length=50)
-	category_id=models.CharField(max_length=200,primary_key=True)
 	def __str__(self):
-		return self.product_category + "-" + self.category_id		
+		return self.product_category
 
 class productlist(models.Model):
 	product_name=models.CharField(max_length=200,primary_key=True)
 	product_category=models.CharField(max_length=50)
 	product_type=models.CharField(max_length=20,choices=PROD_TYPES)
 	available_quantity=models.BigIntegerField()
-	arrival_date=models.DateTimeField(blank=True) 
-	measure_unit=models.CharField(max_length=20) 
-	description=models.CharField(max_length=300,blank=True)		
+	arrival_date=models.DateTimeField(blank=True)
+	measure_unit=models.CharField(max_length=20)
+	description=models.CharField(max_length=300,blank=True)
 	def __str__(self):
-		return self.product_name + "-" + self.product_category  
+		return self.product_name + "-" + self.product_category
 
 class productlog(models.Model):
 	product_name=models.CharField(max_length=200)
@@ -46,7 +44,7 @@ class productlog(models.Model):
 
 class nonconsumable_productlog(models.Model):
 	product_name=models.CharField(max_length=200)
-	
+
 	issued_to=models.CharField(max_length=200,blank=True)
 	issued_by=models.CharField(max_length=200,blank=True)
 	units=models.BigIntegerField(blank=True)
