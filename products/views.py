@@ -158,6 +158,7 @@ def addquantity(request):
 					'admin':admin,
 					'dealing_admin':dealing_admin,
 					'non_admin':non_admin,
+					'verified':user.verified,
 					'messages':'the product quantity is updated',
 					'name' : currentName,
 					'all_products':all_products

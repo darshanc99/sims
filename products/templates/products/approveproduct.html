@@ -11,9 +11,19 @@
  <p style="color:red;text-align: center;">
   <b>
   PENDING REQUEST
+
   </b>
-</p>
  
+</p>
+ {%for key,value in item_quant.items %}
+<p style="background-color:lightgreen;font-size: 20px;color: red">
+  
+  
+  The Total quantity requested for <b>{{ key }}</b></h4> is <b>{{value}}</b></h4>
+  
+
+</p>
+ {% endfor %}
   
    <div class="row" style="padding-top: 20px;" >
    
