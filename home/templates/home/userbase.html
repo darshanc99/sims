@@ -1,0 +1,110 @@
+{% extends 'home/base.html' %}
+{% block content %}
+{% if message %}
+	<div class="alert alert-info" role="alert">
+	  {{message}}
+	</div>
+{% endif %}
+{% if admin %}
+<br><br><div class="" style="padding-left: 2%;padding-right: 2%">
+	<div class="">
+		<div class="row">
+			<div class="col-md-5">
+				<form action="{% url 'newusertype' %}" method="post">
+					{% csrf_token %}
+					<div class="form-row">
+						<div class="col form-group">
+						  	<input type="text" class="form-control" maxlength="15" placeholder="Add user type without spacing" name="usertype" pattern="^\S+$" title="Remove the Spacings" required>
+						</div> <!-- form-group end.// -->
+						<div class="col form-group">
+						  	<button type="submit" class="btn btn-primary btn-block">Add</button>
+						</div> <!-- form-group end.// -->
+					</div> <!-- form-row end.// -->
+				</form>
+		</div> <!-- row.//-->
+	</div>
+	<!--container end.//-->
+</div>
+	<table class="table table-bordered"style="width: 30%">
+	  <thead class="table-dark">
+	    <tr>
+	      <th scope="col">User Type</th>
+				<th scope="col">Delete</th>
+	    </tr>
+	  </thead>
+	  <tbody>
+	    {% for type in all_usertypes %}
+	      <tr>
+					<th scope="row" style="color:green">{{type.user_type}}</th>
+					<th scope="row"><a href="/deleteusertype/{{type.user_type}}"><button type="submit" class="btn btn-sm btn-danger">Remove</button></a></th>
+	      </tr>
+	    {% endfor %}
+	  </tbody>
+	</table>
+
+<br><div class="" style="padding-left: 2%;padding-right: 2%">
+  <h4><b>User Database</b></h4>
+<table class="table table-bordered">
+  <thead class="table-dark">
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Email</th>
+      <th scope="col">Phone</th>
+      <th scope="col">User Type</th>
+      <th scope="col">User Role</th>
+      <th scope="col">Verified</th>
+      <th scope="col">Status</th>
+      <th scope="col">Registered On</th>
+      <th scope="col">Action</th>
+      <th scope="col">Edit</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for user in all_users %}
+      <tr>
+				{% if user.verified %}
+					<th scope="row" style="color:black">{{user.first_name}} {{user.last_name}}</th>
+					<th scope="row" style="color:black"><a href="mailto: {{user.email}}">{{user.email}}</a></th>
+					<th scope="row" style="color:black">{{user.phone}}</th>
+					<th scope="row" style="color:black">{{user.user_type}}</th>
+					<th scope="row" style="color:black">{{user.userrole}}</th>
+					<th scope="row" style="color:black">Yes</th>
+						{% if user.loginstatus %}
+							<th scope="row" style="color:black">Online*</th>
+						{% else %}
+							<th scope="row" style="color:red">Offline</th>
+						{% endif %}
+					<th scope="row" style="color:black">{{user.registered_at}}</th>
+					{% if user.accountstatus %}
+            <th scope="row"><a href="/freeze/{{user.email}}"><button type="submit" class="btn btn-sm btn-info">Freeze</button></a></th>
+          {% else %}
+            <th scope="row"><a href="/unfreeze/{{user.email}}"><button type="submit" class="btn btn-sm btn-info">Unfreeze</button></a></th>
+          {% endif %}
+          <th scope="row"><a href="/edit/{{user.email}}"><button type="submit" class="btn btn-sm btn-secondary"><i class="fa fa-edit" aria-hidden="true"></i></button></a></th>
+				{% else %}
+					<th scope="row" style="color:red">{{user.first_name}} {{user.last_name}}</th>
+					<th scope="row" style="color:red"><a href="mailto: {{user.email}}">{{user.email}}</a></th>
+					<th scope="row" style="color:red">{{user.phone}}</th>
+					<th scope="row" style="color:red">{{user.user_type}}</th>
+					<th scope="row" style="color:red">{{user.userrole}}</th>
+					<th scope="row" style="color:red"><a href="/verify/{{user.email}}"><button type="submit" class="btn btn-sm btn-success">Verify</button></a></th>
+						{% if user.loginstatus %}
+							<th scope="row" style="color:black">Online*</th>
+						{% else %}
+							<th scope="row" style="color:red">Offline</th>
+						{% endif %}
+					<th scope="row" style="color:red" >{{user.registered_at}}</th>
+					<th scope="row"><a href="/delete/{{user.email}}"><button type="submit" class="btn btn-sm btn-danger">Remove</button></a></th>
+					<th scope="row"><a href="{% url 'userbase' %}"><button type="submit" class="btn btn-sm btn-secondary"><i class="fa fa-lock" aria-hidden="true"></i></button></a></th>
+				{% endif %}
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+{% if non_admin %}
+{% endif %}
+{% if dealing_admin %}
+{% endif %}
+{% endblock %}

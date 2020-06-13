@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from authentication.models import useraccounts
+from authentication.models import useraccounts, master_user_types
 from logs.models import sessionlogs
 import datetime, hashlib
 from django.utils import timezone
@@ -144,17 +144,19 @@ def newuser(request):
 						'verified' : currentUser.verified
 					}
 					print(context)
-					return redirect('viewusers')
-					#return render(request,'home/viewusers.html',context)
+					return redirect('userbase')
+					#return render(request,'home/userbase.html',context)
 				else:
 					print("HELLO")
+					all_usertypes = master_user_types.objects.all().order_by('user_type')
 					context = {
 						'admin' : admin,
 						'non_admin' : non_admin,
 						'dealing_admin' : dealing_admin,
 						'logoutStatus' : logoutStatus,
 						'name' : name,
-						'verified' : currentUser.verified
+						'verified' : currentUser.verified,
+						'all_usertypes' : all_usertypes
 					}
 					return render(request,'home/adduser.html',context)
 			else:
@@ -169,7 +171,7 @@ def newuser(request):
 		del request.session['email']
 		return redirect('login')
 
-def viewusers(request):
+def userbase(request):
 	admin = False
 	non_admin = False
 	dealing_admin = False
@@ -177,18 +179,10 @@ def viewusers(request):
 	try:
 		if request.session['email']:
 			currentUser = useraccounts.objects.get(email=request.session['email'])
-			if currentUser.user_type == 'Admin':
+			if currentUser.user_type == 'Admin' and currentUser.verified:
 				admin = True
-				all_users = useraccounts.objects.all().order_by('email')
-				for user in all_users:
-					if user.verified == True:
-						user.verified = 'Yes'
-					if user.verified == False:
-						user.verified = 'No'
-					if user.loginstatus == True:
-						user.loginstatus = 'Online'
-					if user.loginstatus == False:
-						user.loginstatus = 'Offline'
+				all_users = useraccounts.objects.all().order_by('first_name','last_name','email')
+				all_usertypes = master_user_types.objects.all().order_by('user_type')
 				logoutStatus = False
 				name = currentUser.first_name + ' ' + currentUser.last_name
 				context = {
@@ -198,15 +192,18 @@ def viewusers(request):
 					'dealing_admin' : dealing_admin,
 					'logoutStatus' : logoutStatus,
 					'all_users' : all_users,
-					'verified' : currentUser.verified
+					'verified' : currentUser.verified,
+					'all_usertypes' : all_usertypes,
 				}
-				return render(request,'home/viewusers.html',context)
+				print(context)
+				return render(request,'home/userbase.html',context)
 			else:
 				currentUser.loginstatus = False
 				currentUser.save()
 				del request.session['email']
 				return redirect('login')
 	except:
+		return redirect('home')
 		user = useraccounts.objects.get(email=request.session['email'])
 		user.loginstatus = False
 		user.save()
@@ -233,7 +230,7 @@ def verify(request,email):
 			print(message)
 			session = sessionlogs(email=request.session['email'],timestamp=now,message=message)
 			session.save()
-			return redirect('viewusers')
+			return redirect('userbase')
 		else:
 			user = useraccounts.objects.get(email=request.session['email'])
 			user.loginstatus = False
@@ -261,7 +258,7 @@ def deleteuser(request,email):
 			print(message)
 			session = sessionlogs(email=request.session['email'],timestamp=now,message=message)
 			session.save()
-			return redirect('viewusers')
+			return redirect('userbase')
 		else:
 			user = useraccounts.objects.get(email=request.session['email'])
 			user.loginstatus = False
@@ -291,7 +288,7 @@ def freezeuser(request,email):
 				from_ = "+18502667962",
 				body = message
 			)
-			return redirect('viewusers')
+			return redirect('userbase')
 		else:
 			user = useraccounts.objects.get(email=request.session['email'])
 			to = "+91"+str(user.phone)
@@ -327,7 +324,7 @@ def unfreezeuser(request,email):
 				from_ = "+18502667962",
 				body = message
 			)
-			return redirect('viewusers')
+			return redirect('userbase')
 		else:
 			user = useraccounts.objects.get(email=request.session['email'])
 			user.loginstatus = False
@@ -391,4 +388,60 @@ def edituser(request,email):
 			del request.session['email']
 			return redirect('login')
 	else:
+		return redirect('login')
+
+def deleteusertype(request,usertype):
+	if request.session['email']:
+		user = useraccounts.objects.get(email=request.session['email'])
+		if user.user_type == 'Admin' and user.verified:
+			type = master_user_types.objects.get(user_type=usertype)
+			type.delete()
+			message = "Removed " + usertype + " from the master_user_types."
+			now = datetime.datetime.now(tz=timezone.utc)
+			session = sessionlogs(email=request.session['email'],timestamp=now,message=message)
+			session.save()
+			return redirect('userbase')
+		else:
+			user = useraccounts.objects.get(email=request.session['email'])
+			to = "+91"+str(user.phone)
+			user.loginstatus = False
+			user.accountstatus = False
+			user.save()
+			now = datetime.datetime.now(tz=timezone.utc)
+			message = "Freezed self."
+			print(message)
+			session = sessionlogs(email=request.session['email'],timestamp=now,message=message)
+			session.save()
+			del request.session['email']
+			return redirect('login')
+	else:
+		return redirect('login')
+
+def newusertype(request):
+	try:
+		if request.session['email']:
+			print('active')
+			currentUser = useraccounts.objects.get(email=request.session['email'])
+			if currentUser.user_type == 'Admin' and currentUser.verified:
+				print('matched')
+				admin = True
+				if request.method == 'POST':
+					usertype = request.POST.get('usertype')
+					type = master_user_types(user_type=usertype)
+					type.save()
+					print("Saved")
+					now = datetime.datetime.now(tz=timezone.utc)
+					message = "Added " + usertype + " in master_user_types."
+					accounts = sessionlogs(email=currentUser.email,timestamp=now,message=message)
+					accounts.save()
+					return redirect('userbase')
+				else:
+					return redirect('userbase')
+			else:
+				return redirect('home')
+	except:
+		user = useraccounts.objects.get(email=request.session['email'])
+		user.loginstatus = False
+		user.save()
+		del request.session['email']
 		return redirect('login')

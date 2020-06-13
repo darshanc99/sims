@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from .models import useraccounts
+from .models import useraccounts, master_user_types
 from logs.models import sessionlogs
 import hashlib
 import os, random, datetime
@@ -62,8 +62,10 @@ def signup(request):
 			}
 			return render(request,'authentication/otp.html',context)
 	else:
+		all_usertypes = master_user_types.objects.all().order_by('user_type')
 		context = {
-			'logoutStatus' : logoutStatus
+			'logoutStatus' : logoutStatus,
+			'all_usertypes' : all_usertypes,
 		}
 		return render(request,'authentication/signup.html',context)
 

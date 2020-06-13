@@ -22,3 +22,9 @@ class useraccounts(models.Model):
 
 	def __str__(self):
 		return self.email + "-" + self.user_type
+
+class master_user_types(models.Model):
+	user_type = models.CharField(max_length=15)
+
+	def __str__(self):
+		return self.user_type
