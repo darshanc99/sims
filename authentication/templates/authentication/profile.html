@@ -21,7 +21,7 @@
 			<form action="/freeze/{{email}}" method="post">
 				{% csrf_token %}
 				<div class="form-group">
-				    <a href="/freeze/{{email}}"><button type="submit" class="btn btn-danger btn-block">Deactivate Profile</button></a>
+				    <a href="/freeze/{{email}}"><button class="btn btn-primary btn-block btn-danger" type="submit" onclick="return confirm('Deactivating the profile would restrict you from logging into the portal!')">Deactivate Profile</button></a>
 				</div> <!-- form-group// -->
 			</form>
 			<br>

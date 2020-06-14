@@ -203,7 +203,6 @@ def userbase(request):
 				del request.session['email']
 				return redirect('login')
 	except:
-		return redirect('home')
 		user = useraccounts.objects.get(email=request.session['email'])
 		user.loginstatus = False
 		user.save()
