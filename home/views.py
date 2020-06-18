@@ -336,10 +336,12 @@ def unfreezeuser(request,email):
 def edituser(request,email):
 	logoutStatus = True
 	admin = False
+	non_admin = False
+	dealing_admin = False
 	if request.session['email']:
 		user = useraccounts.objects.get(email=request.session['email'])
 		name = user.first_name + ' ' + user.last_name
-		if user.user_type == 'Admin':
+		if user.user_type == 'Admin' and user.verified:
 			admin = True
 			user = useraccounts.objects.get(email=email)
 			oldemail = user.email
@@ -363,7 +365,9 @@ def edituser(request,email):
 					'logoutStatus' : logoutStatus,
 					'admin' : admin,
 					'user' : user,
-					'verified' : user.verified
+					'verified' : user.verified,
+					'dealing_admin' : dealing_admin,
+					'non_admin' : non_admin,
 				}
 				now = datetime.datetime.now(tz=timezone.utc)
 				message = "Account edited for "+email
@@ -378,7 +382,10 @@ def edituser(request,email):
 					'name' : name,
 					'logoutStatus' : logoutStatus,
 					'admin' : admin,
-					'user' : user
+					'user' : user,
+					'verified' : user.verified,
+					'non_admin' : non_admin,
+					'dealing_admin' : dealing_admin,
 				}
 				return render(request,'home/edituser.html',context)
 		else:
