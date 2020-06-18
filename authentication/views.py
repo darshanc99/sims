@@ -102,6 +102,9 @@ def otp(request):
 				user.save()
 				print("USER ADDED")
 				request.session['email'] = request.session['email']
+				usertype = master_user_types.objects.get(user_type=request.session['user_type'])
+				usertype.deletestatus = False
+				usertype.save()
 				del request.session['otp']
 				del request.session['first_name']
 				del request.session['last_name']

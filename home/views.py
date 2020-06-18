@@ -133,6 +133,9 @@ def newuser(request):
 					print(body)
 					accounts = sessionlogs(email=request.session['email'],timestamp=now,message=body)
 					accounts.save()
+					usertype = master_user_types.objects.get(user_type=user_type)
+					usertype.deletestatus = False
+					usertype.save()
 					print(body)
 					context = {
 						'admin' : admin,
@@ -195,14 +198,15 @@ def userbase(request):
 					'verified' : currentUser.verified,
 					'all_usertypes' : all_usertypes,
 				}
-				print(context)
 				return render(request,'home/userbase.html',context)
 			else:
+				return redirect('home')
 				currentUser.loginstatus = False
 				currentUser.save()
 				del request.session['email']
 				return redirect('login')
 	except:
+		return redirect('home')
 		user = useraccounts.objects.get(email=request.session['email'])
 		user.loginstatus = False
 		user.save()
@@ -401,12 +405,15 @@ def deleteusertype(request,usertype):
 		user = useraccounts.objects.get(email=request.session['email'])
 		if user.user_type == 'Admin' and user.verified:
 			type = master_user_types.objects.get(user_type=usertype)
-			type.delete()
-			message = "Removed " + usertype + " from the master_user_types."
-			now = datetime.datetime.now(tz=timezone.utc)
-			session = sessionlogs(email=request.session['email'],timestamp=now,message=message)
-			session.save()
-			return redirect('userbase')
+			if type.delete:
+				type.delete()
+				message = "Removed " + usertype + " from the master_user_types."
+				now = datetime.datetime.now(tz=timezone.utc)
+				session = sessionlogs(email=request.session['email'],timestamp=now,message=message)
+				session.save()
+				return redirect('userbase')
+			else:
+				return redirect('home')
 		else:
 			user = useraccounts.objects.get(email=request.session['email'])
 			to = "+91"+str(user.phone)
@@ -433,6 +440,10 @@ def newusertype(request):
 				admin = True
 				if request.method == 'POST':
 					usertype = request.POST.get('usertype')
+					usertype = usertype.strip()
+					usertype = usertype.title()
+					usertype = ' '.join(usertype.split())
+					usertype = usertype.replace(' ','-')
 					type = master_user_types(user_type=usertype)
 					type.save()
 					print("Saved")

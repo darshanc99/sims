@@ -14,7 +14,7 @@
 					{% csrf_token %}
 					<div class="form-row">
 						<div class="col form-group">
-						  	<input type="text" class="form-control" maxlength="15" placeholder="Add user type without spacing" name="usertype" pattern="^\S+$" title="Remove the Spacings" required>
+						  	<input type="text" class="form-control" maxlength="25" placeholder="Add user type without spacing" name="usertype" title="Remove the Spacings" required>
 						</div> <!-- form-group end.// -->
 						<div class="col form-group">
 						  	<button type="submit" class="btn btn-primary btn-block">Add</button>
@@ -36,7 +36,11 @@
 	    {% for type in all_usertypes %}
 	      <tr>
 					<th scope="row" style="color:green">{{type.user_type}}</th>
-					<th scope="row"><a href="/deleteusertype/{{type.user_type}}"><button type="submit" class="btn btn-sm btn-danger">Remove</button></a></th>
+					{% if type.deletestatus %}
+							<th scope="row"><a href="/deleteusertype/{{type.user_type}}"><button type="submit" class="btn btn-sm btn-danger">Remove</button></a></th>
+					{% else %}
+							<th scope="row"><button type="submit" class="btn btn-sm btn-danger" disabled>Remove</button></th>
+					{% endif %}
 	      </tr>
 	    {% endfor %}
 	  </tbody>
