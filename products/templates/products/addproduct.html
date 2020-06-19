@@ -25,8 +25,8 @@
 					<div class="form-row">
 						<div class="form-group col-md-6">
 						  <label>Product Category</label>
-						  <select id="inputState" class="form-control" name="product_category" required="">
-							<option disabled selected>select</option>
+						  <select id="inputState" class="form-control" name="product_category" required=" ">
+							<option disabled selected value="">select</option>
 							{% for items in all_category %}
 						      <option>{{items.product_category}}</option>
 						     {% endfor %}
@@ -34,8 +34,8 @@
 						</div> <!-- form-group end.// -->
 						<div class="form-group col-md-6">
 						  <label>Product Type</label>
-						  <select id="inputState" class="form-control" name="product_type" required="">
-						   <option disabled selected>select</option>
+						  <select id="inputState" class="form-control" name="product_type" required=" ">
+						   <option disabled selected value="">select</option>
 						      <option>consumable</option>
 						      <option>non-consumable</option>
 						     
@@ -44,12 +44,12 @@
 					 </div>
 					<div class="form-group">
 						<label>Available quantity</label>
-						<input type="number" class="form-control" placeholder="Enter the available qunatity" name="avail_quantity" required="">
+						<input type="number" class="form-control" placeholder="Enter the available qunatity" name="avail_quantity" required=" ">
 					</div> <!-- form-group end.// -->
 					<div class="form-group">
 						  <label>Measurement Unit</label>
-						  <select id="inputState" class="form-control" name="measure_unit" required="">
-						  	 <option disabled selected>select</option>
+						  <select id="inputState" class="form-control" name="measure_unit" required=" ">
+						  	 <option disabled selected value="">select</option>
 						      {% for items in all_units %}
 						      <option>{{items.measure_unit}}</option>
 						     {% endfor %}

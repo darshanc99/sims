@@ -539,14 +539,14 @@ def requestproduct(request):
 				quantity=request.POST.get('quantity')
 				print(int(quantity))
 				proddetails=productlist.objects.get(product_name=product_name)
-				if(int(quantity)>int(proddetails.available_quantity) and user.verified):
+				if((int(quantity)>int(proddetails.available_quantity) or int(quantity)<=0) and user.verified):
 					context={
 					'admin':admin,
 					'non_admin':non_admin,
 					'dealing_admin':dealing_admin,
 					'all_products':all_products,
 					'verified':user.verified,
-					'messages':'Cannot demand more quantity than available',
+					'messages':'Please request for proper quantity',
 					'name':currentName,
 					'logoutStatus':False
 							}	
@@ -556,7 +556,7 @@ def requestproduct(request):
 					times=datetime.datetime.now(tz=timezone.utc)
 					datas=productlog(product_name=product_name,email=request.session['email'],quantity=quantity,timestamp=times,status='pending')
 					datas.save()
-					accounts = sessionlogs(email =request.session['email'],timestamp = times,message="Product requested " +product_name)	
+					accounts = sessionlogs(email =request.session['email'],timestamp = times,message="Product requested " +product_name+" Amount :"+quantity)	
 					accounts.save()
 					context={
 					'admin':admin,
@@ -635,6 +635,23 @@ def approveproduct(request):
 			currentName = user.first_name+" "+user.last_name
 			all_products=productlog.objects.filter(status='pending')
 			prodnew=productlist.objects.all().order_by("product_name")
+			item_quant={}
+			for data in prodnew:
+				print("sdsd")
+
+				sum=0
+				content=productlog.objects.filter(status='pending').filter(product_name=data.product_name)
+				for con in content:
+					print(con.quantity)
+					sum=sum+con.quantity
+				if sum==0:
+					continue
+				else:
+					print(sum)
+					item_quant[data.product_name]=int(sum)
+			print(item_quant)		
+
+
 			data2=productlog.objects.filter(status='approved')
 			print(all_products)
 			context={
@@ -643,7 +660,7 @@ def approveproduct(request):
 			'non_admin':non_admin,
 			'name':currentName,
 			'verified':user.verified,
-			
+			'item_quant':item_quant,
 			'all_products':all_products,
 			'data2':data2,
 			'prodnew':prodnew	
@@ -711,6 +728,23 @@ def productconfirm(request,id,quantity):
 			sizes=prod.available_quantity
 			prodnew=productlist.objects.all().order_by("product_name")
 			productlist.objects.filter(product_name=product_name).update(available_quantity=sizes-int(quantity))
+
+			item_quant={}
+			for data in prodnew:
+				print("sdsd")
+
+				sum=0
+				content=productlog.objects.filter(status='pending').filter(product_name=data.product_name)
+				for con in content:
+					print(con.quantity)
+					sum=sum+con.quantity
+				if sum==0:
+					continue
+				else:
+					print(sum)
+					item_quant[data.product_name]=int(sum)
+
+			print(item_quant)
 			print(all_products)
 			context={
 			'dealing_admin':dealing_admin,
@@ -718,6 +752,7 @@ def productconfirm(request,id,quantity):
 			'non_admin':non_admin,
 			'name':currentName,
 			'verified':user.verified,
+			'item_quant':item_quant,
 			'messages':'The product is approved',
 			'all_products':all_products,
 			'data2':data2,
@@ -830,26 +865,49 @@ def partialconfirm(request,id):
 
 				
 				quantity=str(request.GET['quant'])
-				message="Product "+product_name+" partly given to  "+email
+				if(int(quantity)<=0 or int(quantity)>=dummy.quantity):
+					message="Enter the valid quantity to approve"
+				
+				else:
+					message="Product "+product_name+ " "+ quantity+" given to  "+email
 
-			productlog.objects.filter(id=id).update(status='approved',timestamp=datetime.datetime.now(tz=timezone.utc),quantity=quantity)
+					productlog.objects.filter(id=id).update(status='approved',timestamp=datetime.datetime.now(tz=timezone.utc),quantity=quantity)
+					prod=productlist.objects.get(product_name=product_name)
+					sizes=prod.available_quantity
+					productlist.objects.filter(product_name=product_name).update(available_quantity=sizes-int(quantity))
 			
 
 			all_products=productlog.objects.filter(status='pending')
 			prodnew=productlist.objects.all().order_by("product_name")
 			data2=productlog.objects.filter(status='approved')
 
-			prod=productlist.objects.get(product_name=product_name)
-			sizes=prod.available_quantity
-			productlist.objects.filter(product_name=product_name).update(available_quantity=sizes-int(quantity))
+			item_quant={}
+			for data in prodnew:
+				print("sdsd")
+
+				sum=0
+				content=productlog.objects.filter(status='pending').filter(product_name=data.product_name)
+				for con in content:
+					print(con.quantity)
+					sum=sum+con.quantity
+				if sum==0:
+					continue
+				else:
+					print(sum)
+					item_quant[data.product_name]=int(sum)
+			print(item_quant)
+			
+			
 			print(all_products)
+
 			context={
 			'dealing_admin':dealing_admin,
 			'admin':admin,
 			'non_admin':non_admin,
 			'name':currentName,
+			'item_quant':item_quant,
 			'verified':user.verified,
-			'messages':'The product is approved',
+			'messages':message,
 			'all_products':all_products,
 			'data2':data2,
 			'prodnew':prodnew
@@ -1081,6 +1139,344 @@ def returnconfirm(request,name,id):
 		message = "You have been logged out. Please log in again!"
 		logoutStatus = True
 
+		context = {
+			'message' : message,
+			'logoutStatus' : logoutStatus
+		}
+		return render(request,'authentication/login.html',context)
+
+
+def proddb(request):
+	try:
+		if request.session['email']:
+			admin=False
+			non_admin=False
+			dealing_admin=False
+			all_products=productlist.objects.all().order_by("product_name")
+			user=useraccounts.objects.get(email=request.session['email'])
+			currentName = user.first_name+" "+user.last_name
+			if user.user_type == 'Admin':
+					admin = True
+			else:
+				context={
+					'logoutStatus' : False,
+					'admin' : admin,
+					'non_admin' : non_admin,
+					'dealing_admin':dealing_admin, 
+					'verified':user.verified,
+					'dealing_admin' : dealing_admin,
+						
+					'name' : currentName}
+				return render(request,'home/base.html',context)
+			
+			measurement=master_units.objects.all().order_by("measure_unit")
+			categories=master_category.objects.all().order_by("product_category") 
+			print("doing great")
+			context={
+					'logoutStatus' : False,
+					'admin' : admin,
+					'non_admin' : non_admin,
+					'dealing_admin':dealing_admin, 
+					'verified':user.verified,
+					'dealing_admin' : dealing_admin,
+					'categories':categories,
+					'measurement':measurement,
+					'name' : currentName}
+			print("nice")		
+			return render(request,'products/edit_unit_category.html',context)
+		else:
+			print('nothing')
+	except:
+		message = "You have been logged out. Please log in again!"
+		logoutStatus = True
+
+		context = {
+			'message' : message,
+			'logoutStatus' : logoutStatus
+		}
+		return render(request,'authentication/login.html',context)
+
+def add_measure(request):
+	try:
+		if request.session['email']:
+			admin=False
+			non_admin=False
+			dealing_admin=False
+			all_products=productlist.objects.all().order_by("product_name")
+			user=useraccounts.objects.get(email=request.session['email'])
+			currentName = user.first_name+" "+user.last_name
+			if user.user_type == 'Admin':
+					admin = True
+			else:
+				context={
+					'logoutStatus' : False,
+					'admin' : admin,
+					'non_admin' : non_admin,
+					'dealing_admin':dealing_admin, 
+					'verified':user.verified,
+					'dealing_admin' : dealing_admin,
+						
+					'name' : currentName}
+				return render(request,'home/base.html',context)
+			
+			if request.method=='POST':
+				print("fine")
+				names=request.POST.get('measure')
+				data=master_units(measure_unit=names)
+				print(names)
+				try:
+					if master_units.objects.get(measure_unit=names):
+						measurement=master_units.objects.all().order_by("measure_unit")
+						categories=master_category.objects.all().order_by("product_category")
+						context={
+					    'logoutStatus' : False,
+					    'admin' : admin,
+						'non_admin' : non_admin,
+						'message':'Measure unit exists',
+						'dealing_admin':dealing_admin, 
+						'verified':user.verified,
+						'dealing_admin' : dealing_admin,
+						'categories':categories,
+						'measurement':measurement,
+						'name' : currentName}
+						print("nice")		
+						return render(request,'products/edit_unit_category.html',context)
+				except:
+					print("also herrre")
+					data.save()
+					print("macho")
+					measurement=master_units.objects.all().order_by("measure_unit")
+					categories=master_category.objects.all().order_by("product_category")
+					context={
+					    'logoutStatus' : False,
+					    'admin' : admin,
+						'non_admin' : non_admin,
+						'message':'Measure unit exists',
+						'dealing_admin':dealing_admin, 
+						'verified':user.verified,
+						'dealing_admin' : dealing_admin,
+						'categories':categories,
+						'measurement':measurement,
+						'name' : currentName}
+					print("nice111")		
+					return render(request,'products/edit_unit_category.html',context)
+			else:
+				measurement=master_units.objects.all().order_by("measure_unit")
+				categories=master_category.objects.all().order_by("product_category")
+				context={
+					    'logoutStatus' : False,
+					    'admin' : admin,
+						'non_admin' : non_admin,
+						'message':'Measure unit exists',
+						'dealing_admin':dealing_admin, 
+						'verified':user.verified,
+						'categories':categories,
+						'dealing_admin' : dealing_admin,
+						'measurement':measurement,
+						'name' : currentName}
+				print("nice")		
+				return render(request,'products/edit_unit_category.html',context)
+
+
+	except:
+		message = "You have been logged out. Please log in again!"
+		logoutStatus = True
+		context = {
+			'message' : message,
+			'logoutStatus' : logoutStatus
+		}
+		return render(request,'authentication/login.html',context)
+
+
+def add_category(request):
+	try:
+		if request.session['email']:
+			admin=False
+			non_admin=False
+			dealing_admin=False
+			all_products=productlist.objects.all().order_by("product_name")
+			user=useraccounts.objects.get(email=request.session['email'])
+			currentName = user.first_name+" "+user.last_name
+			if user.user_type == 'Admin':
+					admin = True
+			else:
+				context={
+					'logoutStatus' : False,
+					'admin' : admin,
+					'non_admin' : non_admin,
+					'dealing_admin':dealing_admin, 
+					'verified':user.verified,
+					'dealing_admin' : dealing_admin,
+						
+					'name' : currentName}
+				return render(request,'home/base.html',context)
+			
+			if request.method=='POST':
+				print("fine")
+				names=request.POST.get('category')
+				data=master_category(product_category=names)
+				print(names)
+				try:
+					if product_category.objects.get(product_category=names):
+						measurement=master_units.objects.all().order_by("measure_unit")
+						categories=master_category.objects.all().order_by("product_category")
+
+						context={
+					    'logoutStatus' : False,
+					    'admin' : admin,
+						'non_admin' : non_admin,
+						'message':'Category Already exists',
+						'categories':categories,
+						'dealing_admin':dealing_admin, 
+						'verified':user.verified,
+						'dealing_admin' : dealing_admin,
+						'measurement':measurement,
+						'name' : currentName}
+						print("nice")		
+						return render(request,'products/edit_unit_category.html',context)
+				except:
+					print("also herrre")
+					data.save()
+					print("macho")
+					measurement=master_units.objects.all().order_by("measure_unit")
+					categories=master_category.objects.all().order_by("product_category")
+					context={
+					    'logoutStatus' : False,
+					    'admin' : admin,
+						'non_admin' : non_admin,
+						'message':'Category added successfully',
+						'categories':categories,
+						'dealing_admin':dealing_admin, 
+						'verified':user.verified,
+						'dealing_admin' : dealing_admin,
+						'measurement':measurement,
+						'name' : currentName}
+					print("nice111")		
+					return render(request,'products/edit_unit_category.html',context)
+			else:
+				measurement=master_units.objects.all().order_by("measure_unit")
+				categories=master_category.objects.all().order_by("product_category")
+				context={
+					    'logoutStatus' : False,
+					    'admin' : admin,
+						'non_admin' : non_admin,
+						
+						'categories':categories,
+						'dealing_admin':dealing_admin, 
+						'verified':user.verified,
+						'dealing_admin' : dealing_admin,
+						'measurement':measurement,
+						'name' : currentName}
+				print("nice")		
+				return render(request,'products/edit_unit_category.html',context)
+
+
+	except:
+		message = "You have been logged out. Please log in again!"
+		logoutStatus = True
+		context = {
+			'message' : message,
+			'logoutStatus' : logoutStatus
+		}
+		return render(request,'authentication/login.html',context)
+
+def del_unit(request,name):
+	try:
+		if request.session['email']:
+			admin=False
+			non_admin=False
+			dealing_admin=False
+			all_products=productlist.objects.all().order_by("product_name")
+			user=useraccounts.objects.get(email=request.session['email'])
+			currentName = user.first_name+" "+user.last_name
+			if user.user_type == 'Admin':
+					admin = True
+			else:
+				context={
+					'logoutStatus' : False,
+					'admin' : admin,
+					'non_admin' : non_admin,
+					'dealing_admin':dealing_admin, 
+					'verified':user.verified,
+					'dealing_admin' : dealing_admin,
+						
+					'name' : currentName}
+				return render(request,'home/base.html',context)
+			master_units.objects.filter(measure_unit=name).delete()
+			measurement=master_units.objects.all().order_by("measure_unit")
+			categories=master_category.objects.all().order_by("product_category")
+			context={
+					  'logoutStatus' : False,
+					   'admin' : admin,
+						'non_admin' : non_admin,
+						'message':'measure_unit deleted successfully',
+						'categories':categories,
+						'dealing_admin':dealing_admin, 
+						'verified':user.verified,
+						'dealing_admin' : dealing_admin,
+						'measurement':measurement,
+						'name' : currentName}
+			print("nice111")		
+			return render(request,'products/edit_unit_category.html',context)
+
+		else:
+			print("nothing")
+
+	except:
+		message = "You have been logged out. Please log in again!"
+		logoutStatus = True
+		context = {
+			'message' : message,
+			'logoutStatus' : logoutStatus
+		}
+		return render(request,'authentication/login.html',context)
+
+def del_category(request,name):
+	try:
+		if request.session['email']:
+			admin=False
+			non_admin=False
+			dealing_admin=False
+			all_products=productlist.objects.all().order_by("product_name")
+			user=useraccounts.objects.get(email=request.session['email'])
+			currentName = user.first_name+" "+user.last_name
+			if user.user_type == 'Admin':
+					admin = True
+			else:
+				context={
+					'logoutStatus' : False,
+					'admin' : admin,
+					'non_admin' : non_admin,
+					'dealing_admin':dealing_admin, 
+					'verified':user.verified,
+					'dealing_admin' : dealing_admin,
+						
+					'name' : currentName}
+				return render(request,'home/base.html',context)
+
+			master_category.objects.filter(product_category=name).delete()
+			measurement=master_units.objects.all().order_by("measure_unit")
+			categories=master_category.objects.all().order_by("product_category")
+			context={
+					  'logoutStatus' : False,
+					   'admin' : admin,
+						'non_admin' : non_admin,
+						'message':'Product Category deleted successfully',
+						'categories':categories,
+						'dealing_admin':dealing_admin, 
+						'verified':user.verified,
+						'dealing_admin' : dealing_admin,
+						'measurement':measurement,
+						'name' : currentName}
+			print("nice111")		
+			return render(request,'products/edit_unit_category.html',context)
+
+		else:
+			print("nothing")
+
+	except:
+		message = "You have been logged out. Please log in again!"
+		logoutStatus = True
 		context = {
 			'message' : message,
 			'logoutStatus' : logoutStatus
