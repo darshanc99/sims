@@ -1,0 +1,85 @@
+{% extends 'home/base.html' %}
+{% block content %}
+{% if message %}
+  <div class="alert alert-info" role="alert">
+    {{message}} 
+  </div>
+  {% endif %}
+{% if admin %}
+<br><br><div class="" style="padding-left: 2%;padding-right: 10%">
+	<div class="">
+		<div class="row">
+			<div class="col-md-5">
+				<form action="{% url 'add_measure' %}" method="post">
+					{% csrf_token %}
+					<div class="form-row">
+						<div class="col form-group">
+						  	<input type="text" class="form-control" maxlength="15" placeholder="Add measurement unit" name="measure"  required>
+						</div> <!-- form-group end.// -->
+						<div class="col form-group">
+						  	<button type="submit" class="btn btn-primary btn-block">Add</button>
+						</div> <!-- form-group end.// -->
+					</div> <!-- form-row end.// -->
+				</form>
+			</div>
+			<div div class="col-md-5" style="margin-left: 10%">
+					<form action="{%url 'add_category' %}" method="post">
+					{% csrf_token %}
+					<div class="form-row">
+						<div class="col form-group">
+						  	<input type="text" class="form-control" maxlength="15" placeholder="Add Product Category" name="category"  required>
+						</div> <!-- form-group end.// -->
+						<div class="col form-group">
+						  	<button type="submit" class="btn btn-primary btn-block">Add</button>
+						</div> <!-- form-group end.// -->
+					</div> <!-- form-row end.// -->
+				</form>
+		</div> <!-- row.//-->
+	</div>
+	<!--container end.//-->
+
+
+
+	<div class='col-md-10'>
+	<table class="table table-bordered"style="width: 30%; float: left;margin-top: 5%">
+	  <thead class="table-dark">
+	    <tr>
+	      <th scope="col">Measurement-Unit</th>
+				<th scope="col">Delete</th>
+	    </tr>
+	  </thead>
+	  <tbody>
+	   {%for data in measurement%}
+	      <tr>
+					<th scope="row" style="color:green">{{data.measure_unit}}</th>
+					<th scope="row"><a href="/product/del_unit/{{data.measure_unit}}"><button type="submit" class="btn btn-sm btn-danger">Remove</button></a></th>
+	      </tr>
+	    {% endfor %}
+	  </tbody>
+	</table>
+</div>
+<div class='col-md-10'>
+	<table class="table table-bordered"style="width: 30%;float: right;margin-right: 6%;margin-top: 5%">
+	  <thead class="table-dark">
+	    <tr>
+	      <th scope="col">Product-Category</th>
+				<th scope="col">Delete</th>
+	    </tr>
+	  </thead>
+	  <tbody>
+	   {%for data in categories%}
+	      <tr>
+					<th scope="row" style="color:green">{{data.product_category}}</th>
+					<th scope="row"><a href="/product/del_category/{{data.product_category}}"><button type="submit" class="btn btn-sm btn-danger">Remove</button></a></th>
+	      </tr>
+	    {% endfor %}
+	  </tbody>
+	</table>
+</div>
+
+</div>
+</div>
+
+
+	{% endif %}
+	{% endblock %}
