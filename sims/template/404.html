@@ -1,0 +1,74 @@
+<html>
+  <head>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@600;900&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/4b9ba14b0f.js" crossorigin="anonymous"></script>
+    <title>SIMS</title>
+  </head>
+  <body>
+    <div class="mainbox">
+      <div class="err">4</div>
+      <i class="far fa-question-circle fa-spin"></i>
+      <div class="err2">4</div>
+      <div class="msg"><h3>How you got here is a mystery!</h3>Maybe this page moved? Got deleted? Is hiding out in quarantine? <br>Never existed in the first place?<p>Let's go <a href="{% url 'home' %}">home</a> and try from there.</p></div>
+    </div>
+  </body>
+  <style media="screen">
+    body {
+      background-color: #002b36;
+    }
+
+    .mainbox {
+      background-color: #002b36;
+      margin: auto;
+      height: 600px;
+      width: 600px;
+      position: relative;
+    }
+
+      .err {
+        color: yellow;
+        font-family: 'Nunito Sans', sans-serif;
+        font-size: 11rem;
+        position:absolute;
+        left: 20%;
+        top: 20%;
+      }
+
+    .far {
+      position: absolute;
+      font-size: 8.5rem;
+      left: 42%;
+      top: 27%;
+      color: #ffffff;
+    }
+
+     .err2 {
+        color: yellow;
+        font-family: 'Nunito Sans', sans-serif;
+        font-size: 11rem;
+        position:absolute;
+        left: 68%;
+        top: 20%;
+      }
+
+    .msg {
+        text-align: center;
+        font-family: 'Nunito Sans', sans-serif;
+        font-size: 1.6rem;
+        position:absolute;
+        left: 16%;
+        top: 57%;
+        width: 75%;
+        color:white;
+      }
+
+    a {
+      text-decoration: none;
+      color: yellow;
+    }
+
+    a:hover {
+      text-decoration: underline overline;
+    }
+  </style>
+</html>

@@ -462,3 +462,10 @@ def newusertype(request):
 		user.save()
 		del request.session['email']
 		return redirect('login')
+
+def error(request):
+	logoutStatus = True
+	context = {
+		'logoutStatus' : logoutStatus
+	}
+	return render(request,'home/error.html',context)

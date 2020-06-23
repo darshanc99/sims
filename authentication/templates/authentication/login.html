@@ -7,6 +7,11 @@
 		{% endfor %}
 	</div>
 {% endif %}
+{% if message %}
+	<div class="alert alert-info" role="alert">
+		<b style="color:yellow">{{message}}</b><br>
+	</div>
+{% endif %}
 <div class="container">
 	<br>
 	<div class="row justify-content-center">
