@@ -309,7 +309,6 @@ def freezeuser(request,email):
 		if request.session['email']:
 			currentEmail = request.session['email']
 			user = useraccounts.objects.get(email=currentEmail)
-			print(user)
 			#If user is a verified Admin
 			if user.user_type == 'Admin':
 				try:
