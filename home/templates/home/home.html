@@ -8,9 +8,36 @@
 {% if admin %}
 <br><br>
 <div class="container">
-  <h4><b>SIMS Activity Log</b></h4>
 	{% if verified %}
-		<table class="table table-bordered">
+		<div class="col-md-6">
+			<div class="card">
+			<article class="card-body">
+				<form action="{% url 'filter' %}" method="post">
+					{% csrf_token %}
+					<div class="form-row">
+						<div class="form-group col-md-6">
+						  <label>Email</label>
+						  <input type="email" class="form-control" name="email" placeholder="Enter User Designation" required>
+						</div> <!-- form-group end.// -->
+						<div class="form-group col-md-6">
+						  <label>Filter</label>
+						  <select id="inputState" class="form-control" name="option" required>
+						  	  <option value="" disabled selected>Choose your option</option>
+									<option>Session Activities</option>
+									<option>Product Transactions</option>
+						  </select>
+						</div> <!-- form-group end.// -->
+					</div> <!-- form-row.// -->
+				    <div class="form-group">
+				        <button type="submit" class="btn btn-primary btn-block"> Apply Filters </button>
+				    </div> <!-- form-group// -->
+				</form>
+			</article> <!-- card-body end .// -->
+		</div> <!-- col.//-->
+	</div> <!-- row.//-->
+	<div class="container">
+	<h4><b>SIMS Activity Log</b></h4>
+		<table class="table table-responsive" style="max-height:500px;">
 		  <thead class="table-dark">
 		    <tr>
 		      <th scope="col">Email</th>

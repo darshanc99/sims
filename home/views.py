@@ -3,10 +3,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from authentication.models import useraccounts, master_user_types
 from logs.models import sessionlogs
+from products.models import productlog,nonconsumable_productlog
 import datetime, hashlib
 from django.utils import timezone
 from twilio.rest import Client
 from simchat.models import simmessage
+from itertools import chain
 
 #Twilio creds
 account_sid = "ACa724704a972c70089e7af50aec381049"
@@ -114,6 +116,80 @@ def home(request):
 			except:
 				#If user not logged in
 				return redirect('login')
+
+#The Filters
+def filter(request):
+	admin = False
+	non_admin = False
+	dealing_admin = False
+	try:
+		#If user logged in
+		if request.session['email']:
+			user = useraccounts.objects.get(email=request.session['email'])
+			name = user.first_name + " " + user.last_name
+			logoutStatus = False
+			#Only if the user is a verified admin
+			if user.user_type == 'Admin' and user.verified:
+				admin = True
+				#If there is a POST method
+				if request.method == 'POST':
+					email = request.POST.get('email')
+					option = request.POST.get('option')
+					try:
+						#If user with that email exists
+						if useraccounts.objects.get(email=email):
+							if option == 'Session Activities':
+								all_logs = sessionlogs.objects.filter(email=email).order_by('timestamp').reverse()
+								context = {
+									'name' : name,
+									'admin' : admin,
+									'dealing_admin' : dealing_admin,
+									'non_admin' : non_admin,
+									'verified' : True,
+									'logoutStatus' : logoutStatus,
+									'all_logs' : all_logs,
+									'useremail' : email,
+									'option' : option,
+								}
+								return render(request,'home/filter.html',context)
+							elif option == 'Product Transactions':
+								product_requests = productlog.objects.filter(email=email).order_by('timestamp').reverse()
+								print("Product_Requests",product_requests)
+								context = {
+									'name' : name,
+									'admin' : admin,
+									'dealing_admin' : dealing_admin,
+									'non_admin' : non_admin,
+									'verified' : True,
+									'logoutStatus' : logoutStatus,
+									'product_requests' : product_requests,
+									'useremail' : email,
+									'option' : option,
+								}
+								return render(request,'home/filter.html',context)
+					except:
+						#If user with that email does not exist
+						message = 'User does not exist. Please give a valid email!'
+						all_logs = sessionlogs.objects.all().order_by('timestamp').reverse()
+						context = {
+							'name' : name,
+							'admin' : admin,
+							'non_admin' : non_admin,
+							'dealing_admin' : dealing_admin,
+							'verified' : user.verified,
+							'message' : message,
+							'logoutStatus' : logoutStatus,
+							'all_logs' : all_logs
+						}
+						return render(request,'home/home.html',context)
+				else:
+					return redirect('home')
+			else:
+				#If user is either unverified or not an admin
+				return redirect('home')
+	except:
+		#If user logged loged out
+		return redirect('login')
 
 #Add New User
 def newuser(request):
@@ -273,7 +349,7 @@ def deleteuser(request,email):
 			currentEmail = request.session['email']
 			user = useraccounts.objects.get(email=currentEmail)
 			#Check if the user is a verifed Admin
-			if user.user_type == 'Admin':
+			if user.user_type == 'Admin' and user.verified:
 				try:
 					user = useraccounts.objects.get(email=email)
 					#Only if the user is unverified
@@ -310,7 +386,7 @@ def freezeuser(request,email):
 			currentEmail = request.session['email']
 			user = useraccounts.objects.get(email=currentEmail)
 			#If user is a verified Admin
-			if user.user_type == 'Admin':
+			if user.user_type == 'Admin' and user.verified:
 				try:
 					user = useraccounts.objects.get(email=email)
 					to = "+91"+str(user.phone)
@@ -343,7 +419,7 @@ def unfreezeuser(request,email):
 		if request.session['email']:
 			user = useraccounts.objects.get(email=request.session['email'])
 			#If user is a verifed Admin
-			if user.user_type == 'Admin':
+			if user.user_type == 'Admin' and user.verified:
 				try:
 					user = useraccounts.objects.get(email=email)
 					to = "+91"+str(user.phone)

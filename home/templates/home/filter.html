@@ -1,0 +1,91 @@
+{% extends 'home/base.html' %}
+{% block content %}
+{% if message %}
+	<div class="alert alert-info" role="alert">
+	  {{message}}
+	</div>
+{% endif %}
+{% if admin %}
+<br><br>
+<div class="container">
+	{% if verified %}
+		<div class="col-md-6">
+			<div class="card">
+			<article class="card-body">
+				<form action="{% url 'filter' %}" method="post">
+					{% csrf_token %}
+					<div class="form-row">
+						<div class="form-group col-md-6">
+						  <label>Email</label>
+						  <input type="email" class="form-control" name="email" placeholder="Enter User Designation" required>
+						</div> <!-- form-group end.// -->
+						<div class="form-group col-md-6">
+						  <label>Filter</label>
+						  <select id="inputState" class="form-control" name="option" required>
+						  	  <option value="" disabled selected>Choose your option</option>
+									<option>Session Activities</option>
+									<option>Product Transactions</option>
+						  </select>
+						</div> <!-- form-group end.// -->
+					</div> <!-- form-row.// -->
+				    <div class="form-group">
+				        <button type="submit" class="btn btn-primary btn-block"> Apply Filters </button>
+				    </div> <!-- form-group// -->
+				</form>
+			</article> <!-- card-body end .// -->
+		</div> <!-- col.//-->
+	</div> <!-- row.//-->
+	{% if option == 'Session Activities' %}
+		<div class="">
+	    <b>Search result for <mark>{{useremail}}</mark> - <mark>{{option}}</mark></b>
+		<h4><b>Session Logs</b></h4>
+			<table class="table table-responsive" style="max-height:400px;">
+			  <thead class="table-dark">
+			    <tr>
+			      <th scope="col">Timestamp</th>
+			      <th scope="col">Log</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			    {% for log in all_logs %}
+			      <tr>
+			        <th scope="row">{{log.timestamp}}</th>
+			        <th scope="row" style="color:red">{{log.message}}</th>
+			      </tr>
+			    {% endfor %}
+			  </tbody>
+			</table>
+			</div>
+		{% endif %}
+		{% if option == 'Product Transactions' %}
+		    <b>Search result for <mark>{{useremail}}</mark> - <mark>{{option}}</mark></b>
+			<h4><b>Product Request Status</b></h4>
+				<table class="table table-responsive" style="max-height:400px;">
+				  <thead class="table-dark">
+				    <tr>
+				      <th scope="col">Product Name</th>
+				      <th scope="col">Quantity</th>
+							<th scope="col">Timestamp</th>
+							<th scope="col">Status</th>
+				    </tr>
+				  </thead>
+				  <tbody>
+				    {% for log in product_requests %}
+				      <tr>
+				        <th scope="row">{{log.product_name}}</th>
+								<th scope="row">{{log.quantity}}</th>
+								<th scope="row">{{log.timestamp}}</th>
+				        <th scope="row" style="color:red">{{log.status}}</th>
+				      </tr>
+				    {% endfor %}
+				  </tbody>
+				</table>
+		{% endif %}
+	{% else %}
+		<div class="alert alert-danger" role="alert">
+		<h6 style="color:yellow"><b>The Account is currently being verified by the Admin.
+			In case of urgency, contact the Admin.<br><span style="color:black">Thank You for your co-operation!</span></b></h6>
+		</div>
+	{% endif %}
+{% endif %}
+{% endblock %}

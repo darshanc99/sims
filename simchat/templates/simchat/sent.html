@@ -2,13 +2,13 @@
 {% block content %}
 {% if message %}
 	<div class="alert alert-info" role="alert">
-	  {{message}} 
+	  {{message}}
 	</div>
 {% endif %}
-<br><br><br> 
+<br><br><br>
 <div class="container">
   <b><h4>SENT</h4></b><hr>
-  <table class="table table-bordered">
+  <table class="table table-responsive">
     <thead class="table-dark">
       <tr>
         <th scope="col">TO</th>
@@ -25,7 +25,7 @@
           {% if message.read %}
             <th scope="row">YES</th>
           {% else %}
-            <th scope="row" style="color:red">NO</th>           
+            <th scope="row" style="color:red">NO</th>
           {% endif %}
           <th scope="row">{{message.timestamp}}</th>
         </tr>
