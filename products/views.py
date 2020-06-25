@@ -1,7 +1,8 @@
 from django.shortcuts import render,redirect
 from .models import productlist,productlog,nonconsumable_productlog,master_units,master_category
 from authentication.models import useraccounts
-from logs.models import sessionlogs
+from logs.models import sessionlogs,product_transaction_logs
+from simchat.models import simmessage
 from django.utils import timezone
 import datetime
 import hashlib
@@ -81,7 +82,7 @@ def addproduct(request):
 						}
 					now = datetime.datetime.now(tz=timezone.utc)
 					email=request.session['email']
-					accounts = sessionlogs(email =email,timestamp = now,message="New Product added "+" ("+ product_name+ ")")	
+					accounts = product_transaction_logs(email =email,timestamp = now,message="New Product added "+" ("+ product_name+ ")")	
 					accounts.save()
 
 					return render(request,'products/addproduct.html',context)		
@@ -165,7 +166,7 @@ def addquantity(request):
 					}
 				now = datetime.datetime.now(tz=timezone.utc)
 				email=request.session['email']
-				accounts = sessionlogs(email =email,timestamp = now,message="product ("+names +")" + " quantity increased (+"+quantity+")")	
+				accounts = product_transaction_logs(email =email,timestamp = now,message="product ("+names +")" + " quantity increased (+"+quantity+")")	
 				accounts.save()				
 				return render(request,'products/addquantity.html',context)
 			else:
@@ -249,7 +250,7 @@ def removeproduct(request):
 							}
 							now = datetime.datetime.now(tz=timezone.utc)
 							email=request.session['email']
-							accounts = sessionlogs(email =email,timestamp = now,message="Product Removed ("+names+")")	
+							accounts = product_transaction_logs(email =email,timestamp = now,message="Product Removed ("+names+")")	
 							accounts.save()
 
 							return render(request,'products/removeproduct.html',context)
@@ -310,7 +311,8 @@ def viewproduct(request):
 	logoutStatus=True
 	if request.session['email']:
 		user=useraccounts.objects.get(email=request.session['email'])
-		all_products=productlist.objects.all().order_by("product_name")
+		all_products=productlist.objects.filter(product_type="consumable").order_by("product_name")
+		noncon_product=productlist.objects.filter(product_type="non-consumable").order_by("product_name")
 		currentEmail = request.session['email']
 		currentUser = useraccounts.objects.get(email=currentEmail)
 		currentName = currentUser.first_name+" "+currentUser.last_name
@@ -320,7 +322,8 @@ def viewproduct(request):
 			'non_admin':False,
 			'verified':user.verified,
 			'name':currentName,
-			'all_products':all_products
+			'all_products':all_products,
+			'noncon_product':noncon_product
 			}
 		return render(request,'products/products.html',context)
 	else:
@@ -343,7 +346,8 @@ def routeproduct(request):
 			admin=False
 			non_admin=False
 			dealing_admin=False
-			all_products=productlist.objects.all().order_by("product_name")
+			all_products=productlist.objects.filter(product_type="consumable").order_by("product_name")
+			noncon_product=productlist.objects.filter(product_type="non-consumable").order_by("product_name")
 			user=useraccounts.objects.get(email=request.session['email'])
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
@@ -397,7 +401,8 @@ def routeproduct(request):
 						print("whereeetr")
 						productlist.objects.filter(product_name=old_name).update(product_category=product_category,available_quantity=available_quantity,measure_unit=measure_unit,product_type=product_type)
 						message='Product details updated not changing name'
-						all_products=productlist.objects.all().order_by("product_name")
+						all_products=productlist.objects.filter(product_type="consumable").order_by("product_name")
+						noncon_product=productlist.objects.filter(product_type="non-consumable").order_by("product_name")
 						
 						context={
 							'admin':admin,
@@ -406,11 +411,12 @@ def routeproduct(request):
 							'message':message,
 							'verified':user.verified,
 							'name':currentName,
-							'all_products':all_products
+							'all_products':all_products,
+							'noncon_product':noncon_product
 							}
 						now = datetime.datetime.now(tz=timezone.utc)
 						email=request.session['email']
-						accounts = sessionlogs(email =email,timestamp = now,message="Product details Updated "+old_name)	
+						accounts = product_transaction_logs(email =email,timestamp = now,message="Product details Updated "+old_name)	
 						accounts.save()
 							
 						return render(request,'products/products.html',context)
@@ -419,7 +425,8 @@ def routeproduct(request):
 						productlist.objects.filter(product_name=old_name).update(product_name=product_name,product_category=product_category,available_quantity=available_quantity,measure_unit=measure_unit,product_type=product_type)
 						message='Product details updated with changing name'
 						
-						all_products=productlist.objects.all().order_by("product_name")
+						all_products=productlist.objects.filter(product_type="consumable").order_by("product_name")
+						noncon_product=productlist.objects.filter(product_type="non-consumable").order_by("product_name")
 						
 						context={
 							'admin':admin,
@@ -428,12 +435,13 @@ def routeproduct(request):
 							'message':message,
 							'verified':user.verified,
 							'name':currentName,
+							'noncon_product':noncon_product,
 							'all_products':all_products
 							}
 						now = datetime.datetime.now(tz=timezone.utc)
 						email=request.session['email']
 						
-						accounts = sessionlogs(email =email,timestamp = now,message="Product details/name changed from "+old_name +" to "+product_name)	
+						accounts = product_transaction_logs(email =email,timestamp = now,message="Product details/name changed from "+old_name +" to "+product_name)	
 						accounts.save()	
 						print("even here")
 					return render(request,'products/products.html',context)
@@ -442,6 +450,8 @@ def routeproduct(request):
 				
 	except:
 		message="not working"
+		all_products=productlist.objects.filter(product_type="consumable").order_by("product_name")
+		noncon_product=productlist.objects.filter(product_type="non-consumable").order_by("product_name")
 		context={
 					'admin':admin,
 					'dealing_admin':dealing_admin,
@@ -449,7 +459,8 @@ def routeproduct(request):
 					'message':message,
 					'verified':user.verified,
 					'name':currentName,
-					'all_products':all_products
+					'all_products':all_products,
+					'noncon_product':noncon_product
 				}
 		now = datetime.datetime.now(tz=timezone.utc)
 		email=request.session['email']
@@ -556,7 +567,7 @@ def requestproduct(request):
 					times=datetime.datetime.now(tz=timezone.utc)
 					datas=productlog(product_name=product_name,email=request.session['email'],quantity=quantity,timestamp=times,status='pending')
 					datas.save()
-					accounts = sessionlogs(email =request.session['email'],timestamp = times,message="Product requested " +product_name+" Amount :"+quantity)	
+					accounts = product_transaction_logs(email =request.session['email'],timestamp = times,message="Product requested " +product_name+" Amount :"+quantity)	
 					accounts.save()
 					context={
 					'admin':admin,
@@ -761,7 +772,7 @@ def productconfirm(request,id,quantity):
 			}
 			now = datetime.datetime.now(tz=timezone.utc)
 			emails=request.session['email']
-			accounts = sessionlogs(email =emails,timestamp = now,message=message)	
+			accounts = product_transaction_logs(email =emails,timestamp = now,message=message)	
 			accounts.save()
 					
 			print('now')
@@ -915,7 +926,7 @@ def partialconfirm(request,id):
 			}
 			now = datetime.datetime.now(tz=timezone.utc)
 			emails=request.session['email']
-			accounts = sessionlogs(email =emails,timestamp = now,message=message)	
+			accounts = product_transaction_logs(email =emails,timestamp = now,message=message)	
 			accounts.save()
 					
 			print('now')
@@ -1026,7 +1037,7 @@ def canceltransaction(request,id):
 			}
 			now = datetime.datetime.now(tz=timezone.utc)
 			emails=request.session['email']
-			accounts = sessionlogs(email =emails,timestamp = now,message="cancelled transaction for " + names)	
+			accounts = product_transaction_logs(email =emails,timestamp = now,message="cancelled transaction for " + names)	
 			accounts.save()
 					
 			print('now')
@@ -1119,7 +1130,7 @@ def returnconfirm(request,name,id):
 			print("returned")
 			now = datetime.datetime.now(tz=timezone.utc)
 			emails=request.session['email']
-			accounts = sessionlogs(email =emails,timestamp = now,message="Product " + name+" returned by "+request.session['email'])	
+			accounts = product_transaction_logs(email =emails,timestamp = now,message="Product " + name+" returned by "+request.session['email'])	
 			accounts.save()
 			context={
 			'admin':admin,
@@ -1482,3 +1493,82 @@ def del_category(request,name):
 			'logoutStatus' : logoutStatus
 		}
 		return render(request,'authentication/login.html',context)
+
+def pd_logs(request):
+	admin = False
+	non_admin = False
+	dealing_admin = False
+	logoutStatus = True
+	try:
+		if request.session['email']:
+			email = request.session['email']
+			user = useraccounts.objects.get(email=email)
+
+			name=user.first_name + " " + user.last_name
+			logoutStatus = False
+
+			all_msg = simmessage.objects.all()
+			msg_count = 0
+			for msgs in all_msg:
+				if msgs.receiver == request.session['email'] and msgs.read == False:
+							msg_count+=1
+
+			if user.user_type == 'Admin':
+				admin = True
+				all_logs = product_transaction_logs.objects.all().order_by('timestamp').reverse()
+				verified = user.verified
+				print("fdhfdh")
+				context = {
+							'name' : name,
+							'admin' : admin,
+							'non_admin' : non_admin,
+							'dealing_admin' : dealing_admin,
+							'logoutStatus' : logoutStatus,
+							'all_logs' : all_logs,
+							'msg_count' : msg_count,
+							'verified' : verified
+				}
+				print("heredamn")
+				return render(request,'products/pd_logs.html',context)
+			elif user.user_type == 'Non-Admin':
+				non_admin = True
+				verified = user.verified
+				all_logs = product_transaction_logs.objects.all().order_by('timestamp').reverse()
+				my_logs = []
+				for log in all_logs:
+					if log.email == request.session['email']:
+								my_logs.append(log)
+				context = {
+							'name' : name,
+							'admin' : admin,
+							'non_admin' : non_admin,
+							'dealing_admin' : dealing_admin,
+							'verified' : verified,
+							'logoutStatus' : logoutStatus,
+							'all_logs' : my_logs,
+							'msg_count' : msg_count
+				}
+				return render(request,'products/pd_logs.html',context)
+			elif user.user_type == 'Dealing-Admin':
+				dealing_admin = True
+				verified = user.verified
+				all_logs = product_transaction_logs.objects.all().order_by('timestamp').reverse()
+				my_logs = []
+				for log in all_logs:
+					if log.email == request.session['email']:
+						my_logs.append(log)
+				context = {
+							'name' : name,
+							'admin' : admin,
+							'non_admin' : non_admin,
+							'dealing_admin' : dealing_admin,
+							'logoutStatus' : logoutStatus,
+							'all_logs' : my_logs,
+							'msg_count' : msg_count,
+							'verified' : verified
+				}
+				return render(request,'products/pd_logs.html',context)
+	except:
+				#If user not logged in
+		print("herere")		
+		return redirect('login')

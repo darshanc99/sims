@@ -21,7 +21,7 @@
 						<div class="col form-group">
 						  <label>PRODUCT LIST</label>
 						  <select id="inputState" class="form-control" name="product_list" placeholder="select product" required="">
-						  	<option disabled selected>Select Products</option>
+						  	<option disabled selected value="">Select Products</option>
                               {% for data in all_products %}
 						      <option>{{data.product_name}}</option>
                                {% endfor %}

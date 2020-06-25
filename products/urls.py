@@ -24,5 +24,6 @@ urlpatterns = [
     path('add_measure/',views.add_measure,name='add_measure'),
     path('add_category/',views.add_category,name='add_category'),
     path(r'del_unit/<str:name>',views.del_unit,name='del_unit'),
-    path(r'del_category/<str:name>',views.del_category,name='del_category')
+    path(r'del_category/<str:name>',views.del_category,name='del_category'),
+    path(r'pd_logs/',views.pd_logs,name='pd_logs')
 ]

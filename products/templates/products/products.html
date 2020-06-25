@@ -5,39 +5,58 @@
     {{message}} 
   </div>
   {% endif %}
-  <div class="container">
- <div class="row" style="padding-top: 20px;">
-    
-  {%for data in all_products %}
-          <div class="col-md-3" style="margin-right: 15px;">
+  
+ <div class="row" style="margin-left: 15%;margin-top:3%" >
+     <h4 style="margin-bottom: 2%"><b>CONSUMABLE PRODUCTS </b></h4>
+  
 
-            
-            <div class="card card-primary card-outline">
-              <div class="card-body box-profile">
-                <h3 class="profile-username text-center" style="color:brown"><b>{{data.product_name}}</b></h3>
-                
+    <table class="table table-responsive" style="max-height:500px ;max-width: 80%;margin-bottom: 7%">
+      <thead class="table-dark">
+        <tr>
+          <th scope="col">PRODUCT NAME</th>
+          <th scope="col">PRODUCT TYPE</th>
+          <th scope="col">AVAILABLE QUANTITY</th>
+          <th scope="col">PRODUCT CATEGORY</th>
+          <th scope="col">EDIT DETAILS</th>
+        </tr>
+      </thead>
+      <tbody>
+       {%for data in all_products %}
+          <tr>
+            <th scope="row"><h5><b>{{data.product_name}}</h5></b></th>
+            <th scope="row"><h5><b>{{data.product_type}}</h5></b></th>
+            <th scope="row" style="color:red"><h5><b>{{data.available_quantity}}</b></h5></th>
+            <th scope="row"><h5><b>{{data.product_category}}</b></h5></th>
+            <th scope="row"> <a href="/product/edprod/{{data.product_name}}" class="btn btn-link btn-block" ><i class="fa fa-edit" style="margin-right: 10px"></i><b>Edit</b></a></th>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+           <h4 style="margin-bottom: 2%"><b>NON-CONSUMABLE PRODUCTS </b></h4>
+  
 
-                <ul class="list-group list-group-unbordered mb-3">
-                  <li class="list-group-item">
-                    <b>Type</b> <a class="float-right">{{data.product_type}}</a>
-                  </li>
-                  <li class="list-group-item">
-                    <b>Quantity</b> <a class="float-right">{{data.available_quantity}}</a>
-                  </li>
-                  <li class="list-group-item">
-                    <b>Product Category</b> <a class="float-right">{{data.product_category}}</a>
-                  </li>
-                  <li class="list-group-item">
-                    <b>Measurement unit</b> <a class="float-right">{{data.measure_unit}}</a>
-                  </li>
-                </ul>
-
-                <a href="/product/edprod/{{data.product_name}}" class="btn btn-link btn-block" ><b>Edit details</b></a>
-              </div>
-              <!-- /.card-body -->
-            </div>
-          </div>
-          {% endfor %}    
-        </div>
+    <table class="table table-responsive" style="max-height:500px ;max-width: 80%">
+      <thead class="table-dark">
+        <tr>
+          <th scope="col">PRODUCT NAME</th>
+          <th scope="col">PRODUCT TYPE</th>
+          <th scope="col">AVAILABLE QUANTITY</th>
+          <th scope="col">PRODUCT CATEGORY</th>
+          <th scope="col">EDIT DETAILS</th>
+        </tr>
+      </thead>
+      <tbody>
+       {%for data in noncon_product %}
+          <tr>
+            <th scope="row"><h5><b>{{data.product_name}}</h5></b></th>
+            <th scope="row"><h5><b>{{data.product_type}}</h5></b></th>
+            <th scope="row" style="color:red"><h5><b>{{data.available_quantity}}</b></h5></th>
+            <th scope="row"><h5><b>{{data.product_category}}</b></h5></th>
+            <th scope="row"> <a href="/product/edprod/{{data.product_name}}" class="btn btn-link btn-block" ><i class="fa fa-edit" style="margin-right: 10px"></i><b>Edit</b></a></th>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+             
       </div>
         {% endblock %}

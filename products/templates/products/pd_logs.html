@@ -1,0 +1,103 @@
+{% extends 'home/base.html' %}
+{% block content %}
+{% if message %}
+	<div class="alert alert-info" role="alert">
+	  {{message}}
+	</div>
+{% endif %}
+{% if admin %}
+<br><br>
+<div class="container">
+	{% if verified %}
+		
+	
+	<h4><b>SIMS PRODUCT TRANSACTIONS LOG</b></h4>
+		<table class="table table-responsive" style="max-height:500px;">
+		  <thead class="table-dark">
+		    <tr>
+		      <th scope="col">Email</th>
+		      <th scope="col">Timestamp</th>
+		      <th scope="col">Log</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+		    {% for log in all_logs %}
+		      <tr>
+		        <th scope="row"><a href="mailto: {{log.email}}">{{log.email}}</a></th>
+		        <th scope="row">{{log.timestamp}}</th>
+		        <th scope="row" style="color:red">{{log.message}}</th>
+		      </tr>
+		    {% endfor %}
+		  </tbody>
+		</table>
+		</div>
+	{% else %}
+		<div class="alert alert-danger" role="alert">
+		<h6 style="color:yellow"><b>The Account is currently being verified by the Admin.
+			In case of urgency, contact the Admin.<br><span style="color:black">Thank You for your co-operation!</span></b></h6>
+		</div>
+	{% endif %}
+{% endif %}
+{% if non_admin %}
+	<div class="container">
+		{% if verified %}
+      <br><br><div class="container">
+        <h4><b>SIMS Activity Log</b></h4>
+      <table class="table table-bordered">
+        <thead class="table-dark">
+          <tr>
+            <th scope="col">Email</th>
+            <th scope="col">Timestamp</th>
+            <th scope="col">Log</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in all_logs %}
+            <tr>
+              <th scope="row"><a href="mailto: {{log.email}}">{{log.email}}</a></th>
+              <th scope="row">{{log.timestamp}}</th>
+              <th scope="row" style="color:red">{{log.message}}</th>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      </div>
+		{% else %}
+			<div class="alert alert-danger" role="alert">
+			<h6 style="color:yellow"><b>The Account is currently being verified by the Admin.
+				In case of urgency, contact the Admin.<br><span style="color:black">Thank You for your co-operation!</span></b></h6>
+			</div>
+		{% endif %}
+	</div>
+{% endif %}
+{% if dealing_admin %}
+  <br><br><div class="container">
+    <h4><b>SIMS Activity Log</b></h4>
+	{% if verified %}
+	  <table class="table table-bordered">
+	    <thead class="table-dark">
+	      <tr>
+	        <th scope="col">Email</th>
+	        <th scope="col">Timestamp</th>
+	        <th scope="col">Log</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	      {% for log in all_logs %}
+	        <tr>
+	          <th scope="row"><a href="mailto: {{log.email}}">{{log.email}}</a></th>
+	          <th scope="row">{{log.timestamp}}</th>
+	          <th scope="row" style="color:red">{{log.message}}</th>
+	        </tr>
+	      {% endfor %}
+	    </tbody>
+	  </table>
+	{% else %}
+		<div class="alert alert-danger" role="alert">
+		<h6 style="color:yellow"><b>The Account is currently being verified by the Admin.
+			In case of urgency, contact the Admin.<br><span style="color:black">Thank You for your co-operation!</span></b></h6>
+		</div>
+	{% endif %}
+  </div>
+{% endif %}
+{% endblock %}
