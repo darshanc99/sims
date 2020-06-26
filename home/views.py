@@ -2,7 +2,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from authentication.models import useraccounts, master_user_types
-from logs.models import sessionlogs
+from logs.models import sessionlogs, product_transaction_logs
 from products.models import productlog,nonconsumable_productlog
 import datetime, hashlib
 from django.utils import timezone
@@ -63,6 +63,8 @@ def home(request):
 					if user.user_type == 'Admin':
 						admin = True
 						all_logs = sessionlogs.objects.all().order_by('timestamp').reverse()
+						product_requests = productlog.objects.all().order_by('timestamp').reverse()
+						product_logs = product_transaction_logs.objects.all().order_by('timestamp').reverse()
 						verified = user.verified
 						context = {
 							'name' : name,
@@ -71,6 +73,8 @@ def home(request):
 							'dealing_admin' : dealing_admin,
 							'logoutStatus' : logoutStatus,
 							'all_logs' : all_logs,
+							'product_requests' : product_requests,
+							'product_logs' : product_logs,
 							'msg_count' : msg_count,
 							'verified' : verified
 						}
@@ -78,11 +82,9 @@ def home(request):
 					elif user.user_type == 'Non-Admin':
 						non_admin = True
 						verified = user.verified
-						all_logs = sessionlogs.objects.all().order_by('timestamp').reverse()
-						my_logs = []
-						for log in all_logs:
-							if log.email == request.session['email']:
-								my_logs.append(log)
+						all_logs = sessionlogs.objects.filter(email=user.email).order_by('timestamp').reverse()
+						product_requests = productlog.objects.filter(email=user.email).order_by('timestamp').reverse()
+						product_logs = product_transaction_logs.objects.filter(email=user.email).order_by('timestamp').reverse()
 						context = {
 							'name' : name,
 							'admin' : admin,
@@ -90,25 +92,27 @@ def home(request):
 							'dealing_admin' : dealing_admin,
 							'verified' : verified,
 							'logoutStatus' : logoutStatus,
-							'all_logs' : my_logs,
+							'all_logs' : all_logs,
+							'product_requests' : product_requests,
+							'product_logs' : product_logs,
 							'msg_count' : msg_count
 						}
 						return render(request,'home/home.html',context)
 					elif user.user_type == 'Dealing-Admin':
 						dealing_admin = True
 						verified = user.verified
-						all_logs = sessionlogs.objects.all().order_by('timestamp').reverse()
-						my_logs = []
-						for log in all_logs:
-							if log.email == request.session['email']:
-								my_logs.append(log)
+						all_logs = sessionlogs.objects.filter(email=user.email).order_by('timestamp').reverse()
+						product_requests = productlog.objects.filter(email=user.email).order_by('timestamp').reverse()
+						product_logs = product_transaction_logs.objects.filter(email=user.email).order_by('timestamp').reverse()
 						context = {
 							'name' : name,
 							'admin' : admin,
 							'non_admin' : non_admin,
 							'dealing_admin' : dealing_admin,
 							'logoutStatus' : logoutStatus,
-							'all_logs' : my_logs,
+							'all_logs' : all_logs,
+							'product_requests' : product_requests,
+							'product_logs' : product_logs,
 							'msg_count' : msg_count,
 							'verified' : verified
 						}
@@ -154,7 +158,7 @@ def filter(request):
 								return render(request,'home/filter.html',context)
 							elif option == 'Product Transactions':
 								product_requests = productlog.objects.filter(email=email).order_by('timestamp').reverse()
-								print("Product_Requests",product_requests)
+								product_logs = product_transaction_logs.objects.filter(email=email).order_by('timestamp').reverse()
 								context = {
 									'name' : name,
 									'admin' : admin,
@@ -163,6 +167,7 @@ def filter(request):
 									'verified' : True,
 									'logoutStatus' : logoutStatus,
 									'product_requests' : product_requests,
+									'product_logs' : product_logs,
 									'useremail' : email,
 									'option' : option,
 								}
@@ -171,6 +176,8 @@ def filter(request):
 						#If user with that email does not exist
 						message = 'User does not exist. Please give a valid email!'
 						all_logs = sessionlogs.objects.all().order_by('timestamp').reverse()
+						product_requests = productlog.objects.all().order_by('timestamp').reverse()
+						product_logs = product_transaction_logs.objects.all().order_by('timestamp').reverse()
 						context = {
 							'name' : name,
 							'admin' : admin,
@@ -179,7 +186,9 @@ def filter(request):
 							'verified' : user.verified,
 							'message' : message,
 							'logoutStatus' : logoutStatus,
-							'all_logs' : all_logs
+							'all_logs' : all_logs,
+							'product_requests' : product_requests,
+							'product_logs' : product_logs,
 						}
 						return render(request,'home/home.html',context)
 				else:

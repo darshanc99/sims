@@ -59,8 +59,8 @@
 		{% endif %}
 		{% if option == 'Product Transactions' %}
 		    <b>Search result for <mark>{{useremail}}</mark> - <mark>{{option}}</mark></b>
-			<h4><b>Product Request Status</b></h4>
-				<table class="table table-responsive" style="max-height:400px;">
+			<h4><b>Self Product Requests</b></h4>
+				<table class="table table-responsive" style="max-height:200px;">
 				  <thead class="table-dark">
 				    <tr>
 				      <th scope="col">Product Name</th>
@@ -80,6 +80,23 @@
 				    {% endfor %}
 				  </tbody>
 				</table>
+				<h4><b>Product Transaction Logs</b></h4>
+					<table class="table table-responsive" style="max-height:200px;">
+					  <thead class="table-dark">
+					    <tr>
+								<th scope="col">Timestamp</th>
+								<th scope="col">Status</th>
+					    </tr>
+					  </thead>
+					  <tbody>
+					    {% for log in product_logs %}
+					      <tr>
+									<th scope="row">{{log.timestamp}}</th>
+					        <th scope="row" style="color:red">{{log.message}}</th>
+					      </tr>
+					    {% endfor %}
+					  </tbody>
+					</table>
 		{% endif %}
 	{% else %}
 		<div class="alert alert-danger" role="alert">

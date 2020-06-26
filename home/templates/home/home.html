@@ -36,8 +36,8 @@
 		</div> <!-- col.//-->
 	</div> <!-- row.//-->
 	<div class="container">
-	<h4><b>SIMS Activity Log</b></h4>
-		<table class="table table-responsive" style="max-height:500px;">
+	<h4><b>Session Logs</b></h4>
+		<table class="table table-responsive" style="max-height:200px;">
 		  <thead class="table-dark">
 		    <tr>
 		      <th scope="col">Email</th>
@@ -55,6 +55,48 @@
 		    {% endfor %}
 		  </tbody>
 		</table>
+		<h4><b>Request Logs</b></h4>
+			<table class="table table-responsive" style="max-height:200px;">
+			  <thead class="table-dark">
+			    <tr>
+			      <th scope="col">Email</th>
+			      <th scope="col">Product Name</th>
+			      <th scope="col">Quantity</th>
+						<th scope="col">Timestamp</th>
+						<th scope="col">Status</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			    {% for log in product_requests %}
+			      <tr>
+			        <th scope="row"><a href="mailto: {{log.email}}">{{log.email}}</a></th>
+			        <th scope="row">{{log.product_name}}</th>
+							<th scope="row">{{log.quantity}}</th>
+							<th scope="row">{{log.timestamp}}</th>
+			        <th scope="row" style="color:red">{{log.status}}</th>
+			      </tr>
+			    {% endfor %}
+			  </tbody>
+			</table>
+			<h4><b>Product Logs</b></h4>
+				<table class="table table-responsive" style="max-height:200px;">
+				  <thead class="table-dark">
+				    <tr>
+				      <th scope="col">Email</th>
+				      <th scope="col">Timestamp</th>
+				      <th scope="col">Log</th>
+				    </tr>
+				  </thead>
+				  <tbody>
+				    {% for log in product_logs %}
+				      <tr>
+				        <th scope="row"><a href="mailto: {{log.email}}">{{log.email}}</a></th>
+				        <th scope="row">{{log.timestamp}}</th>
+				        <th scope="row" style="color:red">{{log.message}}</th>
+				      </tr>
+				    {% endfor %}
+				  </tbody>
+				</table>
 		</div>
 	{% else %}
 		<div class="alert alert-danger" role="alert">
@@ -64,29 +106,71 @@
 	{% endif %}
 {% endif %}
 {% if non_admin %}
-	<div class="container">
+	<br><br>
 		{% if verified %}
-      <br><br><div class="container">
-        <h4><b>SIMS Activity Log</b></h4>
-      <table class="table table-bordered">
-        <thead class="table-dark">
-          <tr>
-            <th scope="col">Email</th>
-            <th scope="col">Timestamp</th>
-            <th scope="col">Log</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for log in all_logs %}
-            <tr>
-              <th scope="row"><a href="mailto: {{log.email}}">{{log.email}}</a></th>
-              <th scope="row">{{log.timestamp}}</th>
-              <th scope="row" style="color:red">{{log.message}}</th>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      </div>
+		<div class="container">
+		<h4><b>Session Logs</b></h4>
+			<table class="table table-responsive" style="max-height:200px;">
+			  <thead class="table-dark">
+			    <tr>
+			      <th scope="col">Email</th>
+			      <th scope="col">Timestamp</th>
+			      <th scope="col">Log</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			    {% for log in all_logs %}
+			      <tr>
+			        <th scope="row"><a href="mailto: {{log.email}}">{{log.email}}</a></th>
+			        <th scope="row">{{log.timestamp}}</th>
+			        <th scope="row" style="color:red">{{log.message}}</th>
+			      </tr>
+			    {% endfor %}
+			  </tbody>
+			</table>
+			<h4><b>Self Product Requests</b></h4>
+				<table class="table table-responsive" style="max-height:200px;">
+				  <thead class="table-dark">
+				    <tr>
+				      <th scope="col">Email</th>
+				      <th scope="col">Product Name</th>
+				      <th scope="col">Quantity</th>
+							<th scope="col">Timestamp</th>
+							<th scope="col">Status</th>
+				    </tr>
+				  </thead>
+				  <tbody>
+				    {% for log in product_requests %}
+				      <tr>
+				        <th scope="row"><a href="mailto: {{log.email}}">{{log.email}}</a></th>
+				        <th scope="row">{{log.product_name}}</th>
+								<th scope="row">{{log.quantity}}</th>
+								<th scope="row">{{log.timestamp}}</th>
+				        <th scope="row" style="color:red">{{log.status}}</th>
+				      </tr>
+				    {% endfor %}
+				  </tbody>
+				</table>
+				<h4><b>Product Logs</b></h4>
+					<table class="table table-responsive" style="max-height:200px;">
+					  <thead class="table-dark">
+					    <tr>
+					      <th scope="col">Email</th>
+					      <th scope="col">Timestamp</th>
+					      <th scope="col">Log</th>
+					    </tr>
+					  </thead>
+					  <tbody>
+					    {% for log in product_logs %}
+					      <tr>
+					        <th scope="row"><a href="mailto: {{log.email}}">{{log.email}}</a></th>
+					        <th scope="row">{{log.timestamp}}</th>
+					        <th scope="row" style="color:red">{{log.message}}</th>
+					      </tr>
+					    {% endfor %}
+					  </tbody>
+					</table>
+			</div>
 		{% else %}
 			<div class="alert alert-danger" role="alert">
 			<h6 style="color:yellow"><b>The Account is currently being verified by the Admin.
@@ -96,27 +180,71 @@
 	</div>
 {% endif %}
 {% if dealing_admin %}
-  <br><br><div class="container">
-    <h4><b>SIMS Activity Log</b></h4>
+  <br><br>
 	{% if verified %}
-	  <table class="table table-bordered">
-	    <thead class="table-dark">
-	      <tr>
-	        <th scope="col">Email</th>
-	        <th scope="col">Timestamp</th>
-	        <th scope="col">Log</th>
-	      </tr>
-	    </thead>
-	    <tbody>
-	      {% for log in all_logs %}
-	        <tr>
-	          <th scope="row"><a href="mailto: {{log.email}}">{{log.email}}</a></th>
-	          <th scope="row">{{log.timestamp}}</th>
-	          <th scope="row" style="color:red">{{log.message}}</th>
-	        </tr>
-	      {% endfor %}
-	    </tbody>
-	  </table>
+	<div class="container">
+	<h4><b>Session Logs</b></h4>
+		<table class="table table-responsive" style="max-height:200px;">
+		  <thead class="table-dark">
+		    <tr>
+		      <th scope="col">Email</th>
+		      <th scope="col">Timestamp</th>
+		      <th scope="col">Log</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+		    {% for log in all_logs %}
+		      <tr>
+		        <th scope="row"><a href="mailto: {{log.email}}">{{log.email}}</a></th>
+		        <th scope="row">{{log.timestamp}}</th>
+		        <th scope="row" style="color:red">{{log.message}}</th>
+		      </tr>
+		    {% endfor %}
+		  </tbody>
+		</table>
+		<h4><b>Self Product Requests</b></h4>
+			<table class="table table-responsive" style="max-height:200px;">
+			  <thead class="table-dark">
+			    <tr>
+			      <th scope="col">Email</th>
+			      <th scope="col">Product Name</th>
+			      <th scope="col">Quantity</th>
+						<th scope="col">Timestamp</th>
+						<th scope="col">Status</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			    {% for log in product_requests %}
+			      <tr>
+			        <th scope="row"><a href="mailto: {{log.email}}">{{log.email}}</a></th>
+			        <th scope="row">{{log.product_name}}</th>
+							<th scope="row">{{log.quantity}}</th>
+							<th scope="row">{{log.timestamp}}</th>
+			        <th scope="row" style="color:red">{{log.status}}</th>
+			      </tr>
+			    {% endfor %}
+			  </tbody>
+			</table>
+			<h4><b>Product Logs</b></h4>
+				<table class="table table-responsive" style="max-height:200px;">
+				  <thead class="table-dark">
+				    <tr>
+				      <th scope="col">Email</th>
+				      <th scope="col">Timestamp</th>
+				      <th scope="col">Log</th>
+				    </tr>
+				  </thead>
+				  <tbody>
+				    {% for log in product_logs %}
+				      <tr>
+				        <th scope="row"><a href="mailto: {{log.email}}">{{log.email}}</a></th>
+				        <th scope="row">{{log.timestamp}}</th>
+				        <th scope="row" style="color:red">{{log.message}}</th>
+				      </tr>
+				    {% endfor %}
+				  </tbody>
+				</table>
+		</div>
 	{% else %}
 		<div class="alert alert-danger" role="alert">
 		<h6 style="color:yellow"><b>The Account is currently being verified by the Admin.
