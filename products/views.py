@@ -15,6 +15,8 @@ def addproduct(request):
 			non_admin=False
 			dealing_admin=False
 			all_products=productlist.objects.all().order_by("product_name")
+			all_units=master_units.objects.all()
+			all_category=master_category.objects.all()
 			user=useraccounts.objects.get(email=request.session['email'])
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
@@ -58,6 +60,9 @@ def addproduct(request):
 							'dealing_admin':dealing_admin,
 							'non_admin':non_admin,
 							'message' : messages,
+							'all_category':all_category,
+							'all_products':all_products,
+							'all_units':all_units,
 							'verified':user.verified,
 							'name' : currentName
 							}
@@ -77,6 +82,9 @@ def addproduct(request):
 						'non_admin':False,
 						'all_products':all_products,
 						'verified':user.verified,
+						'all_category':all_category,
+						'all_products':all_products,
+						'all_units':all_units,
 						'message' : messages,
 						'name' : currentName
 						}
@@ -202,6 +210,16 @@ def removeproduct(request):
 			non_admin=False
 			dealing_admin=False
 			all_products=productlist.objects.all().order_by("product_name")
+			del_list=[]
+			for data in all_products:
+				content=productlog.objects.filter(product_name=data.product_name)
+				if content:
+					continue
+				else:
+					del_list.append(data.product_name)
+
+
+
 			user=useraccounts.objects.get(email=request.session['email'])
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
@@ -246,6 +264,7 @@ def removeproduct(request):
 							'messages':messages,
 							'name':currentName,
 							'all_products':all_products,
+							'del_list':del_list,
 							'verified':user.verified
 							}
 							now = datetime.datetime.now(tz=timezone.utc)
@@ -266,7 +285,8 @@ def removeproduct(request):
 							'messages':messages,
 							'name':currentName,
 							'verified':user.verified,
-							'all_products':all_products
+							'all_products':all_products,
+							'del_list':del_list
 							}
 							return render(request,'products/removeproduct.html',context)
 				else:
@@ -278,7 +298,8 @@ def removeproduct(request):
 						'non_admin':non_admin,
 						'verified':user.verified,	
 						'name':currentName,
-						'all_products':all_products
+						'all_products':all_products,
+						'del_list':del_list
 						}
 					
 					return render(request,'products/removeproduct.html',context)
@@ -292,7 +313,8 @@ def removeproduct(request):
 						'non_admin':non_admin,	
 						'name':currentName,
 						'verified':user.verified,
-						'all_products':all_products
+						'all_products':all_products,
+						'del_list':del_list
 						}
 				
 				return render(request,'products/removeproduct.html',context)
@@ -416,7 +438,7 @@ def routeproduct(request):
 							}
 						now = datetime.datetime.now(tz=timezone.utc)
 						email=request.session['email']
-						accounts = product_transaction_logs(email =email,timestamp = now,message="Product details Updated "+old_name)	
+						accounts = product_transaction_logs(email =email,timestamp = now,message="Product details Updated For"+old_name)	
 						accounts.save()
 							
 						return render(request,'products/products.html',context)
@@ -565,7 +587,7 @@ def requestproduct(request):
 				else:
 					print("hersidmssdmind")
 					times=datetime.datetime.now(tz=timezone.utc)
-					datas=productlog(product_name=product_name,email=request.session['email'],quantity=quantity,timestamp=times,status='pending')
+					datas=productlog(product_name=product_name,email=request.session['email'],quantity=quantity,timestamp=times,status='pending',approved_quantity=-1)
 					datas.save()
 					accounts = product_transaction_logs(email =request.session['email'],timestamp = times,message="Product requested " +product_name+" Amount :"+quantity)	
 					accounts.save()
@@ -723,13 +745,13 @@ def productconfirm(request,id,quantity):
 
 			email=dummy.email
 			if(proddata.product_type=='non-consumable'):
-				adding=nonconsumable_productlog(product_name=dummy.product_name,issued_to=email,issued_by=request.session['email'],units=quantity,issue_date=datetime.datetime.now(tz=timezone.utc),return_status='false')
+				adding=nonconsumable_productlog(product_name=dummy.product_name,issued_to=email,issued_by=request.session['email'],units=quantity,issue_date=datetime.datetime.now(tz=timezone.utc),return_status='false',requested_quantity=dummy.quantity)
 				adding.save()
 				print("added successfully")
-			message="Product "+product_name+" approved to  "+email
+			message="Product "+product_name+" "+ "with quantity" +"("+quantiy+")"+ " Completely approved to  "+email
 			
 
-			productlog.objects.filter(id=id).update(status='approved',timestamp=datetime.datetime.now(tz=timezone.utc),quantity=quantity)
+			productlog.objects.filter(id=id).update(status='approved',timestamp=datetime.datetime.now(tz=timezone.utc),approved_quantity=quantity)
 			print("ollaa")
 
 			all_products=productlog.objects.filter(status='pending')
@@ -870,7 +892,9 @@ def partialconfirm(request,id):
 
 			print(dummy)
 			product_name=dummy.product_name
+			prod_data=productlist.objects.get(product_name=dummy.product_name)
 			email=dummy.email
+			print(prod_data)
 			
 			if request.method=='GET':
 
@@ -880,9 +904,16 @@ def partialconfirm(request,id):
 					message="Enter the valid quantity to approve"
 				
 				else:
-					message="Product "+product_name+ " "+ quantity+" given to  "+email
+					message="Product "+product_name+ " "+"("+ quantity+")"+" partially approved to  "+email
+					
+					if(prod_data.product_type=="non-consumable"):
+						print("gerere")
+						adding=nonconsumable_productlog(product_name=dummy.product_name,issued_to=email,issued_by=request.session['email'],units=quantity,issue_date=datetime.datetime.now(tz=timezone.utc),return_status='false',requested_quantity=dummy.quantity)
+						adding.save()
+						
 
-					productlog.objects.filter(id=id).update(status='approved',timestamp=datetime.datetime.now(tz=timezone.utc),quantity=quantity)
+
+					productlog.objects.filter(id=id).update(status='approved',timestamp=datetime.datetime.now(tz=timezone.utc),approved_quantity=quantity)
 					prod=productlist.objects.get(product_name=product_name)
 					sizes=prod.available_quantity
 					productlist.objects.filter(product_name=product_name).update(available_quantity=sizes-int(quantity))
@@ -1163,7 +1194,29 @@ def proddb(request):
 			admin=False
 			non_admin=False
 			dealing_admin=False
+			
 			all_products=productlist.objects.all().order_by("product_name")
+			measuredata=master_units.objects.all().order_by("measure_unit")
+			categorydata=master_category.objects.all().order_by("product_category")
+			measurement=set()
+			categories=set()
+			nondel_measure=set()
+			nondel_category=set()
+			for data in all_products:
+				content=productlog.objects.filter(product_name=data.product_name)
+				if content:
+					nondel_category.add(data.product_category)
+					nondel_measure.add(data.measure_unit)
+			
+			for data in measuredata:
+				if data.measure_unit not in nondel_measure:
+					measurement.add(data.measure_unit)
+
+			for data in categorydata:
+				if data.product_category not in nondel_category:
+					categories.add(data.product_category)
+
+					
 			user=useraccounts.objects.get(email=request.session['email'])
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
@@ -1180,8 +1233,7 @@ def proddb(request):
 					'name' : currentName}
 				return render(request,'home/base.html',context)
 			
-			measurement=master_units.objects.all().order_by("measure_unit")
-			categories=master_category.objects.all().order_by("product_category") 
+			 
 			print("doing great")
 			context={
 					'logoutStatus' : False,
@@ -1190,6 +1242,8 @@ def proddb(request):
 					'dealing_admin':dealing_admin, 
 					'verified':user.verified,
 					'dealing_admin' : dealing_admin,
+					'nondel_category':nondel_category,
+					'nondel_measure':nondel_measure,
 					'categories':categories,
 					'measurement':measurement,
 					'name' : currentName}
@@ -1214,6 +1268,26 @@ def add_measure(request):
 			non_admin=False
 			dealing_admin=False
 			all_products=productlist.objects.all().order_by("product_name")
+			measuredata=master_units.objects.all().order_by("measure_unit")
+			categorydata=master_category.objects.all().order_by("product_category")
+			measurement=set()
+			categories=set()
+			nondel_measure=set()
+			nondel_category=set()
+			for data in all_products:
+				content=productlog.objects.filter(product_name=data.product_name)
+				if content:
+					nondel_category.add(data.product_category)
+					nondel_measure.add(data.measure_unit)
+			
+			for data in measuredata:
+				if data.measure_unit not in nondel_measure:
+					measurement.add(data.measure_unit)
+
+			for data in categorydata:
+				if data.product_category not in nondel_category:
+					categories.add(data.product_category)
+
 			user=useraccounts.objects.get(email=request.session['email'])
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
@@ -1233,12 +1307,11 @@ def add_measure(request):
 			if request.method=='POST':
 				print("fine")
 				names=request.POST.get('measure')
-				data=master_units(measure_unit=names)
+				
 				print(names)
 				try:
 					if master_units.objects.get(measure_unit=names):
-						measurement=master_units.objects.all().order_by("measure_unit")
-						categories=master_category.objects.all().order_by("product_category")
+						
 						context={
 					    'logoutStatus' : False,
 					    'admin' : admin,
@@ -1247,6 +1320,8 @@ def add_measure(request):
 						'dealing_admin':dealing_admin, 
 						'verified':user.verified,
 						'dealing_admin' : dealing_admin,
+						'nondel_measure':nondel_measure,
+						'nondel_category':nondel_category,
 						'categories':categories,
 						'measurement':measurement,
 						'name' : currentName}
@@ -1254,33 +1329,41 @@ def add_measure(request):
 						return render(request,'products/edit_unit_category.html',context)
 				except:
 					print("also herrre")
+					data=master_units(measure_unit=names)
 					data.save()
 					print("macho")
-					measurement=master_units.objects.all().order_by("measure_unit")
-					categories=master_category.objects.all().order_by("product_category")
+					measurement.add(names)
+					
 					context={
 					    'logoutStatus' : False,
 					    'admin' : admin,
 						'non_admin' : non_admin,
-						'message':'Measure unit exists',
+						'message':'Measure unit added',
 						'dealing_admin':dealing_admin, 
 						'verified':user.verified,
 						'dealing_admin' : dealing_admin,
+						'nondel_category':nondel_category,
+						'nondel_measure':nondel_measure,
 						'categories':categories,
 						'measurement':measurement,
 						'name' : currentName}
-					print("nice111")		
+					print("nice111")
+					now = datetime.datetime.now(tz=timezone.utc)
+					accounts = product_transaction_logs(email =request.session['email'],timestamp = now,message="Measure unit " + names+" added by "+request.session['email'])	
+					accounts.save()	
+
 					return render(request,'products/edit_unit_category.html',context)
 			else:
-				measurement=master_units.objects.all().order_by("measure_unit")
-				categories=master_category.objects.all().order_by("product_category")
+				
 				context={
 					    'logoutStatus' : False,
 					    'admin' : admin,
 						'non_admin' : non_admin,
-						'message':'Measure unit exists',
+						
 						'dealing_admin':dealing_admin, 
 						'verified':user.verified,
+						'nondel_measure':nondel_measure,
+						'nondel_category':nondel_category,
 						'categories':categories,
 						'dealing_admin' : dealing_admin,
 						'measurement':measurement,
@@ -1306,6 +1389,26 @@ def add_category(request):
 			non_admin=False
 			dealing_admin=False
 			all_products=productlist.objects.all().order_by("product_name")
+			measuredata=master_units.objects.all().order_by("measure_unit")
+			categorydata=master_category.objects.all().order_by("product_category")
+			measurement=set()
+			categories=set()
+			nondel_measure=set()
+			nondel_category=set()
+			for data in all_products:
+				content=productlog.objects.filter(product_name=data.product_name)
+				if content:
+					nondel_category.add(data.product_category)
+					nondel_measure.add(data.measure_unit)
+			
+			for data in measuredata:
+				if data.measure_unit not in nondel_measure:
+					measurement.add(data.measure_unit)
+
+			for data in categorydata:
+				if data.product_category not in nondel_category:
+					categories.add(data.product_category)
+
 			user=useraccounts.objects.get(email=request.session['email'])
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
@@ -1325,12 +1428,11 @@ def add_category(request):
 			if request.method=='POST':
 				print("fine")
 				names=request.POST.get('category')
-				data=master_category(product_category=names)
+			
 				print(names)
 				try:
-					if product_category.objects.get(product_category=names):
-						measurement=master_units.objects.all().order_by("measure_unit")
-						categories=master_category.objects.all().order_by("product_category")
+					if master_category.objects.get(product_category=names):
+						
 
 						context={
 					    'logoutStatus' : False,
@@ -1342,15 +1444,18 @@ def add_category(request):
 						'verified':user.verified,
 						'dealing_admin' : dealing_admin,
 						'measurement':measurement,
+						'nondel_category':nondel_category,
+						'nondel_measure':nondel_measure,
 						'name' : currentName}
 						print("nice")		
 						return render(request,'products/edit_unit_category.html',context)
 				except:
 					print("also herrre")
+					data=master_category(product_category=names)
 					data.save()
+					categories.add(names)
 					print("macho")
-					measurement=master_units.objects.all().order_by("measure_unit")
-					categories=master_category.objects.all().order_by("product_category")
+					
 					context={
 					    'logoutStatus' : False,
 					    'admin' : admin,
@@ -1359,19 +1464,24 @@ def add_category(request):
 						'categories':categories,
 						'dealing_admin':dealing_admin, 
 						'verified':user.verified,
+						'nondel_measure':nondel_measure,
+						'nondel_category':nondel_category,
 						'dealing_admin' : dealing_admin,
 						'measurement':measurement,
 						'name' : currentName}
-					print("nice111")		
+					print("nice111")
+					now = datetime.datetime.now(tz=timezone.utc)
+					accounts = product_transaction_logs(email =request.session['email'],timestamp = now,message="Product Category " + names+" added by "+request.session['email'])	
+					accounts.save()
 					return render(request,'products/edit_unit_category.html',context)
 			else:
-				measurement=master_units.objects.all().order_by("measure_unit")
-				categories=master_category.objects.all().order_by("product_category")
+				
 				context={
 					    'logoutStatus' : False,
 					    'admin' : admin,
 						'non_admin' : non_admin,
-						
+						'nondel_category':nondel_category,
+						'nondel_measure':nondel_measure,
 						'categories':categories,
 						'dealing_admin':dealing_admin, 
 						'verified':user.verified,
@@ -1398,6 +1508,26 @@ def del_unit(request,name):
 			non_admin=False
 			dealing_admin=False
 			all_products=productlist.objects.all().order_by("product_name")
+			measuredata=master_units.objects.all().order_by("measure_unit")
+			categorydata=master_category.objects.all().order_by("product_category")
+			measurement=set()
+			categories=set()
+			nondel_measure=set()
+			nondel_category=set()
+			for data in all_products:
+				content=productlog.objects.filter(product_name=data.product_name)
+				if content:
+					nondel_category.add(data.product_category)
+					nondel_measure.add(data.measure_unit)
+			
+			for data in measuredata:
+				if data.measure_unit not in nondel_measure:
+					measurement.add(data.measure_unit)
+
+			for data in categorydata:
+				if data.product_category not in nondel_category:
+					categories.add(data.product_category)
+
 			user=useraccounts.objects.get(email=request.session['email'])
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
@@ -1414,20 +1544,25 @@ def del_unit(request,name):
 					'name' : currentName}
 				return render(request,'home/base.html',context)
 			master_units.objects.filter(measure_unit=name).delete()
-			measurement=master_units.objects.all().order_by("measure_unit")
-			categories=master_category.objects.all().order_by("product_category")
+			measurement.discard(name)
+			
 			context={
 					  'logoutStatus' : False,
 					   'admin' : admin,
 						'non_admin' : non_admin,
 						'message':'measure_unit deleted successfully',
+						'nondel_measure':nondel_measure,
+						'nondel_category':nondel_category,
 						'categories':categories,
 						'dealing_admin':dealing_admin, 
 						'verified':user.verified,
 						'dealing_admin' : dealing_admin,
 						'measurement':measurement,
 						'name' : currentName}
-			print("nice111")		
+			print("nice111")
+			now = datetime.datetime.now(tz=timezone.utc)
+			accounts = product_transaction_logs(email =request.session['email'],timestamp = now,message="Measure unit " + name+" removed by "+request.session['email'])	
+			accounts.save()
 			return render(request,'products/edit_unit_category.html',context)
 
 		else:
@@ -1449,6 +1584,26 @@ def del_category(request,name):
 			non_admin=False
 			dealing_admin=False
 			all_products=productlist.objects.all().order_by("product_name")
+			measuredata=master_units.objects.all().order_by("measure_unit")
+			categorydata=master_category.objects.all().order_by("product_category")
+			measurement=set()
+			categories=set()
+			nondel_measure=set()
+			nondel_category=set()
+			for data in all_products:
+				content=productlog.objects.filter(product_name=data.product_name)
+				if content:
+					nondel_category.add(data.product_category)
+					nondel_measure.add(data.measure_unit)
+			
+			for data in measuredata:
+				if data.measure_unit not in nondel_measure:
+					measurement.add(data.measure_unit)
+
+			for data in categorydata:
+				if data.product_category not in nondel_category:
+					categories.add(data.product_category)
+
 			user=useraccounts.objects.get(email=request.session['email'])
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
@@ -1466,20 +1621,25 @@ def del_category(request,name):
 				return render(request,'home/base.html',context)
 
 			master_category.objects.filter(product_category=name).delete()
-			measurement=master_units.objects.all().order_by("measure_unit")
-			categories=master_category.objects.all().order_by("product_category")
+			categories.discard(name)
+			
 			context={
 					  'logoutStatus' : False,
 					   'admin' : admin,
 						'non_admin' : non_admin,
 						'message':'Product Category deleted successfully',
+						'nondel_category':nondel_category,
+						'nondel_measure':nondel_measure,
 						'categories':categories,
 						'dealing_admin':dealing_admin, 
 						'verified':user.verified,
 						'dealing_admin' : dealing_admin,
 						'measurement':measurement,
 						'name' : currentName}
-			print("nice111")		
+			print("nice111")
+			now = datetime.datetime.now(tz=timezone.utc)
+			accounts = product_transaction_logs(email =request.session['email'],timestamp = now,message="Category " + name+" Removed by "+request.session['email'])	
+			accounts.save()		
 			return render(request,'products/edit_unit_category.html',context)
 
 		else:

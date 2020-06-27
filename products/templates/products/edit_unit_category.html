@@ -14,7 +14,7 @@
 					{% csrf_token %}
 					<div class="form-row">
 						<div class="col form-group">
-						  	<input type="text" class="form-control" maxlength="15" placeholder="Add measurement unit" name="measure"  required>
+						  	<input type="text" class="form-control" maxlength="15" placeholder="Add measurement unit" name="measure"  required="">
 						</div> <!-- form-group end.// -->
 						<div class="col form-group">
 						  	<button type="submit" class="btn btn-primary btn-block">Add</button>
@@ -27,7 +27,7 @@
 					{% csrf_token %}
 					<div class="form-row">
 						<div class="col form-group">
-						  	<input type="text" class="form-control" maxlength="15" placeholder="Add Product Category" name="category"  required>
+						  	<input type="text" class="form-control" maxlength="15" placeholder="Add Product Category" name="category"  required="">
 						</div> <!-- form-group end.// -->
 						<div class="col form-group">
 						  	<button type="submit" class="btn btn-primary btn-block">Add</button>
@@ -49,10 +49,15 @@
 	    </tr>
 	  </thead>
 	  <tbody>
+	  	 {%for data in nondel_measure%}
+	      <tr>
+					<th scope="row" style="color:green">{{data}}</th>
+						      </tr>
+	    {% endfor %}
 	   {%for data in measurement%}
 	      <tr>
-					<th scope="row" style="color:green">{{data.measure_unit}}</th>
-					<th scope="row"><a href="/product/del_unit/{{data.measure_unit}}"><button type="submit" class="btn btn-sm btn-danger">Remove</button></a></th>
+					<th scope="row" style="color:green">{{data}}</th>
+					<th scope="row"><a href="/product/del_unit/{{data}}"><button type="submit" class="btn btn-sm btn-danger">Remove</button></a></th>
 	      </tr>
 	    {% endfor %}
 	  </tbody>
@@ -67,10 +72,15 @@
 	    </tr>
 	  </thead>
 	  <tbody>
+	  	{%for data in nondel_category%}
+	      <tr>
+					<th scope="row" style="color:green">{{data}}</th>
+						      </tr>
+	    {% endfor %}
 	   {%for data in categories%}
 	      <tr>
-					<th scope="row" style="color:green">{{data.product_category}}</th>
-					<th scope="row"><a href="/product/del_category/{{data.product_category}}"><button type="submit" class="btn btn-sm btn-danger">Remove</button></a></th>
+					<th scope="row" style="color:green">{{data}}</th>
+					<th scope="row"><a href="/product/del_category/{{data}}"><button type="submit" class="btn btn-sm btn-danger">Remove</button></a></th>
 	      </tr>
 	    {% endfor %}
 	  </tbody>

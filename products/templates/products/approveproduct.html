@@ -41,8 +41,10 @@
                     <b>Request id </b> <a class="float-right">{{content.email}}</a>
                   </li>
                   <li class="list-group-item">
-                    <b>Quantity</b> <a class="float-right">{{content.quantity}}</a>
+                    <b>Quantity_Requested</b> <a class="float-right">{{content.quantity}}</a>
                   </li>
+                
+
                   <li class="list-group-item">
                     <b>Date</b> <a class="float-right">{{content.timestamp}}</a>
                   </li>
@@ -70,13 +72,13 @@
  
  </div>
  {% endfor %} 
- <div class="row" style="position:fixed;margin-left:830px ">
-        <div class="card" style="margin-left: 10px;margin-bottom: auto;">
+ <!-- <div class="row" style="position:fixed;margin-left:60% "> -->
+        <div class="card" style="position:fixed;margin-left: 60%;margin-bottom: auto;">
       <div class="card-header">
                 <h3 class="card-title" style="color:blue"><b>Products Already Present</b></h3>
               </div>
  <div class="card-body p-2">
-                <table class="table">
+                <table class="table table-responsive" style="max-height: 70px" >
                   <thead>
                     <tr>
                      
@@ -97,7 +99,7 @@
                 </table>
               </div>
           </div>
- </div>
+<!--  </div> -->
  
  </div>      
  <p style="color:green;text-align: center;">
@@ -121,7 +123,10 @@
                     <b>Request id</b> <a class="float-right">{{content.email}}</a>
                   </li>
                   <li class="list-group-item">
-                    <b>Quantity</b> <a class="float-right">{{content.quantity}}</a>
+                    <b>Quantity_Requested</b> <a class="float-right">{{content.quantity}}</a>
+                  </li>
+                    <li class="list-group-item">
+                    <b>Quantity_Approved</b> <a class="float-right">{{content.approved_quantity}}</a>
                   </li>
                   <li class="list-group-item">
                     <b>Date</b> <a class="float-right">{{content.timestamp}}</a>

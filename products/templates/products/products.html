@@ -6,11 +6,12 @@
   </div>
   {% endif %}
   
- <div class="row" style="margin-left: 15%;margin-top:3%" >
-     <h4 style="margin-bottom: 2%"><b>CONSUMABLE PRODUCTS </b></h4>
+ <div class="row" style="margin-left: 15%;margin-top:5%" >
+  <div class="container">
+     <h4 style="margin-bottom: 3%"><b>CONSUMABLE PRODUCTS</b></h4>
   
 
-    <table class="table table-responsive" style="max-height:500px ;max-width: 80%;margin-bottom: 7%">
+    <table class="table table-responsive" style="max-height:500px ;max-width: 80%;margin-bottom: 5%">
       <thead class="table-dark">
         <tr>
           <th scope="col">PRODUCT NAME</th>
@@ -23,8 +24,8 @@
       <tbody>
        {%for data in all_products %}
           <tr>
-            <th scope="row"><h5><b>{{data.product_name}}</h5></b></th>
-            <th scope="row"><h5><b>{{data.product_type}}</h5></b></th>
+            <th scope="row"><h5><b>{{data.product_name}}</b></h5></th>
+            <th scope="row"><h5><b>{{data.product_type}}</b></h5></th>
             <th scope="row" style="color:red"><h5><b>{{data.available_quantity}}</b></h5></th>
             <th scope="row"><h5><b>{{data.product_category}}</b></h5></th>
             <th scope="row"> <a href="/product/edprod/{{data.product_name}}" class="btn btn-link btn-block" ><i class="fa fa-edit" style="margin-right: 10px"></i><b>Edit</b></a></th>
@@ -32,7 +33,8 @@
         {% endfor %}
       </tbody>
     </table>
-           <h4 style="margin-bottom: 2%"><b>NON-CONSUMABLE PRODUCTS </b></h4>
+  
+           <h4 style="margin-bottom: 3%"><b>NON-CONSUMABLE PRODUCTS </b></h4>
   
 
     <table class="table table-responsive" style="max-height:500px ;max-width: 80%">
@@ -48,8 +50,8 @@
       <tbody>
        {%for data in noncon_product %}
           <tr>
-            <th scope="row"><h5><b>{{data.product_name}}</h5></b></th>
-            <th scope="row"><h5><b>{{data.product_type}}</h5></b></th>
+            <th scope="row"><h5><b>{{data.product_name}}</b></h5></th>
+            <th scope="row"><h5><b>{{data.product_type}}</b></h5></th>
             <th scope="row" style="color:red"><h5><b>{{data.available_quantity}}</b></h5></th>
             <th scope="row"><h5><b>{{data.product_category}}</b></h5></th>
             <th scope="row"> <a href="/product/edprod/{{data.product_name}}" class="btn btn-link btn-block" ><i class="fa fa-edit" style="margin-right: 10px"></i><b>Edit</b></a></th>
@@ -57,6 +59,6 @@
         {% endfor %}
       </tbody>
     </table>
-             
+      </div>
       </div>
         {% endblock %}
