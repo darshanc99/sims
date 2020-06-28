@@ -5,6 +5,8 @@
 	  {{message}} 
 	</div>
 {% endif %}
+{% if admin %}
+{% if verified %}
 <div class="container">
 	<br>
 	<div class="row">
@@ -101,5 +103,117 @@
               <!-- /.card-body -->
             </div>
 </div> 
+{% else %}
+<div class="alert alert-danger" role="alert">
+		<h6 style="color:yellow"><b>The Account is currently being verified by the Admin.
+			In case of urgency, contact the Admin.<br><span style="color:black">Thank You for your co-operation!</span></b></h6>
+		</div>
+{% endif %}
+{% endif %}		
 <!--container end.//-->
+{% if dealing_admin %}
+{% if verified %}
+<div class="container">
+	<br>
+	<div class="row">
+		<div class="col-md-6">
+			<div class="card">
+			<header class="card-header">
+				<h4 class="card-title mt-2">ADD PRODUCTS</h4>
+			</header>
+			<article class="card-body">
+				<form action="/product/addproduct/" method="post">
+					{% csrf_token %}
+					<div class="form-row">
+						<div class="col form-group">
+							<label>Product name </label>   
+						  	<input type="text" class="form-control" placeholder="Enter Product Name" name="product_name" required="">
+						</div> <!-- form-group end.// -->
+					</div><!-- form-row end.// -->
+					<div class="form-row">
+						<div class="form-group col-md-6">
+						  <label>Product Category</label>
+						  <select id="inputState" class="form-control" name="product_category" required=" ">
+							<option disabled selected value="">select</option>
+							{% for items in all_category %}
+						      <option>{{items.product_category}}</option>
+						     {% endfor %}
+						  </select>
+						</div> <!-- form-group end.// -->
+						<div class="form-group col-md-6">
+						  <label>Product Type</label>
+						  <select id="inputState" class="form-control" name="product_type" required=" ">
+						   <option disabled selected value="">select</option>
+						      <option>consumable</option>
+						      <option>non-consumable</option>
+						     
+						  </select>
+						</div> <!-- form-group end.// -->
+					 </div>
+					<div class="form-group">
+						<label>Available quantity</label>
+						<input type="number" class="form-control" placeholder="Enter the available qunatity" name="avail_quantity" required=" ">
+					</div> <!-- form-group end.// -->
+					<div class="form-group">
+						  <label>Measurement Unit</label>
+						  <select id="inputState" class="form-control" name="measure_unit" required=" ">
+						  	 <option disabled selected value="">select</option>
+						      {% for items in all_units %}
+						      <option>{{items.measure_unit}}</option>
+						     {% endfor %}
+						  </select>
+						</div>
+						 <!-- form-group end.// -->	
+						 <div class="form-group">
+						<label>Product description</label>
+						<input type="text" class="form-control" placeholder="Enter the description" name="description" >
+					</div>			
+					  
+				    <div class="form-group">
+				        <button type="submit" class="btn btn-primary btn-block"> Add Product </button>
+				    </div> <!-- form-group// -->      
+				</form>
+			</article> 
+			<!-- card-body end .// -->
+
+		</div> <!-- col.//-->
+	
+	</div> <!-- row.//-->
+
+	  <div class="card" style="margin-left: 30px;margin-bottom: auto;">
+	  	<div class="card-header">
+                <h3 class="card-title" style="color:blue"><b>Products Already Present</b></h3>
+              </div>
+ <div class="card-body p-2">
+                <table class="table">
+                  <thead>
+                    <tr>
+                     
+                      <th>Product</th>
+                      <th>Quantity</th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                  	{% for data in all_products %}
+                    <tr>
+                     <td>{{data.product_name}}
+                     <td>{{data.available_quantity}}</td>	
+                    </tr>
+                    {% endfor %}
+                    
+                    
+                  </tbody>
+                </table>
+              </div>
+          </div>
+              <!-- /.card-body -->
+            </div>
+</div> 
+{% else %}
+<div class="alert alert-danger" role="alert">
+		<h6 style="color:yellow"><b>The Account is currently being verified by the Admin.
+			In case of urgency, contact the Admin.<br><span style="color:black">Thank You for your co-operation!</span></b></h6>
+		</div>
+{% endif %}
+{% endif %}	
 {% endblock %}

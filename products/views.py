@@ -9,6 +9,9 @@ import hashlib
 # Create your views here.
 def addproduct(request):
 	logoutStatus= True
+	admin=False
+	non_admin=False
+	dealing_admin=False
 	try:
 		if request.session['email']:
 			admin=False
@@ -77,9 +80,9 @@ def addproduct(request):
 					currentUser = useraccounts.objects.get(email=currentEmail)
 					currentName = currentUser.first_name+" "+currentUser.last_name
 					context = {
-						'admin':True,
-						'dealing_admin':False,
-						'non_admin':False,
+						'admin':admin,
+						'dealing_admin':dealing_admin,
+						'non_admin':non_admin,
 						'all_products':all_products,
 						'verified':user.verified,
 						'all_category':all_category,
@@ -115,15 +118,38 @@ def addproduct(request):
 					}				
 				return render(request,'products/addproduct.html',context)
 	except:
-		message = "you need to login first"
-		context = {
-			'message' : message,
+		try:
+			if request.session['email']:
+				user=useraccounts.objects.get(email=request.session['email'])
+				if user.user_type=='Admin':
+					admin=True
+				elif user.user_type=='Dealing-Admin':
+					dealing_admin=True
+				else :
+					non_admin=True
+				message='something went wrong'
+				context={
+				'admin':admin,
+				'dealing_admin':dealing_admin,
+				'non_admin':non_admin,
+				'verified':user.verified,		
+				'message':message,
+				'logoutStatus':False
+			}
+				return redirect('home')
+		except:
+			message = "login first"
+			context = {
+			'messages' : message,
 			'logoutStatus':logoutStatus
 		}
-		return render(request,'authentication/login.html',context)					
+			return redirect('login')		
 
 def addquantity(request):
 	logoutStatus=True
+	admin=False
+	non_admin=False
+	dealing_admin=False
 	try:
 		
 		if request.session['email']:
@@ -186,22 +212,46 @@ def addquantity(request):
 					'dealing_admin':dealing_admin,
 					'non_admin':non_admin,
 					'name' : currentName,
+					'verified':user.verified,
 					'all_products':all_products
 					}
 									
 				return render(request,'products/addquantity.html',context)
 	except:
-		
-		message = "you need to login first"
-		context = {
-			'message' : message,
+		try:
+			if request.session['email']:
+				user=useraccounts.objects.get(email=request.session['email'])
+				if user.user_type=='Admin':
+					admin=True
+				elif user.user_type=='Dealing-Admin':
+					dealing_admin=True
+				else :
+					non_admin=True
+				message='something went wrong'
+				context={
+				'admin':admin,
+				'dealing_admin':dealing_admin,
+				'non_admin':non_admin,
+				'verified':user.verified,		
+				'message':message,
+				'logoutStatus':False
+			}
+				return redirect('home')
+		except:
+			message = "login first"
+			context = {
+			'messages' : message,
 			'logoutStatus':logoutStatus
 		}
+			return redirect('login')
 		return render(request,'authentication/login.html',context)
 
 def removeproduct(request):
 
 	logoutStatus=True
+	admin=False
+	non_admin=False
+	dealing_admin=False
 	try:
 
 		if request.session['email']:
@@ -319,50 +369,96 @@ def removeproduct(request):
 				
 				return render(request,'products/removeproduct.html',context)
 	except:
-		message='you need to login first'
-			
-		context={
-				
-		'message':message,
-		'logoutStatus':logoutStatus
+		try:
+			if request.session['email']:
+				user=useraccounts.objects.get(email=request.session['email'])
+				if user.user_type=='Admin':
+					admin=True
+				elif user.user_type=='Dealing-Admin':
+					dealing_admin=True
+				else :
+					non_admin=True
+				message='something went wrong'
+				context={
+				'admin':admin,
+				'dealing_admin':dealing_admin,
+				'non_admin':non_admin,
+				'verified':user.verified,		
+				'message':message,
+				'logoutStatus':False
 			}
-		return render(request,'authentication/login.html',context)
+				return redirect('home')
+		except:
+			message = "login first"
+			context = {
+			'messages' : message,
+			'logoutStatus':logoutStatus
+		}
+			return redirect('login')
 
 
 def viewproduct(request):
 	logoutStatus=True
-	if request.session['email']:
-		user=useraccounts.objects.get(email=request.session['email'])
-		all_products=productlist.objects.filter(product_type="consumable").order_by("product_name")
-		noncon_product=productlist.objects.filter(product_type="non-consumable").order_by("product_name")
-		currentEmail = request.session['email']
-		currentUser = useraccounts.objects.get(email=currentEmail)
-		currentName = currentUser.first_name+" "+currentUser.last_name
-		context={
-			'admin':True,
-			'dealing_admin':False,
-			'non_admin':False,
-			'verified':user.verified,
-			'name':currentName,
-			'all_products':all_products,
-			'noncon_product':noncon_product
+	admin=False
+	dealing_admin=False
+	non_admin=False
+	try:
+		if request.session['email']:
+
+			user=useraccounts.objects.get(email=request.session['email'])
+			if user.user_type=='Admin':
+				admin=True
+			elif user.user_type=='Dealing-Admin':
+				dealing_admin=True
+
+			all_products=productlist.objects.filter(product_type="consumable").order_by("product_name")
+			noncon_product=productlist.objects.filter(product_type="non-consumable").order_by("product_name")
+			currentEmail = request.session['email']
+			currentUser = useraccounts.objects.get(email=currentEmail)
+			currentName = currentUser.first_name+" "+currentUser.last_name
+			context={
+				'admin':admin,
+				'dealing_admin':dealing_admin,
+				'non_admin':False,
+				'verified':user.verified,
+				'name':currentName,
+				'all_products':all_products,
+				'noncon_product':noncon_product
+					}
+			return render(request,'products/products.html',context)
+	except:
+		try:
+			if request.session['email']:
+				user=useraccounts.objects.get(email=request.session['email'])
+				if user.user_type=='Admin':
+					admin=True
+				elif user.user_type=='Dealing-Admin':
+					dealing_admin=True
+				else :
+					non_admin=True
+				message='something went wrong'
+				context={
+				'admin':admin,
+				'dealing_admin':dealing_admin,
+				'non_admin':non_admin,
+				'verified':user.verified,		
+				'message':message,
+				'logoutStatus':False
 			}
-		return render(request,'products/products.html',context)
-	else:
-		message='you need to login first'
-			
-		context={
-		'admin':True,
-		'dealing_admin':False,
-		'non_admin':False,
-		'verified':user.verified,		
-		'message':message,
-		'logoutStatus':logoutStatus
-			}
-		return render(request,'authentication/login.html',context)
+				return redirect('home')
+		except:
+			message = "login first"
+			context = {
+			'messages' : message,
+			'logoutStatus':logoutStatus
+		}
+			return redirect('login')	
 
 def routeproduct(request):
 	logoutStatus=True
+	admin=False
+	non_admin=False
+	dealing_admin=False
 	try:
 		if request.session['email']:
 			admin=False
@@ -471,27 +567,38 @@ def routeproduct(request):
 				print("doool")
 				
 	except:
-		message="not working"
-		all_products=productlist.objects.filter(product_type="consumable").order_by("product_name")
-		noncon_product=productlist.objects.filter(product_type="non-consumable").order_by("product_name")
-		context={
-					'admin':admin,
-					'dealing_admin':dealing_admin,
-					'non_admin':non_admin,
-					'message':message,
-					'verified':user.verified,
-					'name':currentName,
-					'all_products':all_products,
-					'noncon_product':noncon_product
-				}
-		now = datetime.datetime.now(tz=timezone.utc)
-		email=request.session['email']
-		
-						
-		return render(request,'products/products.html',context)
+		try:
+			if request.session['email']:
+				user=useraccounts.objects.get(email=request.session['email'])
+				if user.user_type=='Admin':
+					admin=True
+				elif user.user_type=='Dealing-Admin':
+					dealing_admin=True
+				else :
+					non_admin=True
+				message='something went wrong'
+				context={
+				'admin':admin,
+				'dealing_admin':dealing_admin,
+				'non_admin':non_admin,
+				'verified':user.verified,		
+				'message':message,
+				'logoutStatus':False
+			}
+				return redirect('home')
+		except:
+			message = "login first"
+			context = {
+			'messages' : message,
+			'logoutStatus':logoutStatus
+		}
+			return redirect('login')
 
 def edprod(request,name):
 	logoutStatus=True
+	admin=False
+	non_admin=False
+	dealing_admin=False
 	try:
 		if request.session['email']:
 			admin=False
@@ -538,20 +645,38 @@ def edprod(request,name):
 					
 			return render(request,'products/editproduct.html',context)
 	except:
-		message='you need to login first'
-	
-			
-		context={
-		'logoutStatus':logoutStatus,
-		'message':message,
-
+		try:
+			if request.session['email']:
+				user=useraccounts.objects.get(email=request.session['email'])
+				if user.user_type=='Admin':
+					admin=True
+				elif user.user_type=='Dealing-Admin':
+					dealing_admin=True
+				else :
+					non_admin=True
+				message='something went wrong'
+				context={
+				'admin':admin,
+				'dealing_admin':dealing_admin,
+				'non_admin':non_admin,
+				'verified':user.verified,		
+				'message':message,
+				'logoutStatus':False
 			}
-		return render(request,'authentication/login.html',context)
+				return redirect('home')
+		except:
+			message = "login first"
+			context = {
+			'messages' : message,
+			'logoutStatus':logoutStatus
+		}
+			return redirect('login')
 
 def requestproduct(request):
 	admin=False
 	non_admin=False
 	dealing_admin=False
+	logoutStatus=True
 	try:
 		if request.session['email']:
 			all_products=productlist.objects.all().order_by("product_name")
@@ -625,19 +750,40 @@ def requestproduct(request):
 				
 				return render(request,'products/requestproduct.html',context)		
 	except:
-		message='you need to login first'
-	
-			
-		context={
-		'logoutStatus':True,
-		'message':message,
-		
+		try:
+			if request.session['email']:
+				user=useraccounts.objects.get(email=request.session['email'])
+				if user.user_type=='Admin':
+					admin=True
+				elif user.user_type=='Dealing-Admin':
+					dealing_admin=True
+				else :
+					non_admin=True
+				message='something went wrong'
+				context={
+				'admin':admin,
+				'dealing_admin':dealing_admin,
+				'non_admin':non_admin,
+				'verified':user.verified,		
+				'message':message,
+				'logoutStatus':False
 			}
-		return render(request,'authentication/login.html',context)
+				return redirect('home')
+		except:
+			message = "login first"
+			context = {
+			'messages' : message,
+			'logoutStatus':logoutStatus
+		}
+			return redirect('login')
 
 
 
 def approveproduct(request):
+	admin=False
+	non_admin=False
+	dealing_admin=False
+	logoutStatus=True
 	try:
 		if request.session['email']:
 			admin=False
@@ -696,7 +842,8 @@ def approveproduct(request):
 			'item_quant':item_quant,
 			'all_products':all_products,
 			'data2':data2,
-			'prodnew':prodnew	
+			'prodnew':prodnew,
+			'logoutStatus':False	
 			}
 					
 			print('now')
@@ -711,7 +858,11 @@ def approveproduct(request):
 					}
 		return render(request,'authentication/login.html',context)
 
-def productconfirm(request,id,quantity):
+def productconfirm(request,id):
+	admin=False
+	non_admin=False
+	dealing_admin=False
+	logoutStatus=False
 	try:
 		if request.session['email']:
 			admin=False
@@ -742,13 +893,14 @@ def productconfirm(request,id,quantity):
 			print(dummy)
 			product_name=dummy.product_name
 			proddata=productlist.objects.get(product_name=dummy.product_name)
+			quantity=int(dummy.quantity)
 
 			email=dummy.email
 			if(proddata.product_type=='non-consumable'):
 				adding=nonconsumable_productlog(product_name=dummy.product_name,issued_to=email,issued_by=request.session['email'],units=quantity,issue_date=datetime.datetime.now(tz=timezone.utc),return_status='false',requested_quantity=dummy.quantity)
 				adding.save()
 				print("added successfully")
-			message="Product "+product_name+" "+ "with quantity" +"("+quantiy+")"+ " Completely approved to  "+email
+			message="Product "+product_name+" "+ "with quantity" +"("+str(quantity)+")"+ " Completely approved to  "+email
 			
 
 			productlog.objects.filter(id=id).update(status='approved',timestamp=datetime.datetime.now(tz=timezone.utc),approved_quantity=quantity)
@@ -801,17 +953,37 @@ def productconfirm(request,id,quantity):
 			return render(request,'products/approveproduct.html',context)
 
 	except:
-		message='you need to login first'
-	
-			
-		context={
-		'logoutStatus':logoutStatus,
-		'message':message,
-		
+		try:
+			if request.session['email']:
+				user=useraccounts.objects.get(email=request.session['email'])
+				if user.user_type=='Admin':
+					admin=True
+				elif user.user_type=='Dealing-Admin':
+					dealing_admin=True
+				else :
+					non_admin=True
+				message='something went wrong'
+				context={
+				'admin':admin,
+				'dealing_admin':dealing_admin,
+				'non_admin':non_admin,
+				'verified':user.verified,		
+				'message':message,
+				'logoutStatus':False
 			}
-		return render(request,'authentication/login.html',context)
+				return redirect('home')
+		except:
+			message = "login first"
+			context = {
+			'messages' : message,
+			'logoutStatus':logoutStatus
+		}
+			return redirect('login')
 
 def myproduct(request):
+	admin=False
+	non_admin=False
+	dealing_admin=False
 	try:
 
 		if request.session['email']:
@@ -853,16 +1025,37 @@ def myproduct(request):
 				print('now')
 				return render(request,'products/listproduct.html',context)
 	except:
-		messages='login first'
-		context = {
-				'logoutStatus' : True,
-					
-				'message' : messages,
-					
-					}
-		return render(request,'authentication/login.html',context)
+		try:
+			if request.session['email']:
+				user=useraccounts.objects.get(email=request.session['email'])
+				if user.user_type=='Admin':
+					admin=True
+				elif user.user_type=='Dealing-Admin':
+					dealing_admin=True
+				else :
+					non_admin=True
+				message='something went wrong'
+				context={
+				'admin':admin,
+				'dealing_admin':dealing_admin,
+				'non_admin':non_admin,
+				'verified':user.verified,		
+				'message':message,
+				'logoutStatus':False
+			}
+				return redirect('home')
+		except:
+			message = "login first"
+			context = {
+			'messages' : message,
+			'logoutStatus':True
+		}
+			return redirect('login')
 
 def partialconfirm(request,id):
+	admin=False
+	non_admin=False
+	dealing_admin=False
 	try:
 		if request.session['email']:
 			admin=False
@@ -964,18 +1157,38 @@ def partialconfirm(request,id):
 			return render(request,'products/approveproduct.html',context)
 
 	except:
-		message='you need to login first'
-	
-			
-		context={
-		'logoutStatus':True,
-		'message':message,
-		
+		try:
+			if request.session['email']:
+				user=useraccounts.objects.get(email=request.session['email'])
+				if user.user_type=='Admin':
+					admin=True
+				elif user.user_type=='Dealing-Admin':
+					dealing_admin=True
+				else :
+					non_admin=True
+				message='something went wrong'
+				context={
+				'admin':admin,
+				'dealing_admin':dealing_admin,
+				'non_admin':non_admin,
+				'verified':user.verified,		
+				'message':message,
+				'logoutStatus':False
 			}
-		return render(request,'authentication/login.html',context)
+				return redirect('home')
+		except:
+			message = "login first"
+			context = {
+			'messages' : message,
+			'logoutStatus':True
+		}
+			return redirect('login')
 
 
 def pendingprods(request):
+	admin=False
+	non_admin=False
+	dealing_admin=False
 	try:
 
 		if request.session['email']:
@@ -1014,16 +1227,37 @@ def pendingprods(request):
 				print('now')
 				return render(request,'products/canceltransaction.html',context)
 	except:
-		messages='login first'
-		context = {
-				'logoutStatus' : True,
-					
-				'message' : messages,
-					
-					}
-		return render(request,'authentication/login.html',context)
+		try:
+			if request.session['email']:
+				user=useraccounts.objects.get(email=request.session['email'])
+				if user.user_type=='Admin':
+					admin=True
+				elif user.user_type=='Dealing-Admin':
+					dealing_admin=True
+				else :
+					non_admin=True
+				message='something went wrong'
+				context={
+				'admin':admin,
+				'dealing_admin':dealing_admin,
+				'non_admin':non_admin,
+				'verified':user.verified,		
+				'message':message,
+				'logoutStatus':False
+			}
+				return redirect('home')
+		except:
+			message = "login first"
+			context = {
+			'messages' : message,
+			'logoutStatus':True
+		}
+			return redirect('login')
 
 def canceltransaction(request,id):
+	admin=False
+	non_admin=False
+	dealing_admin=False
 	try:
 		if request.session['email']:
 			admin=False
@@ -1075,15 +1309,32 @@ def canceltransaction(request,id):
 			return render(request,'products/canceltransaction.html',context)
 
 	except:
-		message='you need to login first'
-	
-			
-		context={
-		'logoutStatus':logoutStatus,
-		'message':message,
-		
+		try:
+			if request.session['email']:
+				user=useraccounts.objects.get(email=request.session['email'])
+				if user.user_type=='Admin':
+					admin=True
+				elif user.user_type=='Dealing-Admin':
+					dealing_admin=True
+				else :
+					non_admin=True
+				message='something went wrong'
+				context={
+				'admin':admin,
+				'dealing_admin':dealing_admin,
+				'non_admin':non_admin,
+				'verified':user.verified,		
+				'message':message,
+				'logoutStatus':False
 			}
-		return render(request,'authentication/login.html',context)
+				return redirect('home')
+		except:
+			message = "login first"
+			context = {
+			'messages' : message,
+			'logoutStatus':True
+		}
+			return redirect('login')
 
 
 def returnproduct(request):
@@ -1123,14 +1374,32 @@ def returnproduct(request):
 				
 			return render(request,'products/returnproduct.html',context)		
 	except:
-		message = "You have been logged out. Please log in again!"
-		logoutStatus = True
-
-		context = {
-			'message' : message,
-			'logoutStatus' : logoutStatus
+		try:
+			if request.session['email']:
+				user=useraccounts.objects.get(email=request.session['email'])
+				if user.user_type=='Admin':
+					admin=True
+				elif user.user_type=='Dealing-Admin':
+					dealing_admin=True
+				else :
+					non_admin=True
+				message='something went wrong'
+				context={
+				'admin':admin,
+				'dealing_admin':dealing_admin,
+				'non_admin':non_admin,
+				'verified':user.verified,		
+				'message':message,
+				'logoutStatus':False
+			}
+				return redirect('home')
+		except:
+			message = "login first"
+			context = {
+			'messages' : message,
+			'logoutStatus':True
 		}
-		return render(request,'authentication/login.html',context)
+			return redirect('login')
 		
 def returnconfirm(request,name,id):
 	admin=False
@@ -1178,17 +1447,38 @@ def returnconfirm(request,name,id):
 			
 
 	except:
-		message = "You have been logged out. Please log in again!"
-		logoutStatus = True
-
-		context = {
-			'message' : message,
-			'logoutStatus' : logoutStatus
+		try:
+			if request.session['email']:
+				user=useraccounts.objects.get(email=request.session['email'])
+				if user.user_type=='Admin':
+					admin=True
+				elif user.user_type=='Dealing-Admin':
+					dealing_admin=True
+				else :
+					non_admin=True
+				message='something went wrong'
+				context={
+				'admin':admin,
+				'dealing_admin':dealing_admin,
+				'non_admin':non_admin,
+				'verified':user.verified,		
+				'message':message,
+				'logoutStatus':False
+			}
+				return redirect('home')
+		except:
+			message = "login first"
+			context = {
+			'messages' : message,
+			'logoutStatus':True
 		}
-		return render(request,'authentication/login.html',context)
+			return redirect('login')
 
 
 def proddb(request):
+	admin=False
+	non_admin=False
+	dealing_admin=False
 	try:
 		if request.session['email']:
 			admin=False
@@ -1220,7 +1510,11 @@ def proddb(request):
 			user=useraccounts.objects.get(email=request.session['email'])
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
-					admin = True
+				admin = True
+			elif user.user_type=='Dealing-Admin':
+				dealing_admin=True
+
+
 			else:
 				context={
 					'logoutStatus' : False,
@@ -1252,16 +1546,37 @@ def proddb(request):
 		else:
 			print('nothing')
 	except:
-		message = "You have been logged out. Please log in again!"
-		logoutStatus = True
-
-		context = {
-			'message' : message,
-			'logoutStatus' : logoutStatus
+		try:
+			if request.session['email']:
+				user=useraccounts.objects.get(email=request.session['email'])
+				if user.user_type=='Admin':
+					admin=True
+				elif user.user_type=='Dealing-Admin':
+					dealing_admin=True
+				else :
+					non_admin=True
+				message='something went wrong'
+				context={
+				'admin':admin,
+				'dealing_admin':dealing_admin,
+				'non_admin':non_admin,
+				'verified':user.verified,		
+				'message':message,
+				'logoutStatus':False
+			}
+				return redirect('home')
+		except:
+			message = "login first"
+			context = {
+			'messages' : message,
+			'logoutStatus':True
 		}
-		return render(request,'authentication/login.html',context)
+			return redirect('login')
 
 def add_measure(request):
+	admin=False
+	non_admin=False
+	dealing_admin=False
 	try:
 		if request.session['email']:
 			admin=False
@@ -1373,16 +1688,38 @@ def add_measure(request):
 
 
 	except:
-		message = "You have been logged out. Please log in again!"
-		logoutStatus = True
-		context = {
-			'message' : message,
-			'logoutStatus' : logoutStatus
+		try:
+			if request.session['email']:
+				user=useraccounts.objects.get(email=request.session['email'])
+				if user.user_type=='Admin':
+					admin=True
+				elif user.user_type=='Dealing-Admin':
+					dealing_admin=True
+				else :
+					non_admin=True
+				message='something went wrong'
+				context={
+				'admin':admin,
+				'dealing_admin':dealing_admin,
+				'non_admin':non_admin,
+				'verified':user.verified,		
+				'message':message,
+				'logoutStatus':False
+			}
+				return redirect('home')
+		except:
+			message = "login first"
+			context = {
+			'messages' : message,
+			'logoutStatus':True
 		}
-		return render(request,'authentication/login.html',context)
+			return redirect('login')
 
 
 def add_category(request):
+	admin=False
+	non_admin=False
+	dealing_admin=False
 	try:
 		if request.session['email']:
 			admin=False
@@ -1493,15 +1830,37 @@ def add_category(request):
 
 
 	except:
-		message = "You have been logged out. Please log in again!"
-		logoutStatus = True
-		context = {
-			'message' : message,
-			'logoutStatus' : logoutStatus
+		try:
+			if request.session['email']:
+				user=useraccounts.objects.get(email=request.session['email'])
+				if user.user_type=='Admin':
+					admin=True
+				elif user.user_type=='Dealing-Admin':
+					dealing_admin=True
+				else :
+					non_admin=True
+				message='something went wrong'
+				context={
+				'admin':admin,
+				'dealing_admin':dealing_admin,
+				'non_admin':non_admin,
+				'verified':user.verified,		
+				'message':message,
+				'logoutStatus':False
+			}
+				return redirect('home')
+		except:
+			message = "login first"
+			context = {
+			'messages' : message,
+			'logoutStatus':True
 		}
-		return render(request,'authentication/login.html',context)
+			return redirect('login')
 
 def del_unit(request,name):
+	admin=False
+	non_admin=False
+	dealing_admin=False
 	try:
 		if request.session['email']:
 			admin=False
@@ -1569,15 +1928,37 @@ def del_unit(request,name):
 			print("nothing")
 
 	except:
-		message = "You have been logged out. Please log in again!"
-		logoutStatus = True
-		context = {
-			'message' : message,
-			'logoutStatus' : logoutStatus
+		try:
+			if request.session['email']:
+				user=useraccounts.objects.get(email=request.session['email'])
+				if user.user_type=='Admin':
+					admin=True
+				elif user.user_type=='Dealing-Admin':
+					dealing_admin=True
+				else :
+					non_admin=True
+				message='something went wrong'
+				context={
+				'admin':admin,
+				'dealing_admin':dealing_admin,
+				'non_admin':non_admin,
+				'verified':user.verified,		
+				'message':message,
+				'logoutStatus':False
+			}
+				return redirect('home')
+		except:
+			message = "login first"
+			context = {
+			'messages' : message,
+			'logoutStatus':True
 		}
-		return render(request,'authentication/login.html',context)
+			return redirect('login')
 
 def del_category(request,name):
+	admin=False
+	non_admin=False
+	dealing_admin=False
 	try:
 		if request.session['email']:
 			admin=False
@@ -1646,13 +2027,32 @@ def del_category(request,name):
 			print("nothing")
 
 	except:
-		message = "You have been logged out. Please log in again!"
-		logoutStatus = True
-		context = {
-			'message' : message,
-			'logoutStatus' : logoutStatus
+		try:
+			if request.session['email']:
+				user=useraccounts.objects.get(email=request.session['email'])
+				if user.user_type=='Admin':
+					admin=True
+				elif user.user_type=='Dealing-Admin':
+					dealing_admin=True
+				else :
+					non_admin=True
+				message='something went wrong'
+				context={
+				'admin':admin,
+				'dealing_admin':dealing_admin,
+				'non_admin':non_admin,
+				'verified':user.verified,		
+				'message':message,
+				'logoutStatus':False
+			}
+				return redirect('home')
+		except:
+			message = "login first"
+			context = {
+			'messages' : message,
+			'logoutStatus':True
 		}
-		return render(request,'authentication/login.html',context)
+			return redirect('login')
 
 def pd_logs(request):
 	admin = False

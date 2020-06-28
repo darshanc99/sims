@@ -73,7 +73,11 @@
 				    {% for log in product_requests %}
 				      <tr>
 				        <th scope="row">{{log.product_name}}</th>
+				        {% if log.status == "pending" %}
 								<th scope="row">{{log.quantity}}</th>
+						{% else %}
+								<th scope="row">{{log.approved_quantity}}</th>
+						{% endif %}			
 								<th scope="row">{{log.timestamp}}</th>
 				        <th scope="row" style="color:red">{{log.status}}</th>
 				      </tr>

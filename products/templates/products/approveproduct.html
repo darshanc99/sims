@@ -7,7 +7,9 @@
   </div>
   {% endif %}
   <div class="container">
- 
+
+ {% if admin %}
+ {% if verified %}
  <p style="color:red;text-align: center;">
   <b>
   PENDING REQUEST
@@ -54,7 +56,7 @@
                   </li>
                 </ul>
 
-                <a href="/product/productconfirm/{{content.id}},{{content.quantity}}" type="submit" class="btn btn-link btn-block" ><b>Approve product</b></a>
+                <a href="/product/productconfirm/{{content.id}}" type="submit" class="btn btn-link btn-block" ><b>Approve product</b></a>
                 <p style="text-align: center;">OR</p>
                 <form action="/product/partialconfirm/{{content.id}}" method="get" >
                   
@@ -78,7 +80,7 @@
                 <h3 class="card-title" style="color:blue"><b>Products Already Present</b></h3>
               </div>
  <div class="card-body p-2">
-                <table class="table table-responsive" style="max-height: 70px" >
+                <table class="table table-responsive" style="max-height: 400px" >
                   <thead>
                     <tr>
                      
@@ -146,5 +148,159 @@
         </div>
  
       </div>
+{% else %}
+<div class="alert alert-danger" role="alert">
+    <h6 style="color:yellow"><b>The Account is currently being verified by the Admin.
+      In case of urgency, contact the Admin.<br><span style="color:black">Thank You for your co-operation!</span></b></h6>
+    </div>
+{% endif %}
+{% endif %}
 
+ {% if dealing_admin %}
+ {% if verified %}
+ <p style="color:red;text-align: center;">
+  <b>
+  PENDING REQUEST
+
+  </b>
+ 
+</p>
+ {%for key,value in item_quant.items %}
+<p style="background-color:lightgreen;font-size: 20px;color: red">
+  
+  
+  The Total quantity requested for <b>{{ key }}</b></h4> is <b>{{value}}</b></h4>
+  
+
+</p>
+ {% endfor %}
+  
+   <div class="row" style="padding-top: 20px;" >
+   
+  {% for content in all_products %}
+          <div class="col-md-3" style="margin-right: 10px;">
+
+            
+            <div class="card card-primary card-outline">
+              <div class="card-body box-profile">
+                <h3 class="profile-username text-center" style="color:brown"><b>{{content.product_name}}</b></h3>
+                
+
+                <ul class="list-group list-group-unbordered mb-3">
+                  <li class="list-group-item">
+                    <b>Request id </b> <a class="float-right">{{content.email}}</a>
+                  </li>
+                  <li class="list-group-item">
+                    <b>Quantity_Requested</b> <a class="float-right">{{content.quantity}}</a>
+                  </li>
+                
+
+                  <li class="list-group-item">
+                    <b>Date</b> <a class="float-right">{{content.timestamp}}</a>
+                  </li>
+                  
+                  <li class="list-group-item">
+                    <b>status</b> <a class="float-right">{{content.status}}</a>
+                  </li>
+                </ul>
+
+                <a href="/product/productconfirm/{{content.id}}" type="submit" class="btn btn-link btn-block" ><b>Approve product</b></a>
+                <p style="text-align: center;">OR</p>
+                <form action="/product/partialconfirm/{{content.id}}" method="get" >
+                  
+                  <div class="form-group">
+                  <input type="number" class="form-control" placeholder="Enter the desired quantity" name="quant" required="">
+                  </div>
+                  <div class="form-group">
+                <button type="submit" class="btn btn-link btn-block"><b> Approve Partial </b></button>
+            </div>
+          </form>
+              </div>
+              <!-- /.card-body -->
+            </div>
+          
+ 
+ </div>
+ {% endfor %} 
+ <!-- <div class="row" style="position:fixed;margin-left:60% "> -->
+        <div class="card" style="position:fixed;margin-left: 60%;margin-bottom: auto;">
+      <div class="card-header">
+                <h3 class="card-title" style="color:blue"><b>Products Already Present</b></h3>
+              </div>
+ <div class="card-body p-2">
+                <table class="table table-responsive" style="max-height: 400px" >
+                  <thead>
+                    <tr>
+                     
+                      <th>Product</th>
+                      <th>Quantity</th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                    {% for data in prodnew %}
+                    <tr>
+                     <td>{{data.product_name}}</td>
+                     <td>{{data.available_quantity}}</td> 
+                    </tr>
+                    {% endfor %}
+                    
+                    
+                  </tbody>
+                </table>
+              </div>
+          </div>
+<!--  </div> -->
+ 
+ </div>      
+ <p style="color:green;text-align: center;">
+  <b>
+  APPROVED REQUEST
+  </b>
+</p>
+  <br>
+  <div class="row">
+ {% for content in data2 %}
+          <div class="col-md-3" style="margin-right: 10px;">
+
+            
+            <div class="card card-primary card-outline">
+              <div class="card-body box-profile">
+                <h3 class="profile-username text-center" style="color:brown"><b>{{content.product_name}}</b></h3>
+                
+
+                <ul class="list-group list-group-unbordered mb-3">
+                  <li class="list-group-item">
+                    <b>Request id</b> <a class="float-right">{{content.email}}</a>
+                  </li>
+                  <li class="list-group-item">
+                    <b>Quantity_Requested</b> <a class="float-right">{{content.quantity}}</a>
+                  </li>
+                    <li class="list-group-item">
+                    <b>Quantity_Approved</b> <a class="float-right">{{content.approved_quantity}}</a>
+                  </li>
+                  <li class="list-group-item">
+                    <b>Date</b> <a class="float-right">{{content.timestamp}}</a>
+                  </li>
+                  <li class="list-group-item">
+                    <b>status</b> <a class="float-right">{{content.status}}</a>
+                  </li>
+                </ul>
+
+              
+              </div>
+              <!-- /.card-body -->
+            </div>
+          </div>
+ {% endfor %} 
+       
+        </div>
+ 
+      </div>
+{% else %}
+<div class="alert alert-danger" role="alert">
+    <h6 style="color:yellow"><b>The Account is currently being verified by the Admin.
+      In case of urgency, contact the Admin.<br><span style="color:black">Thank You for your co-operation!</span></b></h6>
+    </div>
+{% endif %}
+{% endif %}
         {% endblock %}

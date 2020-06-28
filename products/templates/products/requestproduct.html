@@ -5,6 +5,7 @@
 	  {{messages}}
 	</div>
 {% endif %}
+{% if verified %}
 <div class="container">
 	<br>
 	<div class="row justify-content-center">
@@ -72,5 +73,11 @@
           </div>
 </div>
 </div>
+{% else %}
+<div class="alert alert-danger" role="alert">
+    <h6 style="color:yellow"><b>The Account is currently being verified by the Admin.
+      In case of urgency, contact the Admin.<br><span style="color:black">Thank You for your co-operation!</span></b></h6>
+    </div>
+{% endif %}
 
 {% endblock %}
