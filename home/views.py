@@ -595,3 +595,29 @@ def error(request):
 		'logoutStatus' : logoutStatus
 	}
 	return render(request,'home/error.html',context)
+
+#Report Function
+def report(request):
+	admin = False
+	non_admin = False
+	dealing_admin = False
+	logoutStatus = True
+	try:
+		#If user is already logged in
+		if request.session['email']:
+			email = request.session['email']
+			user = useraccounts.objects.get(email=email)
+
+			name = user.first_name + ' ' + user.last_name
+			logoutStatus = False
+
+			#If user is a verified admin
+			if user.user_type == 'Admin' and user.verified:
+				return redirect('home')
+			else:
+				#If user is either unverified or not an admin
+				return redirect('home')
+	except:
+		#If user not logged in
+		return redirect('login')
+	return redirect('home')

@@ -34,7 +34,7 @@ def addproduct(request):
 					'non_admin' : True,
 					'dealing_admin' : dealing_admin,
 					'verified':user.verified,
-					
+
 					'name' : currentName
 						}
 				return render(request,'home/base.html',context)
@@ -50,8 +50,8 @@ def addproduct(request):
 				measure_unit=request.POST.get('measure_unit')
 				description=request.POST.get('description')
 				prod=productlist(product_name,product_category,product_type,available_quantity,arrive,measure_unit,description)
-				
-				
+
+
 				try:
 					if productlist.objects.get(product_name=product_name):
 						messages="Product is already present"
@@ -71,7 +71,7 @@ def addproduct(request):
 							}
 						return render(request,'products/addproduct.html',context)
 				except:
-					
+
 					prod.save()
 					print("hererer")
 					all_products=productlist.objects.all().order_by("product_name")
@@ -93,10 +93,10 @@ def addproduct(request):
 						}
 					now = datetime.datetime.now(tz=timezone.utc)
 					email=request.session['email']
-					accounts = product_transaction_logs(email =email,timestamp = now,message="New Product added "+" ("+ product_name+ ")")	
+					accounts = product_transaction_logs(email =email,timestamp = now,message="New Product added "+" ("+ product_name+ ")")
 					accounts.save()
 
-					return render(request,'products/addproduct.html',context)		
+					return render(request,'products/addproduct.html',context)
 			else:
 				all_products=productlist.objects.all().order_by("product_name")
 				currentEmail = request.session['email']
@@ -115,7 +115,7 @@ def addproduct(request):
 					'all_category':all_category,
 					'all_products':all_products,
 					'name' : currentName
-					}				
+					}
 				return render(request,'products/addproduct.html',context)
 	except:
 		try:
@@ -132,7 +132,7 @@ def addproduct(request):
 				'admin':admin,
 				'dealing_admin':dealing_admin,
 				'non_admin':non_admin,
-				'verified':user.verified,		
+				'verified':user.verified,
 				'message':message,
 				'logoutStatus':False
 			}
@@ -143,7 +143,7 @@ def addproduct(request):
 			'messages' : message,
 			'logoutStatus':logoutStatus
 		}
-			return redirect('login')		
+			return redirect('login')
 
 def addquantity(request):
 	logoutStatus=True
@@ -151,7 +151,7 @@ def addquantity(request):
 	non_admin=False
 	dealing_admin=False
 	try:
-		
+
 		if request.session['email']:
 			admin=False
 			non_admin=False
@@ -171,23 +171,23 @@ def addquantity(request):
 					'verified':user.verified,
 					'non_admin' : True,
 					'dealing_admin' : dealing_admin,
-					
+
 					'name' : currentName
 						}
 				return render(request,'home/base.html',context)
 
-			
+
 			if request.method=='POST':
-				
+
 				names=request.POST.get('product_category')
 				quantity=request.POST.get('quantity')
 				details=productlist.objects.get(product_name=names)
-				
+
 				ans=int(details.available_quantity)+int(quantity)
-				  
+
 				all_products=productlist.objects.all().order_by("product_name")
-				
-				
+
+
 				productlist.objects.filter(product_name=names).update(available_quantity=ans)
 				context = {
 					'admin':admin,
@@ -200,13 +200,13 @@ def addquantity(request):
 					}
 				now = datetime.datetime.now(tz=timezone.utc)
 				email=request.session['email']
-				accounts = product_transaction_logs(email =email,timestamp = now,message="product ("+names +")" + " quantity increased (+"+quantity+")")	
-				accounts.save()				
+				accounts = product_transaction_logs(email =email,timestamp = now,message="product ("+names +")" + " quantity increased (+"+quantity+")")
+				accounts.save()
 				return render(request,'products/addquantity.html',context)
 			else:
 				all_products=productlist.objects.all().order_by("product_name")
-				
-				
+
+
 				context = {
 					'admin':admin,
 					'dealing_admin':dealing_admin,
@@ -215,7 +215,7 @@ def addquantity(request):
 					'verified':user.verified,
 					'all_products':all_products
 					}
-									
+
 				return render(request,'products/addquantity.html',context)
 	except:
 		try:
@@ -232,7 +232,7 @@ def addquantity(request):
 				'admin':admin,
 				'dealing_admin':dealing_admin,
 				'non_admin':non_admin,
-				'verified':user.verified,		
+				'verified':user.verified,
 				'message':message,
 				'logoutStatus':False
 			}
@@ -255,7 +255,7 @@ def removeproduct(request):
 	try:
 
 		if request.session['email']:
-			
+
 			admin=False
 			non_admin=False
 			dealing_admin=False
@@ -284,29 +284,29 @@ def removeproduct(request):
 					'non_admin' : True,
 					'dealing_admin' : dealing_admin,
 					'verified':user.verified,
-					
+
 					'name' : currentName
 						}
 				return render(request,'home/base.html',context)
 			if request.method=='POST':
 				print("herenow")
 				names=request.POST.get('product_list')
-				
+
 				password=request.POST.get('pass')
 				print("here")
 				password = hashlib.sha256(password.encode()).hexdigest()
 				print("herethere")
 				if useraccounts.objects.get(email=request.session['email']):
-						
+
 						print("yahoo")
-						
+
 						if user.userpassword == password:
-							
+
 							productlist.objects.filter(product_name=names).delete()
-							
+
 							messages = "Product removed !"
 							all_products=productlist.objects.all().order_by("product_name")
-							
+
 							context={
 							'admin':admin,
 							'dealing_admin':dealing_admin,
@@ -319,7 +319,7 @@ def removeproduct(request):
 							}
 							now = datetime.datetime.now(tz=timezone.utc)
 							email=request.session['email']
-							accounts = product_transaction_logs(email =email,timestamp = now,message="Product Removed ("+names+")")	
+							accounts = product_transaction_logs(email =email,timestamp = now,message="Product Removed ("+names+")")
 							accounts.save()
 
 							return render(request,'products/removeproduct.html',context)
@@ -327,7 +327,7 @@ def removeproduct(request):
 						else:
 							messages = "Password do not match !"
 							all_products=productlist.objects.all().order_by("product_name")
-							
+
 							context={
 							'admin':admin,
 							'dealing_admin':dealing_admin,
@@ -341,32 +341,32 @@ def removeproduct(request):
 							return render(request,'products/removeproduct.html',context)
 				else:
 					messages='email does not match'
-					
+
 					context={
 						'admin':admin,
 						'dealing_admin':dealing_admin,
 						'non_admin':non_admin,
-						'verified':user.verified,	
+						'verified':user.verified,
 						'name':currentName,
 						'all_products':all_products,
 						'del_list':del_list
 						}
-					
+
 					return render(request,'products/removeproduct.html',context)
 
-					
+
 			else:
-				
+
 				context={
 						'admin':admin,
 						'dealing_admin':dealing_admin,
-						'non_admin':non_admin,	
+						'non_admin':non_admin,
 						'name':currentName,
 						'verified':user.verified,
 						'all_products':all_products,
 						'del_list':del_list
 						}
-				
+
 				return render(request,'products/removeproduct.html',context)
 	except:
 		try:
@@ -383,7 +383,7 @@ def removeproduct(request):
 				'admin':admin,
 				'dealing_admin':dealing_admin,
 				'non_admin':non_admin,
-				'verified':user.verified,		
+				'verified':user.verified,
 				'message':message,
 				'logoutStatus':False
 			}
@@ -441,7 +441,7 @@ def viewproduct(request):
 				'admin':admin,
 				'dealing_admin':dealing_admin,
 				'non_admin':non_admin,
-				'verified':user.verified,		
+				'verified':user.verified,
 				'message':message,
 				'logoutStatus':False
 			}
@@ -452,7 +452,7 @@ def viewproduct(request):
 			'messages' : message,
 			'logoutStatus':logoutStatus
 		}
-			return redirect('login')	
+			return redirect('login')
 
 def routeproduct(request):
 	logoutStatus=True
@@ -480,7 +480,7 @@ def routeproduct(request):
 					'non_admin' : True,
 					'dealing_admin' : dealing_admin,
 					'verified':user.verified,
-					
+
 					'name' : currentName
 						}
 				return render(request,'home/base.html',context)
@@ -501,7 +501,7 @@ def routeproduct(request):
 						print("hola amigos")
 						message='Product with this name already exist'
 						all_products=productlist.objects.all().order_by("product_name")
-						
+
 						context={
 							'admin':admin,
 							'dealing_admin':dealing_admin,
@@ -511,7 +511,7 @@ def routeproduct(request):
 							'verified':user.verified,
 							'all_products':all_products
 							}
-						print("now here")	
+						print("now here")
 						return render(request,'products/editproduct.html',context)
 				except:
 					print("even here ppls")
@@ -521,7 +521,7 @@ def routeproduct(request):
 						message='Product details updated not changing name'
 						all_products=productlist.objects.filter(product_type="consumable").order_by("product_name")
 						noncon_product=productlist.objects.filter(product_type="non-consumable").order_by("product_name")
-						
+
 						context={
 							'admin':admin,
 							'dealing_admin':dealing_admin,
@@ -534,18 +534,18 @@ def routeproduct(request):
 							}
 						now = datetime.datetime.now(tz=timezone.utc)
 						email=request.session['email']
-						accounts = product_transaction_logs(email =email,timestamp = now,message="Product details Updated For"+old_name)	
+						accounts = product_transaction_logs(email =email,timestamp = now,message="Product details Updated For"+old_name)
 						accounts.save()
-							
+
 						return render(request,'products/products.html',context)
 					else:
-						
+
 						productlist.objects.filter(product_name=old_name).update(product_name=product_name,product_category=product_category,available_quantity=available_quantity,measure_unit=measure_unit,product_type=product_type)
 						message='Product details updated with changing name'
-						
+
 						all_products=productlist.objects.filter(product_type="consumable").order_by("product_name")
 						noncon_product=productlist.objects.filter(product_type="non-consumable").order_by("product_name")
-						
+
 						context={
 							'admin':admin,
 							'dealing_admin':dealing_admin,
@@ -558,14 +558,14 @@ def routeproduct(request):
 							}
 						now = datetime.datetime.now(tz=timezone.utc)
 						email=request.session['email']
-						
-						accounts = product_transaction_logs(email =email,timestamp = now,message="Product details/name changed from "+old_name +" to "+product_name)	
-						accounts.save()	
+
+						accounts = product_transaction_logs(email =email,timestamp = now,message="Product details/name changed from "+old_name +" to "+product_name)
+						accounts.save()
 						print("even here")
 					return render(request,'products/products.html',context)
 			else:
 				print("doool")
-				
+
 	except:
 		try:
 			if request.session['email']:
@@ -581,7 +581,7 @@ def routeproduct(request):
 				'admin':admin,
 				'dealing_admin':dealing_admin,
 				'non_admin':non_admin,
-				'verified':user.verified,		
+				'verified':user.verified,
 				'message':message,
 				'logoutStatus':False
 			}
@@ -619,18 +619,18 @@ def edprod(request,name):
 					'non_admin' : True,
 					'dealing_admin' : dealing_admin,
 					'verified':user.verified,
-					
+
 					'name' : currentName
 						}
 				return render(request,'home/base.html',context)
-			
+
 			print("doool")
 			all_products=productlist.objects.filter(product_name=name)
-				
+
 			all_units=master_units.objects.all()
 
 			all_category=master_category.objects.all()
-				
+
 			context={
 					'admin':admin,
 					'dealing_admin':dealing_admin,
@@ -642,7 +642,7 @@ def edprod(request,name):
 					'all_products':all_products
 				}
 
-					
+
 			return render(request,'products/editproduct.html',context)
 	except:
 		try:
@@ -659,7 +659,7 @@ def edprod(request,name):
 				'admin':admin,
 				'dealing_admin':dealing_admin,
 				'non_admin':non_admin,
-				'verified':user.verified,		
+				'verified':user.verified,
 				'message':message,
 				'logoutStatus':False
 			}
@@ -690,7 +690,7 @@ def requestproduct(request):
 			else:
 				dealing_admin = True
 			print("grrieo")
-			
+
 			if request.method=='POST':
 				print("ssaasarere")
 				product_name=request.POST.get('product_category')
@@ -707,14 +707,14 @@ def requestproduct(request):
 					'messages':'Please request for proper quantity',
 					'name':currentName,
 					'logoutStatus':False
-							}	
-					return render(request,'products/requestproduct.html',context)	
+							}
+					return render(request,'products/requestproduct.html',context)
 				else:
 					print("hersidmssdmind")
 					times=datetime.datetime.now(tz=timezone.utc)
 					datas=productlog(product_name=product_name,email=request.session['email'],quantity=quantity,timestamp=times,status='pending',approved_quantity=-1)
 					datas.save()
-					accounts = product_transaction_logs(email =request.session['email'],timestamp = times,message="Product requested " +product_name+" Amount :"+quantity)	
+					accounts = product_transaction_logs(email =request.session['email'],timestamp = times,message="Product requested " +product_name+" Amount :"+quantity)
 					accounts.save()
 					context={
 					'admin':admin,
@@ -725,17 +725,17 @@ def requestproduct(request):
 					'messages':'The request is sent you wll be notified once product is approved',
 					'name':currentName,
 					'logoutStatus':False
-							}	
+							}
 					return render(request,'products/requestproduct.html',context)
 			else:
 				logoutStatus=False
 				print("heree")
-				
-				
+
+
 				print("also here")
-				
-				
-				
+
+
+
 				print("ssosfndfnd")
 				context={
 				'admin':admin,
@@ -743,12 +743,12 @@ def requestproduct(request):
 				'dealing_admin':dealing_admin,
 				'all_products':all_products,
 				'verified':user.verified,
-				
+
 				'name':currentName,
 				'logoutStatus':False
-					}	
-				
-				return render(request,'products/requestproduct.html',context)		
+					}
+
+				return render(request,'products/requestproduct.html',context)
 	except:
 		try:
 			if request.session['email']:
@@ -764,7 +764,7 @@ def requestproduct(request):
 				'admin':admin,
 				'dealing_admin':dealing_admin,
 				'non_admin':non_admin,
-				'verified':user.verified,		
+				'verified':user.verified,
 				'message':message,
 				'logoutStatus':False
 			}
@@ -804,11 +804,11 @@ def approveproduct(request):
 					'non_admin' : True,
 					'verified':user.verified,
 					'dealing_admin' : dealing_admin,
-					
+
 					'name' : currentName
 						}
 				return render(request,'home/base.html',context)
-			
+
 			print("djvdhucdie")
 			user=useraccounts.objects.get(email=request.session['email'])
 			currentName = user.first_name+" "+user.last_name
@@ -828,7 +828,7 @@ def approveproduct(request):
 				else:
 					print(sum)
 					item_quant[data.product_name]=int(sum)
-			print(item_quant)		
+			print(item_quant)
 
 
 			data2=productlog.objects.filter(status='approved')
@@ -843,18 +843,18 @@ def approveproduct(request):
 			'all_products':all_products,
 			'data2':data2,
 			'prodnew':prodnew,
-			'logoutStatus':False	
+			'logoutStatus':False
 			}
-					
+
 			print('now')
 			return render(request,'products/approveproduct.html',context)
 	except:
 		messages='login first'
 		context = {
 				'logoutStatus' : True,
-					
+
 				'message' : messages,
-					
+
 					}
 		return render(request,'authentication/login.html',context)
 
@@ -883,7 +883,7 @@ def productconfirm(request,id):
 					'non_admin' : True,
 					'verified':user.verified,
 					'dealing_admin' : dealing_admin,
-						
+
 					'name' : currentName}
 				return render(request,'home/base.html',context)
 			print("ayaa")
@@ -901,7 +901,7 @@ def productconfirm(request,id):
 				adding.save()
 				print("added successfully")
 			message="Product "+product_name+" "+ "with quantity" +"("+str(quantity)+")"+ " Completely approved to  "+email
-			
+
 
 			productlog.objects.filter(id=id).update(status='approved',timestamp=datetime.datetime.now(tz=timezone.utc),approved_quantity=quantity)
 			print("ollaa")
@@ -942,13 +942,13 @@ def productconfirm(request,id):
 			'all_products':all_products,
 			'data2':data2,
 			'prodnew':prodnew
-				
+
 			}
 			now = datetime.datetime.now(tz=timezone.utc)
 			emails=request.session['email']
-			accounts = product_transaction_logs(email =emails,timestamp = now,message=message)	
+			accounts = product_transaction_logs(email =emails,timestamp = now,message=message)
 			accounts.save()
-					
+
 			print('now')
 			return render(request,'products/approveproduct.html',context)
 
@@ -967,7 +967,7 @@ def productconfirm(request,id):
 				'admin':admin,
 				'dealing_admin':dealing_admin,
 				'non_admin':non_admin,
-				'verified':user.verified,		
+				'verified':user.verified,
 				'message':message,
 				'logoutStatus':False
 			}
@@ -997,12 +997,12 @@ def myproduct(request):
 						admin = True
 				elif user.user_type == 'Dealing-Admin':
 					dealing_admin = True
-					
+
 				else:
 					non_admin=True
-				
-				
-				
+
+
+
 				all_products=productlog.objects.filter(status='pending').filter(email=request.session['email'])
 				ncproduct=nonconsumable_productlog.objects.filter(issued_to=request.session['email']).filter(return_status='true')
 				data2=productlog.objects.filter(status='approved').filter(email=request.session['email'])
@@ -1019,9 +1019,9 @@ def myproduct(request):
 				'data2':data2,
 				'prodnew':prodnew,
 				'name':currentName
-					
+
 				}
-						
+
 				print('now')
 				return render(request,'products/listproduct.html',context)
 	except:
@@ -1039,7 +1039,7 @@ def myproduct(request):
 				'admin':admin,
 				'dealing_admin':dealing_admin,
 				'non_admin':non_admin,
-				'verified':user.verified,		
+				'verified':user.verified,
 				'message':message,
 				'logoutStatus':False
 			}
@@ -1076,10 +1076,10 @@ def partialconfirm(request,id):
 					'non_admin' : True,
 					'verified':user.verified,
 					'dealing_admin' : dealing_admin,
-						
+
 					'name' : currentName}
 				return render(request,'home/base.html',context)
-			
+
 
 			dummy=productlog.objects.get(id=id)
 
@@ -1088,29 +1088,29 @@ def partialconfirm(request,id):
 			prod_data=productlist.objects.get(product_name=dummy.product_name)
 			email=dummy.email
 			print(prod_data)
-			
+
 			if request.method=='GET':
 
-				
+
 				quantity=str(request.GET['quant'])
 				if(int(quantity)<=0 or int(quantity)>=dummy.quantity):
 					message="Enter the valid quantity to approve"
-				
+
 				else:
 					message="Product "+product_name+ " "+"("+ quantity+")"+" partially approved to  "+email
-					
+
 					if(prod_data.product_type=="non-consumable"):
 						print("gerere")
 						adding=nonconsumable_productlog(product_name=dummy.product_name,issued_to=email,issued_by=request.session['email'],units=quantity,issue_date=datetime.datetime.now(tz=timezone.utc),return_status='false',requested_quantity=dummy.quantity)
 						adding.save()
-						
 
 
-					productlog.objects.filter(id=id).update(status='approved',timestamp=datetime.datetime.now(tz=timezone.utc),approved_quantity=quantity)
+
+					productlog.objects.filter(id=id).update(status='partially approved',timestamp=datetime.datetime.now(tz=timezone.utc),approved_quantity=quantity)
 					prod=productlist.objects.get(product_name=product_name)
 					sizes=prod.available_quantity
 					productlist.objects.filter(product_name=product_name).update(available_quantity=sizes-int(quantity))
-			
+
 
 			all_products=productlog.objects.filter(status='pending')
 			prodnew=productlist.objects.all().order_by("product_name")
@@ -1131,8 +1131,8 @@ def partialconfirm(request,id):
 					print(sum)
 					item_quant[data.product_name]=int(sum)
 			print(item_quant)
-			
-			
+
+
 			print(all_products)
 
 			context={
@@ -1146,13 +1146,13 @@ def partialconfirm(request,id):
 			'all_products':all_products,
 			'data2':data2,
 			'prodnew':prodnew
-				
+
 			}
 			now = datetime.datetime.now(tz=timezone.utc)
 			emails=request.session['email']
-			accounts = product_transaction_logs(email =emails,timestamp = now,message=message)	
+			accounts = product_transaction_logs(email =emails,timestamp = now,message=message)
 			accounts.save()
-					
+
 			print('now')
 			return render(request,'products/approveproduct.html',context)
 
@@ -1171,7 +1171,7 @@ def partialconfirm(request,id):
 				'admin':admin,
 				'dealing_admin':dealing_admin,
 				'non_admin':non_admin,
-				'verified':user.verified,		
+				'verified':user.verified,
 				'message':message,
 				'logoutStatus':False
 			}
@@ -1202,14 +1202,14 @@ def pendingprods(request):
 						admin = True
 				elif user.user_type == 'Dealing-Admin':
 					dealing_admin = True
-					
+
 				else:
 					non_admin=True
-				
-				
-				
+
+
+
 				all_products=productlog.objects.filter(status='pending').filter(email=request.session['email'])
-				
+
 				print(all_products)
 				context={
 				'dealing_admin':dealing_admin,
@@ -1217,13 +1217,13 @@ def pendingprods(request):
 				'non_admin':non_admin,
 				'name':currentName,
 				'verified':user.verified,
-				
+
 				'all_products':all_products,
-				
+
 				'name':currentName
-					
+
 				}
-						
+
 				print('now')
 				return render(request,'products/canceltransaction.html',context)
 	except:
@@ -1241,7 +1241,7 @@ def pendingprods(request):
 				'admin':admin,
 				'dealing_admin':dealing_admin,
 				'non_admin':non_admin,
-				'verified':user.verified,		
+				'verified':user.verified,
 				'message':message,
 				'logoutStatus':False
 			}
@@ -1273,21 +1273,21 @@ def canceltransaction(request,id):
 				print("fngfifdfjbnfg")
 			else:
 				non_admin=True
-			
+
 
 			dummy=productlog.objects.get(id=id)
 
-			names=dummy.product_name 
+			names=dummy.product_name
 
 			print(dummy)
-			
+
 			productlog.objects.filter(id=id).filter(status='pending').delete()
-			
+
 
 			all_products=productlog.objects.filter(status='pending')
-			
 
-			
+
+
 			print(all_products)
 			context={
 			'dealing_admin':dealing_admin,
@@ -1297,14 +1297,14 @@ def canceltransaction(request,id):
 			'verified':user.verified,
 			'messages':'The Transaction is cancelled',
 			'all_products':all_products
-			
-				
+
+
 			}
 			now = datetime.datetime.now(tz=timezone.utc)
 			emails=request.session['email']
-			accounts = product_transaction_logs(email =emails,timestamp = now,message="cancelled transaction for " + names)	
+			accounts = product_transaction_logs(email =emails,timestamp = now,message="cancelled transaction for " + names)
 			accounts.save()
-					
+
 			print('now')
 			return render(request,'products/canceltransaction.html',context)
 
@@ -1323,7 +1323,7 @@ def canceltransaction(request,id):
 				'admin':admin,
 				'dealing_admin':dealing_admin,
 				'non_admin':non_admin,
-				'verified':user.verified,		
+				'verified':user.verified,
 				'message':message,
 				'logoutStatus':False
 			}
@@ -1354,12 +1354,12 @@ def returnproduct(request):
 			else:
 				dealing_admin = True
 			print("grrieo")
-			
-			
+
+
 			logoutStatus=False
-			
-			productdata=nonconsumable_productlog.objects.filter(return_status='false').filter(issued_to=request.session['email'])	
-				
+
+			productdata=nonconsumable_productlog.objects.filter(return_status='false').filter(issued_to=request.session['email'])
+
 			print("ssosfndfnd")
 			context={
 			'admin':admin,
@@ -1367,12 +1367,12 @@ def returnproduct(request):
 			'dealing_admin':dealing_admin,
 			'all_products':all_products,
 			'verified':user.verified,
-			'productdata':productdata,	
+			'productdata':productdata,
 			'name':currentName,
 			'logoutStatus':False
-				}	
-				
-			return render(request,'products/returnproduct.html',context)		
+				}
+
+			return render(request,'products/returnproduct.html',context)
 	except:
 		try:
 			if request.session['email']:
@@ -1388,7 +1388,7 @@ def returnproduct(request):
 				'admin':admin,
 				'dealing_admin':dealing_admin,
 				'non_admin':non_admin,
-				'verified':user.verified,		
+				'verified':user.verified,
 				'message':message,
 				'logoutStatus':False
 			}
@@ -1400,7 +1400,7 @@ def returnproduct(request):
 			'logoutStatus':True
 		}
 			return redirect('login')
-		
+
 def returnconfirm(request,name,id):
 	admin=False
 	non_admin=False
@@ -1418,19 +1418,19 @@ def returnconfirm(request,name,id):
 			else:
 				dealing_admin = True
 			print("grrieo")
-			
-			
+
+
 			logoutStatus=False
 			currtime=datetime.datetime.now(tz=timezone.utc)
 
 			nonconsumable_productlog.objects.filter(product_name=name).filter(id=id).update(return_date=currtime,return_status='true')
-			
-			productdata=nonconsumable_productlog.objects.filter(return_status='false').filter(issued_to=request.session['email'])	
-				
+
+			productdata=nonconsumable_productlog.objects.filter(return_status='false').filter(issued_to=request.session['email'])
+
 			print("returned")
 			now = datetime.datetime.now(tz=timezone.utc)
 			emails=request.session['email']
-			accounts = product_transaction_logs(email =emails,timestamp = now,message="Product " + name+" returned by "+request.session['email'])	
+			accounts = product_transaction_logs(email =emails,timestamp = now,message="Product " + name+" returned by "+request.session['email'])
 			accounts.save()
 			context={
 			'admin':admin,
@@ -1438,13 +1438,13 @@ def returnconfirm(request,name,id):
 			'dealing_admin':dealing_admin,
 			'all_products':all_products,
 			'verified':user.verified,
-			'productdata':productdata,	
+			'productdata':productdata,
 			'name':currentName,
 			'logoutStatus':False
-				}	
-				
+				}
+
 			return render(request,'products/returnproduct.html',context)
-			
+
 
 	except:
 		try:
@@ -1461,7 +1461,7 @@ def returnconfirm(request,name,id):
 				'admin':admin,
 				'dealing_admin':dealing_admin,
 				'non_admin':non_admin,
-				'verified':user.verified,		
+				'verified':user.verified,
 				'message':message,
 				'logoutStatus':False
 			}
@@ -1484,7 +1484,7 @@ def proddb(request):
 			admin=False
 			non_admin=False
 			dealing_admin=False
-			
+
 			all_products=productlist.objects.all().order_by("product_name")
 			measuredata=master_units.objects.all().order_by("measure_unit")
 			categorydata=master_category.objects.all().order_by("product_category")
@@ -1497,7 +1497,7 @@ def proddb(request):
 				if content:
 					nondel_category.add(data.product_category)
 					nondel_measure.add(data.measure_unit)
-			
+
 			for data in measuredata:
 				if data.measure_unit not in nondel_measure:
 					measurement.add(data.measure_unit)
@@ -1506,7 +1506,7 @@ def proddb(request):
 				if data.product_category not in nondel_category:
 					categories.add(data.product_category)
 
-					
+
 			user=useraccounts.objects.get(email=request.session['email'])
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
@@ -1520,20 +1520,20 @@ def proddb(request):
 					'logoutStatus' : False,
 					'admin' : admin,
 					'non_admin' : non_admin,
-					'dealing_admin':dealing_admin, 
+					'dealing_admin':dealing_admin,
 					'verified':user.verified,
 					'dealing_admin' : dealing_admin,
-						
+
 					'name' : currentName}
 				return render(request,'home/base.html',context)
-			
-			 
+
+
 			print("doing great")
 			context={
 					'logoutStatus' : False,
 					'admin' : admin,
 					'non_admin' : non_admin,
-					'dealing_admin':dealing_admin, 
+					'dealing_admin':dealing_admin,
 					'verified':user.verified,
 					'dealing_admin' : dealing_admin,
 					'nondel_category':nondel_category,
@@ -1541,7 +1541,7 @@ def proddb(request):
 					'categories':categories,
 					'measurement':measurement,
 					'name' : currentName}
-			print("nice")		
+			print("nice")
 			return render(request,'products/edit_unit_category.html',context)
 		else:
 			print('nothing')
@@ -1560,7 +1560,7 @@ def proddb(request):
 				'admin':admin,
 				'dealing_admin':dealing_admin,
 				'non_admin':non_admin,
-				'verified':user.verified,		
+				'verified':user.verified,
 				'message':message,
 				'logoutStatus':False
 			}
@@ -1594,7 +1594,7 @@ def add_measure(request):
 				if content:
 					nondel_category.add(data.product_category)
 					nondel_measure.add(data.measure_unit)
-			
+
 			for data in measuredata:
 				if data.measure_unit not in nondel_measure:
 					measurement.add(data.measure_unit)
@@ -1612,27 +1612,27 @@ def add_measure(request):
 					'logoutStatus' : False,
 					'admin' : admin,
 					'non_admin' : non_admin,
-					'dealing_admin':dealing_admin, 
+					'dealing_admin':dealing_admin,
 					'verified':user.verified,
 					'dealing_admin' : dealing_admin,
-						
+
 					'name' : currentName}
 				return render(request,'home/base.html',context)
-			
+
 			if request.method=='POST':
 				print("fine")
 				names=request.POST.get('measure')
-				
+
 				print(names)
 				try:
 					if master_units.objects.get(measure_unit=names):
-						
+
 						context={
 					    'logoutStatus' : False,
 					    'admin' : admin,
 						'non_admin' : non_admin,
 						'message':'Measure unit exists',
-						'dealing_admin':dealing_admin, 
+						'dealing_admin':dealing_admin,
 						'verified':user.verified,
 						'dealing_admin' : dealing_admin,
 						'nondel_measure':nondel_measure,
@@ -1640,7 +1640,7 @@ def add_measure(request):
 						'categories':categories,
 						'measurement':measurement,
 						'name' : currentName}
-						print("nice")		
+						print("nice")
 						return render(request,'products/edit_unit_category.html',context)
 				except:
 					print("also herrre")
@@ -1648,13 +1648,13 @@ def add_measure(request):
 					data.save()
 					print("macho")
 					measurement.add(names)
-					
+
 					context={
 					    'logoutStatus' : False,
 					    'admin' : admin,
 						'non_admin' : non_admin,
 						'message':'Measure unit added',
-						'dealing_admin':dealing_admin, 
+						'dealing_admin':dealing_admin,
 						'verified':user.verified,
 						'dealing_admin' : dealing_admin,
 						'nondel_category':nondel_category,
@@ -1664,18 +1664,18 @@ def add_measure(request):
 						'name' : currentName}
 					print("nice111")
 					now = datetime.datetime.now(tz=timezone.utc)
-					accounts = product_transaction_logs(email =request.session['email'],timestamp = now,message="Measure unit " + names+" added by "+request.session['email'])	
-					accounts.save()	
+					accounts = product_transaction_logs(email =request.session['email'],timestamp = now,message="Measure unit " + names+" added by "+request.session['email'])
+					accounts.save()
 
 					return render(request,'products/edit_unit_category.html',context)
 			else:
-				
+
 				context={
 					    'logoutStatus' : False,
 					    'admin' : admin,
 						'non_admin' : non_admin,
-						
-						'dealing_admin':dealing_admin, 
+
+						'dealing_admin':dealing_admin,
 						'verified':user.verified,
 						'nondel_measure':nondel_measure,
 						'nondel_category':nondel_category,
@@ -1683,7 +1683,7 @@ def add_measure(request):
 						'dealing_admin' : dealing_admin,
 						'measurement':measurement,
 						'name' : currentName}
-				print("nice")		
+				print("nice")
 				return render(request,'products/edit_unit_category.html',context)
 
 
@@ -1702,7 +1702,7 @@ def add_measure(request):
 				'admin':admin,
 				'dealing_admin':dealing_admin,
 				'non_admin':non_admin,
-				'verified':user.verified,		
+				'verified':user.verified,
 				'message':message,
 				'logoutStatus':False
 			}
@@ -1737,7 +1737,7 @@ def add_category(request):
 				if content:
 					nondel_category.add(data.product_category)
 					nondel_measure.add(data.measure_unit)
-			
+
 			for data in measuredata:
 				if data.measure_unit not in nondel_measure:
 					measurement.add(data.measure_unit)
@@ -1755,21 +1755,21 @@ def add_category(request):
 					'logoutStatus' : False,
 					'admin' : admin,
 					'non_admin' : non_admin,
-					'dealing_admin':dealing_admin, 
+					'dealing_admin':dealing_admin,
 					'verified':user.verified,
 					'dealing_admin' : dealing_admin,
-						
+
 					'name' : currentName}
 				return render(request,'home/base.html',context)
-			
+
 			if request.method=='POST':
 				print("fine")
 				names=request.POST.get('category')
-			
+
 				print(names)
 				try:
 					if master_category.objects.get(product_category=names):
-						
+
 
 						context={
 					    'logoutStatus' : False,
@@ -1777,14 +1777,14 @@ def add_category(request):
 						'non_admin' : non_admin,
 						'message':'Category Already exists',
 						'categories':categories,
-						'dealing_admin':dealing_admin, 
+						'dealing_admin':dealing_admin,
 						'verified':user.verified,
 						'dealing_admin' : dealing_admin,
 						'measurement':measurement,
 						'nondel_category':nondel_category,
 						'nondel_measure':nondel_measure,
 						'name' : currentName}
-						print("nice")		
+						print("nice")
 						return render(request,'products/edit_unit_category.html',context)
 				except:
 					print("also herrre")
@@ -1792,14 +1792,14 @@ def add_category(request):
 					data.save()
 					categories.add(names)
 					print("macho")
-					
+
 					context={
 					    'logoutStatus' : False,
 					    'admin' : admin,
 						'non_admin' : non_admin,
 						'message':'Category added successfully',
 						'categories':categories,
-						'dealing_admin':dealing_admin, 
+						'dealing_admin':dealing_admin,
 						'verified':user.verified,
 						'nondel_measure':nondel_measure,
 						'nondel_category':nondel_category,
@@ -1808,11 +1808,11 @@ def add_category(request):
 						'name' : currentName}
 					print("nice111")
 					now = datetime.datetime.now(tz=timezone.utc)
-					accounts = product_transaction_logs(email =request.session['email'],timestamp = now,message="Product Category " + names+" added by "+request.session['email'])	
+					accounts = product_transaction_logs(email =request.session['email'],timestamp = now,message="Product Category " + names+" added by "+request.session['email'])
 					accounts.save()
 					return render(request,'products/edit_unit_category.html',context)
 			else:
-				
+
 				context={
 					    'logoutStatus' : False,
 					    'admin' : admin,
@@ -1820,12 +1820,12 @@ def add_category(request):
 						'nondel_category':nondel_category,
 						'nondel_measure':nondel_measure,
 						'categories':categories,
-						'dealing_admin':dealing_admin, 
+						'dealing_admin':dealing_admin,
 						'verified':user.verified,
 						'dealing_admin' : dealing_admin,
 						'measurement':measurement,
 						'name' : currentName}
-				print("nice")		
+				print("nice")
 				return render(request,'products/edit_unit_category.html',context)
 
 
@@ -1844,7 +1844,7 @@ def add_category(request):
 				'admin':admin,
 				'dealing_admin':dealing_admin,
 				'non_admin':non_admin,
-				'verified':user.verified,		
+				'verified':user.verified,
 				'message':message,
 				'logoutStatus':False
 			}
@@ -1878,7 +1878,7 @@ def del_unit(request,name):
 				if content:
 					nondel_category.add(data.product_category)
 					nondel_measure.add(data.measure_unit)
-			
+
 			for data in measuredata:
 				if data.measure_unit not in nondel_measure:
 					measurement.add(data.measure_unit)
@@ -1896,15 +1896,15 @@ def del_unit(request,name):
 					'logoutStatus' : False,
 					'admin' : admin,
 					'non_admin' : non_admin,
-					'dealing_admin':dealing_admin, 
+					'dealing_admin':dealing_admin,
 					'verified':user.verified,
 					'dealing_admin' : dealing_admin,
-						
+
 					'name' : currentName}
 				return render(request,'home/base.html',context)
 			master_units.objects.filter(measure_unit=name).delete()
 			measurement.discard(name)
-			
+
 			context={
 					  'logoutStatus' : False,
 					   'admin' : admin,
@@ -1913,14 +1913,14 @@ def del_unit(request,name):
 						'nondel_measure':nondel_measure,
 						'nondel_category':nondel_category,
 						'categories':categories,
-						'dealing_admin':dealing_admin, 
+						'dealing_admin':dealing_admin,
 						'verified':user.verified,
 						'dealing_admin' : dealing_admin,
 						'measurement':measurement,
 						'name' : currentName}
 			print("nice111")
 			now = datetime.datetime.now(tz=timezone.utc)
-			accounts = product_transaction_logs(email =request.session['email'],timestamp = now,message="Measure unit " + name+" removed by "+request.session['email'])	
+			accounts = product_transaction_logs(email =request.session['email'],timestamp = now,message="Measure unit " + name+" removed by "+request.session['email'])
 			accounts.save()
 			return render(request,'products/edit_unit_category.html',context)
 
@@ -1942,7 +1942,7 @@ def del_unit(request,name):
 				'admin':admin,
 				'dealing_admin':dealing_admin,
 				'non_admin':non_admin,
-				'verified':user.verified,		
+				'verified':user.verified,
 				'message':message,
 				'logoutStatus':False
 			}
@@ -1976,7 +1976,7 @@ def del_category(request,name):
 				if content:
 					nondel_category.add(data.product_category)
 					nondel_measure.add(data.measure_unit)
-			
+
 			for data in measuredata:
 				if data.measure_unit not in nondel_measure:
 					measurement.add(data.measure_unit)
@@ -1994,16 +1994,16 @@ def del_category(request,name):
 					'logoutStatus' : False,
 					'admin' : admin,
 					'non_admin' : non_admin,
-					'dealing_admin':dealing_admin, 
+					'dealing_admin':dealing_admin,
 					'verified':user.verified,
 					'dealing_admin' : dealing_admin,
-						
+
 					'name' : currentName}
 				return render(request,'home/base.html',context)
 
 			master_category.objects.filter(product_category=name).delete()
 			categories.discard(name)
-			
+
 			context={
 					  'logoutStatus' : False,
 					   'admin' : admin,
@@ -2012,15 +2012,15 @@ def del_category(request,name):
 						'nondel_category':nondel_category,
 						'nondel_measure':nondel_measure,
 						'categories':categories,
-						'dealing_admin':dealing_admin, 
+						'dealing_admin':dealing_admin,
 						'verified':user.verified,
 						'dealing_admin' : dealing_admin,
 						'measurement':measurement,
 						'name' : currentName}
 			print("nice111")
 			now = datetime.datetime.now(tz=timezone.utc)
-			accounts = product_transaction_logs(email =request.session['email'],timestamp = now,message="Category " + name+" Removed by "+request.session['email'])	
-			accounts.save()		
+			accounts = product_transaction_logs(email =request.session['email'],timestamp = now,message="Category " + name+" Removed by "+request.session['email'])
+			accounts.save()
 			return render(request,'products/edit_unit_category.html',context)
 
 		else:
@@ -2041,7 +2041,7 @@ def del_category(request,name):
 				'admin':admin,
 				'dealing_admin':dealing_admin,
 				'non_admin':non_admin,
-				'verified':user.verified,		
+				'verified':user.verified,
 				'message':message,
 				'logoutStatus':False
 			}
@@ -2130,5 +2130,5 @@ def pd_logs(request):
 				return render(request,'products/pd_logs.html',context)
 	except:
 				#If user not logged in
-		print("herere")		
+		print("herere")
 		return redirect('login')
