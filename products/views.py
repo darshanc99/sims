@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from .models import productlist,productlog,nonconsumable_productlog,master_units,master_category
 from authentication.models import useraccounts
-from logs.models import sessionlogs,product_transaction_logs
+from logs.models import sessionlogs,product_transaction_logs,product_operationlogs
 from simchat.models import simmessage
 from django.utils import timezone
 import datetime
@@ -93,9 +93,13 @@ def addproduct(request):
 						}
 					now = datetime.datetime.now(tz=timezone.utc)
 					email=request.session['email']
-					accounts = product_transaction_logs(email =email,timestamp = now,message="New Product added "+" ("+ product_name+ ")")	
+					
+					accounts = product_transaction_logs(email =email,timestamp = now,message="New Product added "+" ("+ product_name+ ")")
 					accounts.save()
-
+					print("djfdfd")
+					content= product_operationlogs(product_name=product_name,timestamp=now,operation="addition",quantity=int(available_quantity),initial_quantity=0,final_quantity=int(available_quantity),issued_by=email)
+					content.save()
+					print("djfdfd444")
 					return render(request,'products/addproduct.html',context)		
 			else:
 				all_products=productlist.objects.all().order_by("product_name")
@@ -201,7 +205,15 @@ def addquantity(request):
 				now = datetime.datetime.now(tz=timezone.utc)
 				email=request.session['email']
 				accounts = product_transaction_logs(email =email,timestamp = now,message="product ("+names +")" + " quantity increased (+"+quantity+")")	
-				accounts.save()				
+				accounts.save()
+
+				data=product_operationlogs.objects.filter(product_name=names).order_by('timestamp').last()
+				print(data.final_quantity)
+				value=int(quantity)+data.final_quantity
+
+				content= product_operationlogs(product_name=names,timestamp=now,operation="addition",quantity=int(quantity),initial_quantity=int(data.final_quantity),final_quantity=value,issued_by=email)
+				content.save()
+
 				return render(request,'products/addquantity.html',context)
 			else:
 				all_products=productlist.objects.all().order_by("product_name")
@@ -488,41 +500,19 @@ def routeproduct(request):
 				print("fhghgf")
 				old_name=request.POST.get('product_list')
 				print(old_name)
-				product_name=request.POST.get('product_name')
-				print(product_name)
+				
 				product_category=request.POST.get('product_category')
 				print(product_category)
 				product_type=request.POST.get('product_type')
 				available_quantity=request.POST.get('avail_quantity')
 				measure_unit=request.POST.get('measure_unit')
-				print("fghghh222")
-				try:
-					if productlist.objects.get(product_name=product_name):
-						print("hola amigos")
-						message='Product with this name already exist'
-						all_products=productlist.objects.all().order_by("product_name")
-						
-						context={
-							'admin':admin,
-							'dealing_admin':dealing_admin,
-							'non_admin':non_admin,
-							'message':message,
-							'name':currentName,
-							'verified':user.verified,
-							'all_products':all_products
-							}
-						print("now here")	
-						return render(request,'products/editproduct.html',context)
-				except:
-					print("even here ppls")
-					if product_name=='':
-						print("whereeetr")
-						productlist.objects.filter(product_name=old_name).update(product_category=product_category,available_quantity=available_quantity,measure_unit=measure_unit,product_type=product_type)
-						message='Product details updated not changing name'
-						all_products=productlist.objects.filter(product_type="consumable").order_by("product_name")
-						noncon_product=productlist.objects.filter(product_type="non-consumable").order_by("product_name")
-						
-						context={
+				
+				print("even here ppls")
+				productlist.objects.filter(product_name=old_name).update(product_category=product_category,available_quantity=available_quantity,measure_unit=measure_unit,product_type=product_type)
+				message='Product details updated '
+				all_products=productlist.objects.filter(product_type="consumable").order_by("product_name")
+				noncon_product=productlist.objects.filter(product_type="non-consumable").order_by("product_name")
+				context={
 							'admin':admin,
 							'dealing_admin':dealing_admin,
 							'non_admin':non_admin,
@@ -532,37 +522,13 @@ def routeproduct(request):
 							'all_products':all_products,
 							'noncon_product':noncon_product
 							}
-						now = datetime.datetime.now(tz=timezone.utc)
-						email=request.session['email']
-						accounts = product_transaction_logs(email =email,timestamp = now,message="Product details Updated For"+old_name)	
-						accounts.save()
+				now = datetime.datetime.now(tz=timezone.utc)
+				email=request.session['email']
+				accounts = product_transaction_logs(email =email,timestamp = now,message="Product details Updated For"+old_name)	
+				accounts.save()
 							
-						return render(request,'products/products.html',context)
-					else:
-						
-						productlist.objects.filter(product_name=old_name).update(product_name=product_name,product_category=product_category,available_quantity=available_quantity,measure_unit=measure_unit,product_type=product_type)
-						message='Product details updated with changing name'
-						
-						all_products=productlist.objects.filter(product_type="consumable").order_by("product_name")
-						noncon_product=productlist.objects.filter(product_type="non-consumable").order_by("product_name")
-						
-						context={
-							'admin':admin,
-							'dealing_admin':dealing_admin,
-							'non_admin':non_admin,
-							'message':message,
-							'verified':user.verified,
-							'name':currentName,
-							'noncon_product':noncon_product,
-							'all_products':all_products
-							}
-						now = datetime.datetime.now(tz=timezone.utc)
-						email=request.session['email']
-						
-						accounts = product_transaction_logs(email =email,timestamp = now,message="Product details/name changed from "+old_name +" to "+product_name)	
-						accounts.save()	
-						print("even here")
-					return render(request,'products/products.html',context)
+				return render(request,'products/products.html',context)
+					
 			else:
 				print("doool")
 				
@@ -906,6 +872,9 @@ def productconfirm(request,id):
 			productlog.objects.filter(id=id).update(status='approved',timestamp=datetime.datetime.now(tz=timezone.utc),approved_quantity=quantity)
 			print("ollaa")
 
+
+			
+
 			all_products=productlog.objects.filter(status='pending')
 			data2=productlog.objects.filter(status='approved')
 
@@ -913,6 +882,12 @@ def productconfirm(request,id):
 			sizes=prod.available_quantity
 			prodnew=productlist.objects.all().order_by("product_name")
 			productlist.objects.filter(product_name=product_name).update(available_quantity=sizes-int(quantity))
+
+			element=product_operationlogs.objects.filter(product_name=product_name).order_by('timestamp').last()
+			print(element.final_quantity)
+			value=element.final_quantity - int(quantity)
+			content= product_operationlogs(product_name=product_name,timestamp=datetime.datetime.now(tz=timezone.utc),operation="subtraction",quantity=int(quantity),initial_quantity=int(element.final_quantity),final_quantity=value,issued_by=email)
+			content.save()
 
 			item_quant={}
 			for data in prodnew:
@@ -948,6 +923,8 @@ def productconfirm(request,id):
 			emails=request.session['email']
 			accounts = product_transaction_logs(email =emails,timestamp = now,message=message)	
 			accounts.save()
+
+			
 					
 			print('now')
 			return render(request,'products/approveproduct.html',context)
@@ -1110,7 +1087,12 @@ def partialconfirm(request,id):
 					prod=productlist.objects.get(product_name=product_name)
 					sizes=prod.available_quantity
 					productlist.objects.filter(product_name=product_name).update(available_quantity=sizes-int(quantity))
-			
+
+					element=product_operationlogs.objects.filter(product_name=dummy.product_name).order_by('timestamp').last()
+					print(element.final_quantity)
+					value=element.final_quantity - int(quantity)
+					content= product_operationlogs(product_name=dummy.product_name,timestamp=datetime.datetime.now(tz=timezone.utc),operation="subtraction",quantity=int(quantity),initial_quantity=int(element.final_quantity),final_quantity=value,issued_by=email)
+					content.save()
 
 			all_products=productlog.objects.filter(status='pending')
 			prodnew=productlist.objects.all().order_by("product_name")

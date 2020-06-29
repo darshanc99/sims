@@ -79,7 +79,15 @@
 								<th scope="row">{{log.approved_quantity}}</th>
 						{% endif %}			
 								<th scope="row">{{log.timestamp}}</th>
-				        <th scope="row" style="color:red">{{log.status}}</th>
+							{% if log.status == "approved" %}	
+						{% if log.quantity > log.approved_quantity %}	
+			        <th scope="row" style="color:red">{{log.status}} partialy</th>
+			        {% else %}
+			        <th scope="row" style="color:red">{{log.status}} </th>
+			        {%endif%}
+			         {% else %}
+			        <th scope="row" style="color:red">{{log.status}} </th>
+			        {% endif %}
 				      </tr>
 				    {% endfor %}
 				  </tbody>
