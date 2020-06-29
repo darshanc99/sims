@@ -61,7 +61,8 @@
 			    <tr>
 			      <th scope="col">Email</th>
 			      <th scope="col">Product Name</th>
-			      <th scope="col">Quantity</th>
+						<th scope="col">Product Requested</th>
+			      <th scope="col">Quantity Approved</th>
 						<th scope="col">Timestamp</th>
 						<th scope="col">Status</th>
 			    </tr>
@@ -71,12 +72,14 @@
 			      <tr>
 			        <th scope="row"><a href="mailto: {{log.email}}">{{log.email}}</a></th>
 			        <th scope="row">{{log.product_name}}</th>
-			         {% if log.status == "pending" %}
-								<th scope="row">{{log.quantity}}</th>
+							<th scope="row">{{log.quantity}}</th>
+		         {% if log.status == "pending" %}
+								<th scope="row">-</th>
 						{% else %}
 								<th scope="row">{{log.approved_quantity}}</th>
-						{% endif %}			
+						{% endif %}
 							<th scope="row">{{log.timestamp}}</th>
+<<<<<<< HEAD
 						{% if log.status == "approved" %}	
 						{% if log.quantity > log.approved_quantity %}	
 			        <th scope="row" style="color:red">{{log.status}} partialy</th>
@@ -87,6 +90,17 @@
 			        <th scope="row" style="color:red">{{log.status}} </th>
 			        {% endif %}
 
+=======
+						{% if log.status == "pending" %}
+			        <th scope="row" style="color:red">{{log.status}}</th>
+						{% endif %}
+						{% if log.status == "approved" %}
+							<th scope="row" style="color:green">{{log.status}}</th>
+						{% endif %}
+						{% if log.status == "partially approved" %}
+							<th scope="row" style="color:purple">{{log.status}}</th>
+						{% endif %}
+>>>>>>> 945108bb5374e920b4d3066b09cfcc37ebd16d52
 			      </tr>
 			    {% endfor %}
 			  </tbody>

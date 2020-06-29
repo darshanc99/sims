@@ -17,5 +17,6 @@ urlpatterns = [
     path(r'unfreeze/<str:email>',views.unfreezeuser,name='unfreezeuser'),
     path(r'edit/<str:email>',views.edituser,name='edituser'),
     path(r'error/',views.error,name='error'),
-    path(r'filter/',views.filter,name='filter')
+    path(r'filter/',views.filter,name='filter'),
+    path(r'report/',views.report,name='report')
 ]
