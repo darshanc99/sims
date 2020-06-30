@@ -37,7 +37,16 @@
 			<mark>{{text | safe}}</mark><br>
 		{% endif %}
 		<br>
-    <h4><b>Report</b></h4>
+		<form class="form-inline">
+		  <div class="form-group mb-2">
+		    <h4><b>Report</b></h4><span>&nbsp;&nbsp;&nbsp;&nbsp;
+		  </div>
+			{% if start %}
+				<button type="submit" class="btn btn-outline-dark mb-2"><a href="export/{{start}}/{{end}}/">Download</a></button>
+			{% else %}
+				<button type="submit" class="btn btn-outline-dark mb-2"><a href="export/">Download</a></button>
+			{% endif %}
+		</form>
       <table class="table table-responsive" style="max-height:500px;">
         <thead class="table-dark">
           <tr>

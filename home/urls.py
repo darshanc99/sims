@@ -19,4 +19,6 @@ urlpatterns = [
     path(r'error/',views.error,name='error'),
     path(r'filter/',views.filter,name='filter'),
     path(r'report/',views.report,name='report'),
+    path(r'report/export/',views.export,name='export'),
+    path(r'report/export/<str:start>/<str:end>/',views.exportcsv,name='exportcsv'),
 ]

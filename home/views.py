@@ -9,6 +9,8 @@ from django.utils import timezone
 from twilio.rest import Client
 from simchat.models import simmessage
 from itertools import chain
+import csv
+from django.http import HttpResponse
 
 #Twilio creds
 account_sid = "ACa724704a972c70089e7af50aec381049"
@@ -630,7 +632,6 @@ def report(request):
 							query = product_operationlogs.objects.filter(product_name=product.product_name,timestamp__date__range=(start_date,end_date))
 							#Check if query is None
 							if len(query) == 0:
-								print("Kem Palty")
 								query = product_operationlogs.objects.filter(product_name=product.product_name).order_by('timestamp').reverse()
 								temp['opening_balance'] = query[0].final_quantity
 								temp['closing_balance'] = temp['opening_balance']
@@ -671,6 +672,8 @@ def report(request):
 							'name' : name,
 							'text' : message,
 							'result' : result,
+							'start' : start_date,
+							"end" : end_date,
 						}
 						return render(request,'home/report.html',context)
 					else:
@@ -749,3 +752,109 @@ def report(request):
 		#If user not logged in
 		return redirect('home')
 	return redirect('home')
+
+#Download Function no start and end date given
+def export(request):
+	user = useraccounts.objects.get(email=request.session['email'])
+	#Only for verified admin
+	try:
+		if user.user_type == 'Admin' and user.verified:
+			result = []
+			products = productlist.objects.all().order_by('product_name')
+			for product in products:
+				temp = {}
+				temp['product'] = product.product_name
+				temp['category'] = product.product_category
+				query = product_operationlogs.objects.filter(product_name=product.product_name)
+				temp['opening_balance'] = query[0].final_quantity
+				query = product_operationlogs.objects.filter(product_name=product.product_name).order_by('timestamp').reverse()
+				temp['closing_balance'] = query[0].final_quantity
+				temp['net'] = abs(temp['closing_balance']-temp['opening_balance'])
+				total_requests = productlog.objects.filter(product_name=product.product_name).values_list('quantity', flat=True)
+				total_requests = sum(total_requests)
+				total_approved = productlog.objects.filter(product_name=product.product_name).values_list('approved_quantity', flat=True)
+				total_approved = sum(total_approved)
+				temp['requests'] = total_requests
+				temp['approved'] = total_approved
+				if total_requests > 0:
+					temp['approvedcent'] = round(total_approved*100/total_requests,2)
+				else:
+					temp['approvedcent'] = '-'
+				result.append(temp)
+			response = HttpResponse(content_type='text/csv')
+			response['Content-Disposition'] = 'attachment;filename="simreport.csv"'
+			writer = csv.writer(response)
+			writer.writerow(['Full Time Report for SIMS'])
+			writer.writerow(['Product','Category','Opening Balance','Net Change','Closing Balance','Total Requests','Total Approved','%Approved'])
+			for res in result:
+				lis = [str(res['product']),str(res['category']),str(res['opening_balance']),str(res['net']),str(res['closing_balance']),str(res['requests']),str(res['approved']),str(res['approvedcent'])]
+				writer.writerow(lis)
+			return response
+		else:
+			return redirect('home')
+	except:
+		return redirect('home')
+
+#Download function with start and end date
+def exportcsv(request,start,end):
+	start_date = start
+	end_date = end
+	user = useraccounts.objects.get(email=request.session['email'])
+	#Only for Verified Admin
+	try:
+		if user.user_type == 'Admin' and user.verified:
+			#If end date is greater than or equal to start date
+			if end_date >= start_date:
+				result = []
+				#get all the products
+				products = productlist.objects.all().order_by('product_name')
+				for product in products:
+					temp = {}
+					temp['product'] = product.product_name
+					temp['category'] = product.product_category
+					query = product_operationlogs.objects.filter(product_name=product.product_name,timestamp__date__range=(start_date,end_date))
+					#Check if query is None
+					if len(query) == 0:
+						query = product_operationlogs.objects.filter(product_name=product.product_name).order_by('timestamp').reverse()
+						temp['opening_balance'] = query[0].final_quantity
+						temp['closing_balance'] = temp['opening_balance']
+						temp['net'] = abs(temp['closing_balance']-temp['opening_balance'])
+						total_requests = productlog.objects.filter(product_name=product.product_name).values_list('quantity', flat=True)
+						total_requests = sum(total_requests)
+						total_approved = productlog.objects.filter(product_name=product.product_name).values_list('approved_quantity', flat=True)
+						total_approved = sum(total_approved)
+						temp['requests'] = total_requests
+						temp['approved'] = total_approved
+						if total_requests > 0:
+							temp['approvedcent'] = round(total_approved*100/total_requests,2)
+						else:
+							temp['approvedcent'] = '-'
+					else:
+						temp['opening_balance'] = query[0].final_quantity
+						query = product_operationlogs.objects.filter(product_name=product.product_name).order_by('timestamp').reverse()
+						temp['closing_balance'] = query[0].final_quantity
+						temp['net'] = abs(temp['closing_balance']-temp['opening_balance'])
+						total_requests = productlog.objects.filter(product_name=product.product_name).values_list('quantity', flat=True)
+						total_requests = sum(total_requests)
+						total_approved = productlog.objects.filter(product_name=product.product_name).values_list('approved_quantity', flat=True)
+						total_approved = sum(total_approved)
+						temp['requests'] = total_requests
+						temp['approved'] = total_approved
+						if total_requests > 0:
+							temp['approvedcent'] = round(total_approved*100/total_requests,2)
+						else:
+							temp['approvedcent'] = '-'
+					result.append(temp)
+				response = HttpResponse(content_type='text/csv')
+				response['Content-Disposition'] = 'attachment;filename="simreport.csv"'
+				writer = csv.writer(response)
+				writer.writerow(['Report between ' + start_date + ' and ' + end_date])
+				writer.writerow(['Product','Category','Opening Balance','Net Change','Closing Balance','Total Requests','Total Approved','%Approved'])
+				for res in result:
+					lis = [str(res['product']),str(res['category']),str(res['opening_balance']),str(res['net']),str(res['closing_balance']),str(res['requests']),str(res['approved']),str(res['approvedcent'])]
+					writer.writerow(lis)
+				return response
+			else:
+				return redirect('home')
+	except:
+		return redirect('home')
