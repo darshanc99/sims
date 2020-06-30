@@ -614,17 +614,52 @@ def report(request):
 			#If user is a verified admin
 			if user.user_type == 'Admin' and user.verified:
 				admin = True
-				report = product_operationlogs.objects.all().order_by('timestamp').reverse()
-				context = {
-					'admin' : admin,
-					'non_admin' : non_admin,
-					'dealing_admin' : dealing_admin,
-					'logoutStatus' : logoutStatus,
-					'verified' :  user.verified,
-					'operations' : report,
-					'name' : name,
-				}
-				return render(request,'home/report.html',context)
+				#If POST method
+				if request.method == 'POST':
+					start_date = request.POST.get('start_date')
+					end_date = request.POST.get('end_date')
+					#If the end_date is greater than the start_date
+					if end_date >= start_date:
+						all_op = product_operationlogs.objects.filter(product_name='Paper',timestamp__date__range=(start_date,end_date))
+						print(all_op)
+						message = 'Currently, showing report for <b>' + start_date + "</b> - <b>" + end_date + "</b>."
+						report = product_operationlogs.objects.all().order_by('timestamp').reverse()
+						context = {
+							'admin' : admin,
+							'non_admin' : non_admin,
+							'dealing_admin' : dealing_admin,
+							'verified' : user.verified,
+							'name' : name,
+							'text' : message,
+							'operations' : report,
+						}
+						return render(request,'home/report.html',context)
+					else:
+						message = 'Error: End Date was found smaller than the Start Date! Please try again with smaller Start Date.'
+						report = product_operationlogs.objects.all().order_by('timestamp').reverse()
+						context = {
+							'admin' : admin,
+							'non_admin' : non_admin,
+							'dealing_admin' : dealing_admin,
+							'verified' : user.verified,
+							'name' : name,
+							'message' : message,
+							'operations' : report,
+						}
+						return render(request,'home/report.html',context)
+				else:
+					#If no POST method
+					report = product_operationlogs.objects.all().order_by('timestamp').reverse()
+					context = {
+						'admin' : admin,
+						'non_admin' : non_admin,
+						'dealing_admin' : dealing_admin,
+						'logoutStatus' : logoutStatus,
+						'verified' :  user.verified,
+						'operations' : report,
+						'name' : name,
+					}
+					return render(request,'home/report.html',context)
 			else:
 				#If user is either unverified or not an admin
 				return redirect('home')

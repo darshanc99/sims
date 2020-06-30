@@ -12,30 +12,32 @@
 		<div class="col-md-6">
 			<div class="card">
 			<article class="card-body">
-				<form action="{% url 'filter' %}" method="post">
+				<form action="{% url 'report' %}" method="POST">
 					{% csrf_token %}
 					<div class="form-row">
 						<div class="form-group col-md-6">
-						  <label>Email</label>
-						  <input type="email" class="form-control" name="email" placeholder="Enter User Designation" required>
+						  <label>Start Date</label>
+						  <input type="date" class="form-control" name="start_date" required>
 						</div> <!-- form-group end.// -->
 						<div class="form-group col-md-6">
-						  <label>Filter</label>
-						  <select id="inputState" class="form-control" name="option" required>
-						  	  <option value="" disabled selected>Choose your option</option>
-									<option>Session Activities</option>
-									<option>Product Transactions</option>
-						  </select>
+						  <label>End Date</label>
+							<input type="date" class="form-control" name="end_date" required>
 						</div> <!-- form-group end.// -->
 					</div> <!-- form-row.// -->
-				    <div class="form-group">
-				        <button type="submit" class="btn btn-primary btn-block"> Apply Filters </button>
-				    </div> <!-- form-group// -->
-				</form>
+					<div class="form-group">
+							<button type="submit" class="btn btn-primary btn-block"> Apply Filters </button>
+					</div> <!-- form-group// -->
+			</form>
   			</article> <!-- card-body end .// -->
   		</div> <!-- col.//-->
   	</div> <!-- row.//-->
-    <h4><b>Operation Logs</b></h4>
+		<br>
+		<mark><i><b>Note: The default Report shows you the report right from the day SIMS was born, until now!</b></i></mark><br>
+		{% if text %}
+			<mark>{{text | safe}}</mark><br>
+		{% endif %}
+		<br>
+    <h4><b>Report</b></h4>
       <table class="table table-responsive" style="max-height:500px;">
         <thead class="table-dark">
           <tr>
