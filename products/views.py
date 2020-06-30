@@ -93,21 +93,14 @@ def addproduct(request):
 						}
 					now = datetime.datetime.now(tz=timezone.utc)
 					email=request.session['email']
-<<<<<<< HEAD
-					
+
 					accounts = product_transaction_logs(email =email,timestamp = now,message="New Product added "+" ("+ product_name+ ")")
 					accounts.save()
 					print("djfdfd")
 					content= product_operationlogs(product_name=product_name,timestamp=now,operation="addition",quantity=int(available_quantity),initial_quantity=0,final_quantity=int(available_quantity),issued_by=email)
 					content.save()
 					print("djfdfd444")
-					return render(request,'products/addproduct.html',context)		
-=======
-					accounts = product_transaction_logs(email =email,timestamp = now,message="New Product added "+" ("+ product_name+ ")")
-					accounts.save()
-
 					return render(request,'products/addproduct.html',context)
->>>>>>> 945108bb5374e920b4d3066b09cfcc37ebd16d52
 			else:
 				all_products=productlist.objects.all().order_by("product_name")
 				currentEmail = request.session['email']
@@ -211,8 +204,7 @@ def addquantity(request):
 					}
 				now = datetime.datetime.now(tz=timezone.utc)
 				email=request.session['email']
-<<<<<<< HEAD
-				accounts = product_transaction_logs(email =email,timestamp = now,message="product ("+names +")" + " quantity increased (+"+quantity+")")	
+				accounts = product_transaction_logs(email =email,timestamp = now,message="product ("+names +")" + " quantity increased (+"+quantity+")")
 				accounts.save()
 
 				data=product_operationlogs.objects.filter(product_name=names).order_by('timestamp').last()
@@ -222,10 +214,6 @@ def addquantity(request):
 				content= product_operationlogs(product_name=names,timestamp=now,operation="addition",quantity=int(quantity),initial_quantity=int(data.final_quantity),final_quantity=value,issued_by=email)
 				content.save()
 
-=======
-				accounts = product_transaction_logs(email =email,timestamp = now,message="product ("+names +")" + " quantity increased (+"+quantity+")")
-				accounts.save()
->>>>>>> 945108bb5374e920b4d3066b09cfcc37ebd16d52
 				return render(request,'products/addquantity.html',context)
 			else:
 				all_products=productlist.objects.all().order_by("product_name")
@@ -512,50 +500,19 @@ def routeproduct(request):
 				print("fhghgf")
 				old_name=request.POST.get('product_list')
 				print(old_name)
-				
+
 				product_category=request.POST.get('product_category')
 				print(product_category)
 				product_type=request.POST.get('product_type')
 				available_quantity=request.POST.get('avail_quantity')
 				measure_unit=request.POST.get('measure_unit')
-<<<<<<< HEAD
-				
+
 				print("even here ppls")
 				productlist.objects.filter(product_name=old_name).update(product_category=product_category,available_quantity=available_quantity,measure_unit=measure_unit,product_type=product_type)
 				message='Product details updated '
 				all_products=productlist.objects.filter(product_type="consumable").order_by("product_name")
 				noncon_product=productlist.objects.filter(product_type="non-consumable").order_by("product_name")
 				context={
-=======
-				print("fghghh222")
-				try:
-					if productlist.objects.get(product_name=product_name):
-						print("hola amigos")
-						message='Product with this name already exist'
-						all_products=productlist.objects.all().order_by("product_name")
-
-						context={
-							'admin':admin,
-							'dealing_admin':dealing_admin,
-							'non_admin':non_admin,
-							'message':message,
-							'name':currentName,
-							'verified':user.verified,
-							'all_products':all_products
-							}
-						print("now here")
-						return render(request,'products/editproduct.html',context)
-				except:
-					print("even here ppls")
-					if product_name=='':
-						print("whereeetr")
-						productlist.objects.filter(product_name=old_name).update(product_category=product_category,available_quantity=available_quantity,measure_unit=measure_unit,product_type=product_type)
-						message='Product details updated not changing name'
-						all_products=productlist.objects.filter(product_type="consumable").order_by("product_name")
-						noncon_product=productlist.objects.filter(product_type="non-consumable").order_by("product_name")
-
-						context={
->>>>>>> 945108bb5374e920b4d3066b09cfcc37ebd16d52
 							'admin':admin,
 							'dealing_admin':dealing_admin,
 							'non_admin':non_admin,
@@ -565,47 +522,13 @@ def routeproduct(request):
 							'all_products':all_products,
 							'noncon_product':noncon_product
 							}
-<<<<<<< HEAD
 				now = datetime.datetime.now(tz=timezone.utc)
 				email=request.session['email']
-				accounts = product_transaction_logs(email =email,timestamp = now,message="Product details Updated For"+old_name)	
+				accounts = product_transaction_logs(email =email,timestamp = now,message="Product details Updated For"+old_name)
 				accounts.save()
-							
+
 				return render(request,'products/products.html',context)
-					
-=======
-						now = datetime.datetime.now(tz=timezone.utc)
-						email=request.session['email']
-						accounts = product_transaction_logs(email =email,timestamp = now,message="Product details Updated For"+old_name)
-						accounts.save()
 
-						return render(request,'products/products.html',context)
-					else:
-
-						productlist.objects.filter(product_name=old_name).update(product_name=product_name,product_category=product_category,available_quantity=available_quantity,measure_unit=measure_unit,product_type=product_type)
-						message='Product details updated with changing name'
-
-						all_products=productlist.objects.filter(product_type="consumable").order_by("product_name")
-						noncon_product=productlist.objects.filter(product_type="non-consumable").order_by("product_name")
-
-						context={
-							'admin':admin,
-							'dealing_admin':dealing_admin,
-							'non_admin':non_admin,
-							'message':message,
-							'verified':user.verified,
-							'name':currentName,
-							'noncon_product':noncon_product,
-							'all_products':all_products
-							}
-						now = datetime.datetime.now(tz=timezone.utc)
-						email=request.session['email']
-
-						accounts = product_transaction_logs(email =email,timestamp = now,message="Product details/name changed from "+old_name +" to "+product_name)
-						accounts.save()
-						print("even here")
-					return render(request,'products/products.html',context)
->>>>>>> 945108bb5374e920b4d3066b09cfcc37ebd16d52
 			else:
 				print("doool")
 
@@ -950,7 +873,7 @@ def productconfirm(request,id):
 			print("ollaa")
 
 
-			
+
 
 			all_products=productlog.objects.filter(status='pending')
 			data2=productlog.objects.filter(status='approved')
@@ -1001,11 +924,8 @@ def productconfirm(request,id):
 			accounts = product_transaction_logs(email =emails,timestamp = now,message=message)
 			accounts.save()
 
-<<<<<<< HEAD
-			
-					
-=======
->>>>>>> 945108bb5374e920b4d3066b09cfcc37ebd16d52
+
+
 			print('now')
 			return render(request,'products/approveproduct.html',context)
 
@@ -1168,14 +1088,11 @@ def partialconfirm(request,id):
 					sizes=prod.available_quantity
 					productlist.objects.filter(product_name=product_name).update(available_quantity=sizes-int(quantity))
 
-<<<<<<< HEAD
 					element=product_operationlogs.objects.filter(product_name=dummy.product_name).order_by('timestamp').last()
 					print(element.final_quantity)
 					value=element.final_quantity - int(quantity)
 					content= product_operationlogs(product_name=dummy.product_name,timestamp=datetime.datetime.now(tz=timezone.utc),operation="subtraction",quantity=int(quantity),initial_quantity=int(element.final_quantity),final_quantity=value,issued_by=email)
 					content.save()
-=======
->>>>>>> 945108bb5374e920b4d3066b09cfcc37ebd16d52
 
 			all_products=productlog.objects.filter(status='pending')
 			prodnew=productlist.objects.all().order_by("product_name")

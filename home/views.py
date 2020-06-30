@@ -2,7 +2,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from authentication.models import useraccounts, master_user_types
-from logs.models import sessionlogs, product_transaction_logs
+from logs.models import sessionlogs, product_transaction_logs, product_operationlogs
 from products.models import productlog,nonconsumable_productlog
 import datetime, hashlib
 from django.utils import timezone
@@ -613,7 +613,18 @@ def report(request):
 
 			#If user is a verified admin
 			if user.user_type == 'Admin' and user.verified:
-				return redirect('home')
+				admin = True
+				report = product_operationlogs.objects.all().order_by('timestamp').reverse()
+				context = {
+					'admin' : admin,
+					'non_admin' : non_admin,
+					'dealing_admin' : dealing_admin,
+					'logoutStatus' : logoutStatus,
+					'verified' :  user.verified,
+					'operations' : report,
+					'name' : name,
+				}
+				return render(request,'home/report.html',context)
 			else:
 				#If user is either unverified or not an admin
 				return redirect('home')
