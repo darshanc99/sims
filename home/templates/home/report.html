@@ -41,29 +41,35 @@
       <table class="table table-responsive" style="max-height:500px;">
         <thead class="table-dark">
           <tr>
-            <th scope="col">Committed By</th>
-            <th scope="col">Product Name</th>
-            <th scope="col">Timestamp</th>
-            <th scope="col">Operation</th>
-            <th scope="col">Initial Quantity</th>
-            <th scope="col">Change of</th>
-            <th scope="col">Final Quantity</th>
+            <th scope="col">Product</th>
+						<th scope="col">Category</th>
+						<th scope="col">Opening Balance</th>
+						<th scope="col">Net Change</th>
+						<th scope="col">Closing Balance</th>
+						<th scope="col">Total Requests</th>
+						<th scope="col">Total Approved</th>
+						<th scope="col">%Approved</th>
           </tr>
         </thead>
         <tbody>
-          {% for operation in operations %}
+          {% for res in result %}
             <tr>
-              <th scope="row"><a href="mailto: {{operation.issued_by}}">{{operation.issued_by}}</a></th>
-              <th scope="row">{{operation.product_name}}</th>
-              <th scope="row">{{operation.timestamp}}</th>
-              <th scope="row">{{operation.operation}}</th>
-              <th scope="row">{{operation.initial_quantity}}</th>
-              {% if operation.operation == 'addition' %}
-                <th scope="row" style="color: green">+{{operation.quantity}}</th>
-              {% else %}
-                <th scope="row" style="color: red">-{{operation.quantity}}</th>
-              {% endif %}
-              <th scope="row">{{operation.final_quantity}}</th>
+              <th scope="row">{{res.product}}</th>
+              <th scope="row">{{res.category}}</th>
+            	<th scope="row">{{res.opening_balance}}</th>
+							{% if res.opening_balance == res.closing_balance %}
+              	<th scope="row">{{res.net}}</th>
+							{% endif %}
+							{% if res.closing_balance > res.opening_balance %}
+		              <th scope="row" style="color:green">+{{res.net}}</th>
+							{% endif %}
+							{% if res.opening_balance > res.closing_balance %}
+              	<th scope="row" style="color:red">-{{res.net}}</th>
+							{% endif %}
+              <th scope="row">{{res.closing_balance}}</th>
+							<th scope="row">{{res.requests}}</th>
+							<th scope="row">{{res.approved}}</th>
+							<th scope="row" style="color:purple">{{res.approvedcent}}</th>
             </tr>
           {% endfor %}
         </tbody>

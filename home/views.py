@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from authentication.models import useraccounts, master_user_types
 from logs.models import sessionlogs, product_transaction_logs, product_operationlogs
-from products.models import productlog,nonconsumable_productlog
+from products.models import productlog, nonconsumable_productlog, productlist
 import datetime, hashlib
 from django.utils import timezone
 from twilio.rest import Client
@@ -620,10 +620,49 @@ def report(request):
 					end_date = request.POST.get('end_date')
 					#If the end_date is greater than the start_date
 					if end_date >= start_date:
-						all_op = product_operationlogs.objects.filter(product_name='Paper',timestamp__date__range=(start_date,end_date))
-						print(all_op)
+						result = []
+						#get all the products
+						products = productlist.objects.all().order_by('product_name')
+						for product in products:
+							temp = {}
+							temp['product'] = product.product_name
+							temp['category'] = product.product_category
+							query = product_operationlogs.objects.filter(product_name=product.product_name,timestamp__date__range=(start_date,end_date))
+							#Check if query is None
+							if len(query) == 0:
+								print("Kem Palty")
+								query = product_operationlogs.objects.filter(product_name=product.product_name).order_by('timestamp').reverse()
+								temp['opening_balance'] = query[0].final_quantity
+								temp['closing_balance'] = temp['opening_balance']
+								temp['net'] = abs(temp['closing_balance']-temp['opening_balance'])
+								total_requests = productlog.objects.filter(product_name=product.product_name).values_list('quantity', flat=True)
+								total_requests = sum(total_requests)
+								total_approved = productlog.objects.filter(product_name=product.product_name).values_list('approved_quantity', flat=True)
+								total_approved = sum(total_approved)
+								temp['requests'] = total_requests
+								temp['approved'] = total_approved
+								if total_requests > 0:
+									temp['approvedcent'] = round(total_approved*100/total_requests,2)
+								else:
+									temp['approvedcent'] = '-'
+							else:
+								temp['opening_balance'] = query[0].final_quantity
+								query = product_operationlogs.objects.filter(product_name=product.product_name).order_by('timestamp').reverse()
+								temp['closing_balance'] = query[0].final_quantity
+								temp['net'] = abs(temp['closing_balance']-temp['opening_balance'])
+								total_requests = productlog.objects.filter(product_name=product.product_name).values_list('quantity', flat=True)
+								total_requests = sum(total_requests)
+								total_approved = productlog.objects.filter(product_name=product.product_name).values_list('approved_quantity', flat=True)
+								total_approved = sum(total_approved)
+								temp['requests'] = total_requests
+								temp['approved'] = total_approved
+								if total_requests > 0:
+									temp['approvedcent'] = round(total_approved*100/total_requests,2)
+								else:
+									temp['approvedcent'] = '-'
+							result.append(temp)
+
 						message = 'Currently, showing report for <b>' + start_date + "</b> - <b>" + end_date + "</b>."
-						report = product_operationlogs.objects.all().order_by('timestamp').reverse()
 						context = {
 							'admin' : admin,
 							'non_admin' : non_admin,
@@ -631,12 +670,33 @@ def report(request):
 							'verified' : user.verified,
 							'name' : name,
 							'text' : message,
-							'operations' : report,
+							'result' : result,
 						}
 						return render(request,'home/report.html',context)
 					else:
 						message = 'Error: End Date was found smaller than the Start Date! Please try again with smaller Start Date.'
-						report = product_operationlogs.objects.all().order_by('timestamp').reverse()
+						result = []
+						products = productlist.objects.all().order_by('product_name')
+						for product in products:
+							temp = {}
+							temp['product'] = product.product_name
+							temp['category'] = product.product_category
+							query = product_operationlogs.objects.filter(product_name=product.product_name)
+							temp['opening_balance'] = query[0].final_quantity
+							query = product_operationlogs.objects.filter(product_name=product.product_name).order_by('timestamp').reverse()
+							temp['closing_balance'] = query[0].final_quantity
+							temp['net'] = abs(temp['closing_balance']-temp['opening_balance'])
+							total_requests = productlog.objects.filter(product_name=product.product_name).values_list('quantity', flat=True)
+							total_requests = sum(total_requests)
+							total_approved = productlog.objects.filter(product_name=product.product_name).values_list('approved_quantity', flat=True)
+							total_approved = sum(total_approved)
+							temp['requests'] = total_requests
+							temp['approved'] = total_approved
+							if total_requests > 0:
+								temp['approvedcent'] = round(total_approved*100/total_requests,2)
+							else:
+								temp['approvedcent'] = '-'
+							result.append(temp)
 						context = {
 							'admin' : admin,
 							'non_admin' : non_admin,
@@ -644,19 +704,41 @@ def report(request):
 							'verified' : user.verified,
 							'name' : name,
 							'message' : message,
-							'operations' : report,
+							'result' : result,
 						}
 						return render(request,'home/report.html',context)
 				else:
 					#If no POST method
-					report = product_operationlogs.objects.all().order_by('timestamp').reverse()
+					result = []
+					products = productlist.objects.all().order_by('product_name')
+					for product in products:
+						print("For product:",product)
+						temp = {}
+						temp['product'] = product.product_name
+						temp['category'] = product.product_category
+						query = product_operationlogs.objects.filter(product_name=product.product_name)
+						temp['opening_balance'] = query[0].final_quantity
+						query = product_operationlogs.objects.filter(product_name=product.product_name).order_by('timestamp').reverse()
+						temp['closing_balance'] = query[0].final_quantity
+						temp['net'] = abs(temp['closing_balance']-temp['opening_balance'])
+						total_requests = productlog.objects.filter(product_name=product.product_name).values_list('quantity', flat=True)
+						total_requests = sum(total_requests)
+						total_approved = productlog.objects.filter(product_name=product.product_name).values_list('approved_quantity', flat=True)
+						total_approved = sum(total_approved)
+						temp['requests'] = total_requests
+						temp['approved'] = total_approved
+						if total_requests > 0:
+							temp['approvedcent'] = round(total_approved*100/total_requests,2)
+						else:
+							temp['approvedcent'] = '-'
+						result.append(temp)
 					context = {
 						'admin' : admin,
 						'non_admin' : non_admin,
 						'dealing_admin' : dealing_admin,
 						'logoutStatus' : logoutStatus,
 						'verified' :  user.verified,
-						'operations' : report,
+						'result' : result,
 						'name' : name,
 					}
 					return render(request,'home/report.html',context)
@@ -665,5 +747,5 @@ def report(request):
 				return redirect('home')
 	except:
 		#If user not logged in
-		return redirect('login')
+		return redirect('home')
 	return redirect('home')
