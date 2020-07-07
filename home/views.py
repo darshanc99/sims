@@ -318,6 +318,37 @@ def userbase(request):
 		#Error Handler
 		return redirect('home')
 
+#Log out a user
+def offline(request,email):
+	try:
+		#If user is logged in
+		if request.session['email']:
+			currentUser = useraccounts.objects.get(email=request.session['email'])
+			user = useraccounts.objects.get(email=email)
+
+			#If user is a verified admin
+			if currentUser.user_type == 'Admin' and currentUser.verified:
+
+				#If the email is the current user's email
+				if email == request.session['email']:
+					return redirect('logout')
+				else:
+					user.loginstatus = False
+					user.save()
+					now = datetime.datetime.now(tz=timezone.utc)
+					message = email + " logged out by " + request.session['email'] + "."
+					accounts = sessionlogs(email=email,timestamp=now,message=message)
+					accounts.save()
+					accounts = sessionlogs(email=request.session['email'],timestamp=now,message=message)
+					accounts.save()
+
+					return redirect('userbase')
+			else:
+				#User is not a verified admin
+				return redirect('home')
+	except:
+		return redirect('home')
+
 #Verify a user
 def verify(request,email):
 	#If user logged in
@@ -715,7 +746,6 @@ def report(request):
 					result = []
 					products = productlist.objects.all().order_by('product_name')
 					for product in products:
-						print("For product:",product)
 						temp = {}
 						temp['product'] = product.product_name
 						temp['category'] = product.product_category

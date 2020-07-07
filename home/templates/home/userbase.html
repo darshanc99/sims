@@ -74,7 +74,7 @@
 					<th scope="row" style="color:black">{{user.userrole}}</th>
 					<th scope="row" style="color:black">Yes</th>
 						{% if user.loginstatus %}
-							<th scope="row" style="color:black">Online*</th>
+							<th scope="row" style="color:black"><a href="/offline/{{user.email}}"><button type="button" class="btn btn-outline-success btn-sm">Log Out</button></a></th>
 						{% else %}
 							<th scope="row" style="color:red">Offline</th>
 						{% endif %}
@@ -93,7 +93,7 @@
 					<th scope="row" style="color:red">{{user.userrole}}</th>
 					<th scope="row" style="color:red"><a href="/verify/{{user.email}}"><button type="submit" class="btn btn-sm btn-success">Verify</button></a></th>
 						{% if user.loginstatus %}
-							<th scope="row" style="color:black">Online*</th>
+							<th scope="row" style="color:black"><a href="/offline/{{user.email}}"><button type="button" class="btn btn-outline-success btn-sm">Log Out</button></a></th>
 						{% else %}
 							<th scope="row" style="color:red">Offline</th>
 						{% endif %}
