@@ -11,7 +11,7 @@ urlpatterns = [
     path('routeproduct/',views.routeproduct,name='routeproduct'),
     path('edprod/<str:name>',views.edprod,name='edprod'),
     path('returnproduct',views.returnproduct,name='returnproduct'),
-    path('returnconfirm/<str:name>,<int:id>',views.returnconfirm,name='returnconfirm'),
+    path('returnconfirm/<int:id>',views.returnconfirm,name='returnconfirm'),
     path('viewproduct/',views.viewproduct,name='viewproduct'),
     path('requestproduct/',views.requestproduct,name='requestproduct'),
     path('approveproduct/',views.approveproduct,name='approveproduct'),
@@ -27,4 +27,6 @@ urlpatterns = [
     path(r'del_category/<str:name>',views.del_category,name='del_category'),
     path(r'pd_logs/',views.pd_logs,name='pd_logs'),
     path(r'rejectproduct/<int:id>',views.rejectproduct,name='rejectproduct'),
+    path('returnrequest',views.returnrequest,name='returnrequest'),
+    path('returnrequestconfirm/<int:id>',views.returnrequestconfirm,name='returnrequestconfirm')
 ]
