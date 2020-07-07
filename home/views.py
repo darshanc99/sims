@@ -651,11 +651,19 @@ def report(request):
 				if request.method == 'POST':
 					start_date = request.POST.get('start_date')
 					end_date = request.POST.get('end_date')
-					#If the end_date is greater than the start_date
+
+					#date = end_date + 1
+					date = end_date
+					date = date.strip()
+					date = date.split('-')
+					date = datetime.date(int(date[0]),int(date[1]),int(date[2]))
+					date+=datetime.timedelta(days=1)
+					date = str(date)
+
 					if end_date >= start_date:
 						result = []
 						#get all the products
-						products = productlist.objects.all().order_by('product_name')
+						products = productlist.objects.filter(arrival_date__lte=date).order_by('product_name')
 						for product in products:
 							temp = {}
 							temp['product'] = product.product_name
@@ -667,9 +675,9 @@ def report(request):
 								temp['opening_balance'] = query[0].final_quantity
 								temp['closing_balance'] = temp['opening_balance']
 								temp['net'] = abs(temp['closing_balance']-temp['opening_balance'])
-								total_requests = productlog.objects.filter(product_name=product.product_name).values_list('quantity', flat=True)
+								total_requests = productlog.objects.filter(product_name=product.product_name,timestamp__date__range=(start_date,end_date)).values_list('quantity', flat=True)
 								total_requests = sum(total_requests)
-								total_approved = productlog.objects.filter(product_name=product.product_name).values_list('approved_quantity', flat=True)
+								total_approved = productlog.objects.filter(product_name=product.product_name,timestamp__date__range=(start_date,end_date)).values_list('approved_quantity', flat=True)
 								total_approved = sum(total_approved)
 								temp['requests'] = total_requests
 								temp['approved'] = total_approved
@@ -678,13 +686,17 @@ def report(request):
 								else:
 									temp['approvedcent'] = '-'
 							else:
-								temp['opening_balance'] = query[0].final_quantity
-								query = product_operationlogs.objects.filter(product_name=product.product_name).order_by('timestamp').reverse()
-								temp['closing_balance'] = query[0].final_quantity
+								temp['opening_balance'] = query[0].initial_quantity
+								query = product_operationlogs.objects.filter(product_name=product.product_name,timestamp__date__range=(start_date,end_date)).order_by('timestamp')
+								count,c = len(query),0
+								for q in query:
+									c+=1
+									if c == count:
+										temp['closing_balance'] = q.final_quantity
 								temp['net'] = abs(temp['closing_balance']-temp['opening_balance'])
-								total_requests = productlog.objects.filter(product_name=product.product_name).values_list('quantity', flat=True)
+								total_requests = productlog.objects.filter(product_name=product.product_name,timestamp__date__range=(start_date,end_date)).values_list('quantity', flat=True)
 								total_requests = sum(total_requests)
-								total_approved = productlog.objects.filter(product_name=product.product_name).values_list('approved_quantity', flat=True)
+								total_approved = productlog.objects.filter(product_name=product.product_name,timestamp__date__range=(start_date,end_date)).values_list('approved_quantity', flat=True)
 								total_approved = sum(total_approved)
 								temp['requests'] = total_requests
 								temp['approved'] = total_approved
@@ -716,7 +728,7 @@ def report(request):
 							temp['product'] = product.product_name
 							temp['category'] = product.product_category
 							query = product_operationlogs.objects.filter(product_name=product.product_name)
-							temp['opening_balance'] = query[0].final_quantity
+							temp['opening_balance'] = query[0].initial_quantity
 							query = product_operationlogs.objects.filter(product_name=product.product_name).order_by('timestamp').reverse()
 							temp['closing_balance'] = query[0].final_quantity
 							temp['net'] = abs(temp['closing_balance']-temp['opening_balance'])
@@ -750,7 +762,7 @@ def report(request):
 						temp['product'] = product.product_name
 						temp['category'] = product.product_category
 						query = product_operationlogs.objects.filter(product_name=product.product_name)
-						temp['opening_balance'] = query[0].final_quantity
+						temp['opening_balance'] = query[0].initial_quantity
 						query = product_operationlogs.objects.filter(product_name=product.product_name).order_by('timestamp').reverse()
 						temp['closing_balance'] = query[0].final_quantity
 						temp['net'] = abs(temp['closing_balance']-temp['opening_balance'])
@@ -781,7 +793,6 @@ def report(request):
 	except:
 		#If user not logged in
 		return redirect('home')
-	return redirect('home')
 
 #Download Function no start and end date given
 def export(request):
@@ -796,7 +807,7 @@ def export(request):
 				temp['product'] = product.product_name
 				temp['category'] = product.product_category
 				query = product_operationlogs.objects.filter(product_name=product.product_name)
-				temp['opening_balance'] = query[0].final_quantity
+				temp['opening_balance'] = query[0].initial_quantity
 				query = product_operationlogs.objects.filter(product_name=product.product_name).order_by('timestamp').reverse()
 				temp['closing_balance'] = query[0].final_quantity
 				temp['net'] = abs(temp['closing_balance']-temp['opening_balance'])
@@ -829,6 +840,14 @@ def export(request):
 def exportcsv(request,start,end):
 	start_date = start
 	end_date = end
+	#date = end_date + 1
+	date = end_date
+	date = date.strip()
+	date = date.split('-')
+	date = datetime.date(int(date[0]),int(date[1]),int(date[2]))
+	date+=datetime.timedelta(days=1)
+	date = str(date)
+
 	user = useraccounts.objects.get(email=request.session['email'])
 	#Only for Verified Admin
 	try:
@@ -837,7 +856,7 @@ def exportcsv(request,start,end):
 			if end_date >= start_date:
 				result = []
 				#get all the products
-				products = productlist.objects.all().order_by('product_name')
+				products = productlist.objects.filter(arrival_date__lte=date).order_by('product_name')
 				for product in products:
 					temp = {}
 					temp['product'] = product.product_name
@@ -860,13 +879,17 @@ def exportcsv(request,start,end):
 						else:
 							temp['approvedcent'] = '-'
 					else:
-						temp['opening_balance'] = query[0].final_quantity
-						query = product_operationlogs.objects.filter(product_name=product.product_name).order_by('timestamp').reverse()
-						temp['closing_balance'] = query[0].final_quantity
+						temp['opening_balance'] = query[0].initial_quantity
+						query = product_operationlogs.objects.filter(product_name=product.product_name,timestamp__date__range=(start_date,end_date)).order_by('timestamp')
+						count,c = len(query),0
+						for q in query:
+							c+=1
+							if c == count:
+								temp['closing_balance'] = q.final_quantity
 						temp['net'] = abs(temp['closing_balance']-temp['opening_balance'])
-						total_requests = productlog.objects.filter(product_name=product.product_name).values_list('quantity', flat=True)
+						total_requests = productlog.objects.filter(product_name=product.product_name,timestamp__date__range=(start_date,end_date)).values_list('quantity', flat=True)
 						total_requests = sum(total_requests)
-						total_approved = productlog.objects.filter(product_name=product.product_name).values_list('approved_quantity', flat=True)
+						total_approved = productlog.objects.filter(product_name=product.product_name,timestamp__date__range=(start_date,end_date)).values_list('approved_quantity', flat=True)
 						total_approved = sum(total_approved)
 						temp['requests'] = total_requests
 						temp['approved'] = total_approved
