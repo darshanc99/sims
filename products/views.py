@@ -5,6 +5,8 @@ from logs.models import sessionlogs,product_transaction_logs,product_operationlo
 from simchat.models import simmessage
 from django.utils import timezone
 import datetime
+import random
+import string
 import hashlib
 # Create your views here.
 def addproduct(request):
@@ -780,6 +782,7 @@ def approveproduct(request):
 			dealing_admin=False
 			all_products=productlist.objects.all().order_by("product_name")
 			user=useraccounts.objects.get(email=request.session['email'])
+
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 					admin = True
@@ -804,6 +807,7 @@ def approveproduct(request):
 			all_products=productlog.objects.filter(status='pending')
 			prodnew=productlist.objects.all().order_by("product_name")
 			rejprod=productlog.objects.filter(status='denied')
+
 			item_quant={}
 			for data in prodnew:
 				print("sdsd")
@@ -824,6 +828,7 @@ def approveproduct(request):
 			data2=productlog.objects.filter(status='approved').union(productlog.objects.filter(status='partially approved'))
 
 			data3=nonconsumable_productlog.objects.filter(return_status='true')
+			non_conprod=nonconsumable_productlog.objects.filter(return_status='false')
 			print(all_products)
 			context={
 			'dealing_admin':dealing_admin,
@@ -834,6 +839,7 @@ def approveproduct(request):
 			'verified':user.verified,
 			'item_quant':item_quant,
 			'all_products':all_products,
+			'non_conprod':non_conprod,
 			'data2':data2,
 			'data3':data3,
 			'prodnew':prodnew,
@@ -889,10 +895,101 @@ def productconfirm(request,id):
 			proddata=productlist.objects.get(product_name=dummy.product_name)
 			quantity=int(dummy.quantity)
 
+			if(quantity>proddata.available_quantity):
+
+				all_products=productlog.objects.filter(status='pending')
+				data2=productlog.objects.filter(status='approved').union(productlog.objects.filter(status='partially approved'))
+				rejprod=productlog.objects.filter(status='denied')
+				data3=nonconsumable_productlog.objects.filter(return_status='true')
+				non_conprod=nonconsumable_productlog.objects.filter(return_status='false')
+
+				prod=productlist.objects.get(product_name=product_name)
+				sizes=prod.available_quantity
+				prodnew=productlist.objects.all().order_by("product_name")
+				
+
+				item_quant={}
+				for data in prodnew:
+					print("sdsd")
+
+					sum=0
+					content=productlog.objects.filter(status='pending').filter(product_name=data.product_name)
+					for con in content:
+						print(con.quantity)
+						sum=sum+con.quantity
+					if sum==0:
+						continue
+					else:
+						print(sum)
+						item_quant[data.product_name]=int(sum)
+
+				print(item_quant)
+				print(all_products)
+				context={
+				'dealing_admin':dealing_admin,
+				'admin':admin,
+				'non_admin':non_admin,
+				'name':currentName,
+				'verified':user.verified,
+				'non_conprod':non_conprod,
+				'item_quant':item_quant,
+				'messages':'The product cannot be approved less quantity available',
+				'all_products':all_products,
+				'data2':data2,
+				'rejprod':rejprod,
+				'data3':data3,
+				'prodnew':prodnew
+
+				}
+				
+				print('now')
+				return render(request,'products/approveproduct.html',context)
+			print("here")
 			email=dummy.email
 			if(proddata.product_type=='non-consumable'):
-				adding=nonconsumable_productlog(product_name=dummy.product_name,issued_to=email,issued_by=request.session['email'],units=quantity,issue_date=datetime.datetime.now(tz=timezone.utc),return_status='false',requested_quantity=dummy.quantity,return_request='false')
-				adding.save()
+				ser_list=[]
+				comp_data=nonconsumable_productlog.objects.all()
+				for item in comp_data:
+					ser_list.append(item.product_serial_no)
+				print("heresss")
+				for i in range(quantity):
+					key=''
+					print("fdfd")
+					for k in range(2):
+						key+=random.choice(string.ascii_uppercase)
+						print(key)
+					for j in range(2):
+						key+=random.choice(string.digits)
+						print(key)
+					for l in range(2):
+						key+=random.choice(string.ascii_uppercase)
+					print(key)
+
+					while(True):
+						if key in ser_list:
+							key=''
+							for k in range(0,2):
+								key+=random.choice(string.ascii_uppercase)
+							for j in range(0,2):
+								key+=random.choice(string.digits)
+							for l in range(0,2):
+								key+=random.choice(string.ascii_uppercase)
+						else:
+							adding=nonconsumable_productlog(product_name=dummy.product_name,issued_to=email,issued_by=request.session['email'],units=1,issue_date=datetime.datetime.now(tz=timezone.utc),return_status='false',requested_quantity=1,return_request='false',product_serial_no=key)
+							adding.save()
+							ser_list.append(key)
+							break
+
+
+
+
+
+
+
+
+
+				# adding=nonconsumable_productlog(product_name=dummy.product_name,issued_to=email,issued_by=request.session['email'],units=quantity,issue_date=datetime.datetime.now(tz=timezone.utc),return_status='false',requested_quantity=dummy.quantity,return_request='false')
+				# adding.save()
 				print("added successfully")
 			message="Product "+product_name+" "+ "with quantity" +"("+str(quantity)+")"+ " Completely approved to  "+email
 
@@ -907,6 +1004,7 @@ def productconfirm(request,id):
 			data2=productlog.objects.filter(status='approved').union(productlog.objects.filter(status='partially approved'))
 			rejprod=productlog.objects.filter(status='denied')
 			data3=nonconsumable_productlog.objects.filter(return_status='true')
+			non_conprod=nonconsumable_productlog.objects.filter(return_status='false')
 
 			prod=productlist.objects.get(product_name=product_name)
 			sizes=prod.available_quantity
@@ -942,6 +1040,7 @@ def productconfirm(request,id):
 			'non_admin':non_admin,
 			'name':currentName,
 			'verified':user.verified,
+			'non_conprod':non_conprod,
 			'item_quant':item_quant,
 			'messages':'The product is approved',
 			'all_products':all_products,
@@ -1014,6 +1113,7 @@ def myproduct(request):
 
 				all_products=productlog.objects.filter(status='pending').filter(email=request.session['email'])
 				rejprod=productlog.objects.filter(status='denied').filter(email=request.session['email'])
+				non_conprod=nonconsumable_productlog.objects.filter(issued_to=request.session['email']).filter(return_status='false')
 				ncproduct=nonconsumable_productlog.objects.filter(issued_to=request.session['email']).filter(return_status='true')
 				data2=productlog.objects.filter(status='approved').filter(email=request.session['email']).union(productlog.objects.filter(status='partially approved').filter(email=request.session['email']))
 				prodnew=productlist.objects.all().order_by("product_name")
@@ -1024,6 +1124,7 @@ def myproduct(request):
 				'non_admin':non_admin,
 				'rejprod':rejprod,
 				'name':currentName,
+				'non_conprod':non_conprod,
 				'verified':user.verified,
 				'ncproduct':ncproduct,
 				'all_products':all_products,
@@ -1104,7 +1205,7 @@ def partialconfirm(request,id):
 
 
 				quantity=str(request.GET['quant'])
-				if(int(quantity)<=0 or int(quantity)>=dummy.quantity):
+				if(int(quantity)<=0 or int(quantity)>=dummy.quantity or int(quantity)>prod_data.available_quantity):
 					message="Enter the valid quantity to approve"
 
 				else:
@@ -1112,8 +1213,42 @@ def partialconfirm(request,id):
 
 					if(prod_data.product_type=="non-consumable"):
 						print("gerere")
-						adding=nonconsumable_productlog(product_name=dummy.product_name,issued_to=email,issued_by=request.session['email'],units=quantity,issue_date=datetime.datetime.now(tz=timezone.utc),return_status='false',requested_quantity=dummy.quantity,return_request='false')
-						adding.save()
+						ser_list=[]
+						comp_data=nonconsumable_productlog.objects.all()
+						for item in comp_data:
+							ser_list.append(item.product_serial_no)
+						print("heresss")
+						for i in range(int(quantity)):
+							key=''
+							print("fdfd")
+							for k in range(2):
+								key+=random.choice(string.ascii_uppercase)
+								print(key)
+							for j in range(2):
+								key+=random.choice(string.digits)
+								print(key)
+							for l in range(2):
+								key+=random.choice(string.ascii_uppercase)
+							print(key)
+
+							while(True):
+								if key in ser_list:
+									key=''
+									for k in range(0,2):
+										key+=random.choice(string.ascii_uppercase)
+									for j in range(0,2):
+										key+=random.choice(string.digits)
+									for l in range(0,2):
+										key+=random.choice(string.ascii_uppercase)
+								else:
+									adding=nonconsumable_productlog(product_name=dummy.product_name,issued_to=email,issued_by=request.session['email'],units=1,issue_date=datetime.datetime.now(tz=timezone.utc),return_status='false',requested_quantity=1,return_request='false',product_serial_no=key)
+									adding.save()
+									ser_list.append(key)
+									break
+
+
+						# adding=nonconsumable_productlog(product_name=dummy.product_name,issued_to=email,issued_by=request.session['email'],units=quantity,issue_date=datetime.datetime.now(tz=timezone.utc),return_status='false',requested_quantity=dummy.quantity,return_request='false')
+						# adding.save()
 
 
 
@@ -1133,6 +1268,7 @@ def partialconfirm(request,id):
 			prodnew=productlist.objects.all().order_by("product_name")
 			data2=productlog.objects.filter(status='approved').union(productlog.objects.filter(status='partially approved'))
 			data3=nonconsumable_productlog.objects.filter(return_status='true')
+			non_conprod=nonconsumable_productlog.objects.filter(issued_to=request.session['email']).filter(return_status='false')
 
 			item_quant={}
 			for data in prodnew:
@@ -1157,6 +1293,7 @@ def partialconfirm(request,id):
 			'dealing_admin':dealing_admin,
 			'admin':admin,
 			'rejprod':rejprod,
+			'non_conprod':non_conprod,
 			'non_admin':non_admin,
 			'name':currentName,
 			'item_quant':item_quant,
