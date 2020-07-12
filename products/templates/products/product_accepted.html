@@ -8,7 +8,7 @@
   {% endif %}
   <div class="container">
 
- {% if admin %}
+ 
  {% if verified %}
 
   
@@ -72,70 +72,7 @@
       In case of urgency, contact the Admin.<br><span style="color:black">Thank You for your co-operation!</span></b></h6>
     </div>
 {% endif %}
-{% endif %}
 
- {% if dealing_admin %}
- {% if verified %}
-  <div class="row" style="padding-top: 20px;" >
-   
-  {% for content in non_accept %}
-          <div class="col-md-3" style="margin-right: 10px;">
-
-            
-            <div class="card card-primary card-outline">
-              <div class="card-body box-profile">
-                <h3 class="profile-username text-center" style="color:brown"><b>{{content.product_name}}</b></h3>
-                
-
-                <ul class="list-group list-group-unbordered mb-3">
-                  <li class="list-group-item">
-                    <b>Request id </b> <a class="float-right">{{content.issued_to}}</a>
-                  </li>
-                  <li class="list-group-item">
-                    <b>Quantity_Requested</b> <a class="float-right">{{content.units}}</a>
-                  </li>
-                
-
-                  <li class="list-group-item">
-                    <b>Date</b> <a class="float-right">{{content.issue_date}}</a>
-                  </li>
-                  
-                  <li class="list-group-item">
-                    <b>Product_accepted</b> <a class="float-right">{{content.product_accepted}}</a>
-                  </li>
-                  <li class="list-group-item">
-                    <b>Serial No.</b> <a class="float-right">{{content.product_serial_no}}</a>
-                  </li>
-                </ul>
-
-               
-                <form action="/product/product_accept/{{content.id}}" method="get" >
-                  
-                  <div class="form-group">
-                  <input type="number" class="form-control" placeholder="Enter the Serial NO." name="serial" required="">
-                  </div>
-                  <div class="form-group">
-                <button type="submit" class="btn btn-link btn-block"><b> Accept Product </b></button>
-            </div>
-          
-              </div>
-              <!-- /.card-body -->
-            </div>
-          
- 
- </div>
- {% endfor %} 
- <!-- <div class="row" style="position:fixed;margin-left:60% "> -->
-       </div>
- 
-      
-{% else %}
-<div class="alert alert-danger" role="alert">
-    <h6 style="color:yellow"><b>The Account is currently being verified by the Admin.
-      In case of urgency, contact the Admin.<br><span style="color:black">Thank You for your co-operation!</span></b></h6>
-    </div>
-{% endif %}
-{% endif %}
 
  
         {% endblock %}

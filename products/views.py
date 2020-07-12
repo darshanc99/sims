@@ -2663,6 +2663,7 @@ def product_accept(request,id):
 
 				if request.method=='GET':
 					data=request.GET['serial']
+					print(data)
 					content=nonconsumable_productlog.objects.filter(id=id).first()
 					if data==content.product_serial_no:
 
@@ -2677,28 +2678,35 @@ def product_accept(request,id):
 
 
 
-				
-					non_accept=nonconsumable_productlog.objects.filter(return_status='false').filter(product_accepted='false').filter(issued_to=request.session['email'])
-					
-					
-					context={
-					'dealing_admin':dealing_admin,
-					'admin':admin,
-					'non_admin':non_admin,
-					'non_accept':non_accept,
-					'messages':messages,
-					
-					'name':currentName,
-					
-					'verified':user.verified,
-				
-				
-				
+				all_products=productlog.objects.filter(status='pending').filter(email=request.session['email'])
+				rejprod=productlog.objects.filter(status='denied').filter(email=request.session['email'])
+				non_conprod=nonconsumable_productlog.objects.filter(issued_to=request.session['email']).filter(return_status='false').filter(product_accepted='true')
+				non_accept=nonconsumable_productlog.objects.filter(return_status='false').filter(product_accepted='false').filter(issued_to=request.session['email'])
+				ncproduct=nonconsumable_productlog.objects.filter(issued_to=request.session['email']).filter(return_status='true')
+				data2=productlog.objects.filter(status='approved').filter(email=request.session['email']).union(productlog.objects.filter(status='partially approved').filter(email=request.session['email']))
+				prodnew=productlist.objects.all().order_by("product_name")
+				print(all_products)
+				context={
+				'dealing_admin':dealing_admin,
+				'admin':admin,
+				'non_admin':non_admin,
+				'non_accept':non_accept,
+				'rejprod':rejprod,
+				'name':currentName,
+				'non_conprod':non_conprod,
+				'verified':user.verified,
+				'ncproduct':ncproduct,
+				'all_products':all_products,
+				'data2':data2,
+				'prodnew':prodnew,
+				'messages':messages,
+				'name':currentName
 
 				}
+					
 
 				print('now')
-				return render(request,'products/product_accepted.html',context)
+				return render(request,'products/listproduct.html',context)
 	except:
 		try:
 			if request.session['email']:

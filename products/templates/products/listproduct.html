@@ -123,7 +123,7 @@
                   </li>
                   
                   <li class="list-group-item">
-                    <b>Product_accepted</b> <a class="float-right">{{content.product_accpted}}</a>
+                    <b>Product_accepted</b> <a class="float-right">{{content.product_accepted}}</a>
                   </li>
                   <li class="list-group-item">
                     <b>Serial No.</b> <a class="float-right">{{content.product_serial_no}}</a>
@@ -131,10 +131,10 @@
                 </ul>
 
                
-                <form action="#" method="get" >
+                <form action="/product/product_accept/{{content.id}}" method="get" >
                   
                   <div class="form-group">
-                  <input type="number" class="form-control" placeholder="Enter the Serial NO." name="serial" required="">
+                  <input type="text" class="form-control" placeholder="Enter the Serial NO." name="serial" required="">
                   </div>
                   <div class="form-group">
                 <button type="submit" class="btn btn-link btn-block"><b> Accept Product </b></button>
@@ -152,7 +152,7 @@
        </div>
  <p style="color: green; text-align: center;">
   <b>
-  APPROVED REQUEST
+  APPROVED REQUEST(ALL PRODUCTS)
   </b>
 </p>
   <div class="row">
