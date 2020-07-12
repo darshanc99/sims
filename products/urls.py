@@ -28,5 +28,7 @@ urlpatterns = [
     path(r'pd_logs/',views.pd_logs,name='pd_logs'),
     path(r'rejectproduct/<int:id>',views.rejectproduct,name='rejectproduct'),
     path('returnrequest',views.returnrequest,name='returnrequest'),
-    path('returnrequestconfirm/<int:id>',views.returnrequestconfirm,name='returnrequestconfirm')
+    path('returnrequestconfirm/<int:id>',views.returnrequestconfirm,name='returnrequestconfirm'),
+    path(r'product_accept/<int:id>',views.product_accept,name='product_accept'),
+    path('accept_route/',views.accept_route,name='accept_route'),
 ]

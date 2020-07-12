@@ -40,6 +40,7 @@ class productlog(models.Model):
 	timestamp=models.DateTimeField(blank=True)
 	status=models.CharField(max_length=50)
 	approved_quantity=models.BigIntegerField(default=None,blank=True)
+	issued_by=models.CharField(max_length=100,null=True)
 	def __str__(self):
 		return self.product_name + "-" + self.status
 
@@ -55,5 +56,6 @@ class nonconsumable_productlog(models.Model):
 	requested_quantity=models.BigIntegerField(null=True,blank=True)
 	return_request=models.CharField(max_length=50,null=True,blank=True)
 	product_serial_no=models.CharField(max_length=20,null=True)
+	product_accepted=models.CharField(max_length=20,null=True)
 	def __str__(self):
 		return self.product_name+"-"+self.issue_date
