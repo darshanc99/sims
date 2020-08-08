@@ -8,6 +8,7 @@ import datetime
 import random
 import string
 import hashlib
+
 # Create your views here.
 def addproduct(request):
 	logoutStatus= True
@@ -908,7 +909,7 @@ def productconfirm(request,id):
 				prod=productlist.objects.get(product_name=product_name)
 				sizes=prod.available_quantity
 				prodnew=productlist.objects.all().order_by("product_name")
-				
+
 
 				item_quant={}
 				for data in prodnew:
@@ -943,7 +944,7 @@ def productconfirm(request,id):
 				'prodnew':prodnew
 
 				}
-				
+
 				print('now')
 				return render(request,'products/approveproduct.html',context)
 			print("here")
@@ -1388,7 +1389,7 @@ def rejectproduct(request,id):
 			quantity=int(dummy.quantity)
 
 			email=dummy.email
-			
+
 
 			productlog.objects.filter(id=id).update(status='denied',timestamp=datetime.datetime.now(tz=timezone.utc),approved_quantity=0)
 			print("ollaa")
@@ -1400,11 +1401,11 @@ def rejectproduct(request,id):
 			data2=productlog.objects.filter(status='approved').union(productlog.objects.filter(status='partially approved'))
 			rejprod=productlog.objects.filter(status='denied')
 
-			
-			prodnew=productlist.objects.all().order_by("product_name")
-			
 
-			
+			prodnew=productlist.objects.all().order_by("product_name")
+
+
+
 
 			item_quant={}
 			for data in prodnew:
@@ -2577,8 +2578,8 @@ def accept_route(request):
 	try:
 
 		if request.session['email']:
-				
-				
+
+
 				user=useraccounts.objects.get(email=request.session['email'])
 				currentName = user.first_name+" "+user.last_name
 				if user.user_type == 'Admin':
@@ -2591,23 +2592,23 @@ def accept_route(request):
 
 
 
-				
-				
+
+
 				non_accept=nonconsumable_productlog.objects.filter(return_status='false').filter(product_accepted='false').filter(issued_to=request.session['email'])
-				
-				
+
+
 				context={
 				'dealing_admin':dealing_admin,
 				'admin':admin,
 				'non_admin':non_admin,
 				'non_accept':non_accept,
-				
+
 				'name':currentName,
-				
+
 				'verified':user.verified,
-				
-				
-				
+
+
+
 
 				}
 
@@ -2649,8 +2650,8 @@ def product_accept(request,id):
 	try:
 
 		if request.session['email']:
-				
-				
+
+
 				user=useraccounts.objects.get(email=request.session['email'])
 				currentName = user.first_name+" "+user.last_name
 				if user.user_type == 'Admin':
@@ -2703,7 +2704,7 @@ def product_accept(request,id):
 				'name':currentName
 
 				}
-					
+
 
 				print('now')
 				return render(request,'products/listproduct.html',context)

@@ -520,6 +520,7 @@ def edituser(request,email):
 						user.userrole = userrole
 						user.save()
 						logoutStatus = False
+						all_usertypes = master_user_types.objects.all().order_by('user_type')
 						context = {
 							'name' : name,
 							'logoutStatus' : logoutStatus,
@@ -528,6 +529,7 @@ def edituser(request,email):
 							'verified' : user.verified,
 							'dealing_admin' : dealing_admin,
 							'non_admin' : non_admin,
+							'all_usertypes' : all_usertypes,
 						}
 						now = datetime.datetime.now(tz=timezone.utc)
 						message = "Account edited for "+email
@@ -536,6 +538,7 @@ def edituser(request,email):
 						return render(request,'home/edituser.html',context)
 					else:
 						#If no POST request
+						all_usertypes = master_user_types.objects.all().order_by('user_type')
 						logoutStatus = False
 						admin = True
 						context = {
@@ -546,6 +549,7 @@ def edituser(request,email):
 							'verified' : user.verified,
 							'non_admin' : non_admin,
 							'dealing_admin' : dealing_admin,
+							'all_usertypes' : all_usertypes,
 						}
 						return render(request,'home/edituser.html',context)
 				except:
