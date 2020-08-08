@@ -10,6 +10,8 @@ import string
 import hashlib
 
 # Create your views here.
+
+#Add product
 def addproduct(request):
 	logoutStatus= True
 	admin=False
@@ -29,7 +31,6 @@ def addproduct(request):
 					admin = True
 			elif user.user_type == 'Dealing-Admin':
 				dealing_admin = True
-				print("fngfifdfjbnfg")
 			else:
 				context = {
 					'logoutStatus' : False,
@@ -42,8 +43,6 @@ def addproduct(request):
 						}
 				return render(request,'home/base.html',context)
 
-
-			print('here')
 			if request.method=='POST':
 				product_name=request.POST.get('product_name')
 				product_category=request.POST.get('product_category')
@@ -53,7 +52,6 @@ def addproduct(request):
 				measure_unit=request.POST.get('measure_unit')
 				description=request.POST.get('description')
 				prod=productlist(product_name,product_category,product_type,available_quantity,arrive,measure_unit,description)
-
 
 				try:
 					if productlist.objects.get(product_name=product_name):
@@ -76,7 +74,6 @@ def addproduct(request):
 				except:
 
 					prod.save()
-					print("hererer")
 					all_products=productlist.objects.all().order_by("product_name")
 					messages="Product added successfully"
 					currentEmail = request.session['email']
@@ -99,10 +96,8 @@ def addproduct(request):
 
 					accounts = product_transaction_logs(email =email,timestamp = now,message="New Product added "+" ("+ product_name+ ")")
 					accounts.save()
-					print("djfdfd")
 					content= product_operationlogs(product_name=product_name,timestamp=now,operation="addition",quantity=int(available_quantity),initial_quantity=0,final_quantity=int(available_quantity),issued_by=email)
 					content.save()
-					print("djfdfd444")
 					return render(request,'products/addproduct.html',context)
 			else:
 				all_products=productlist.objects.all().order_by("product_name")
@@ -152,13 +147,13 @@ def addproduct(request):
 		}
 			return redirect('login')
 
+#Increase Quantity of the product in the inventory
 def addquantity(request):
 	logoutStatus=True
 	admin=False
 	non_admin=False
 	dealing_admin=False
 	try:
-
 		if request.session['email']:
 			admin=False
 			non_admin=False
@@ -170,7 +165,6 @@ def addquantity(request):
 					admin = True
 			elif user.user_type == 'Dealing-Admin':
 				dealing_admin = True
-				print("fngfifdfjbnfg")
 			else:
 				context = {
 					'logoutStatus' : False,
@@ -183,18 +177,12 @@ def addquantity(request):
 						}
 				return render(request,'home/base.html',context)
 
-
 			if request.method=='POST':
-
 				names=request.POST.get('product_category')
 				quantity=request.POST.get('quantity')
 				details=productlist.objects.get(product_name=names)
-
 				ans=int(details.available_quantity)+int(quantity)
-
 				all_products=productlist.objects.all().order_by("product_name")
-
-
 				productlist.objects.filter(product_name=names).update(available_quantity=ans)
 				context = {
 					'admin':admin,
@@ -209,19 +197,13 @@ def addquantity(request):
 				email=request.session['email']
 				accounts = product_transaction_logs(email =email,timestamp = now,message="product ("+names +")" + " quantity increased (+"+quantity+")")
 				accounts.save()
-
 				data=product_operationlogs.objects.filter(product_name=names).order_by('timestamp').last()
-				print(data.final_quantity)
 				value=int(quantity)+data.final_quantity
-
 				content= product_operationlogs(product_name=names,timestamp=now,operation="addition",quantity=int(quantity),initial_quantity=int(data.final_quantity),final_quantity=value,issued_by=email)
 				content.save()
-
 				return render(request,'products/addquantity.html',context)
 			else:
 				all_products=productlist.objects.all().order_by("product_name")
-
-
 				context = {
 					'admin':admin,
 					'dealing_admin':dealing_admin,
@@ -230,7 +212,6 @@ def addquantity(request):
 					'verified':user.verified,
 					'all_products':all_products
 					}
-
 				return render(request,'products/addquantity.html',context)
 	except:
 		try:
@@ -261,16 +242,14 @@ def addquantity(request):
 			return redirect('login')
 		return render(request,'authentication/login.html',context)
 
+#Remove Product from the inventory
 def removeproduct(request):
-
 	logoutStatus=True
 	admin=False
 	non_admin=False
 	dealing_admin=False
 	try:
-
 		if request.session['email']:
-
 			admin=False
 			non_admin=False
 			dealing_admin=False
@@ -282,16 +261,12 @@ def removeproduct(request):
 					continue
 				else:
 					del_list.append(data.product_name)
-
-
-
 			user=useraccounts.objects.get(email=request.session['email'])
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 					admin = True
 			elif user.user_type == 'Dealing-Admin':
 				dealing_admin = True
-				print("fngfifdfjbnfg")
 			else:
 				context = {
 					'logoutStatus' : False,
@@ -304,24 +279,15 @@ def removeproduct(request):
 						}
 				return render(request,'home/base.html',context)
 			if request.method=='POST':
-				print("herenow")
 				names=request.POST.get('product_list')
 
 				password=request.POST.get('pass')
-				print("here")
 				password = hashlib.sha256(password.encode()).hexdigest()
-				print("herethere")
 				if useraccounts.objects.get(email=request.session['email']):
-
-						print("yahoo")
-
 						if user.userpassword == password:
-
 							productlist.objects.filter(product_name=names).delete()
-
 							messages = "Product removed !"
 							all_products=productlist.objects.all().order_by("product_name")
-
 							context={
 							'admin':admin,
 							'dealing_admin':dealing_admin,
@@ -336,15 +302,11 @@ def removeproduct(request):
 							email=request.session['email']
 							accounts = product_transaction_logs(email =email,timestamp = now,message="Product Removed ("+names+")")
 							accounts.save()
-
 							product_operationlogs.objects.filter(product_name=names).delete()
-							print("done")
 							return render(request,'products/removeproduct.html',context)
-
 						else:
 							messages = "Password do not match !"
 							all_products=productlist.objects.all().order_by("product_name")
-
 							context={
 							'admin':admin,
 							'dealing_admin':dealing_admin,
@@ -358,7 +320,6 @@ def removeproduct(request):
 							return render(request,'products/removeproduct.html',context)
 				else:
 					messages='email does not match'
-
 					context={
 						'admin':admin,
 						'dealing_admin':dealing_admin,
@@ -368,12 +329,8 @@ def removeproduct(request):
 						'all_products':all_products,
 						'del_list':del_list
 						}
-
 					return render(request,'products/removeproduct.html',context)
-
-
 			else:
-
 				context={
 						'admin':admin,
 						'dealing_admin':dealing_admin,
@@ -383,7 +340,6 @@ def removeproduct(request):
 						'all_products':all_products,
 						'del_list':del_list
 						}
-
 				return render(request,'products/removeproduct.html',context)
 	except:
 		try:
@@ -413,7 +369,7 @@ def removeproduct(request):
 		}
 			return redirect('login')
 
-
+#View Product
 def viewproduct(request):
 	logoutStatus=True
 	admin=False
@@ -421,13 +377,11 @@ def viewproduct(request):
 	non_admin=False
 	try:
 		if request.session['email']:
-
 			user=useraccounts.objects.get(email=request.session['email'])
 			if user.user_type=='Admin':
 				admin=True
 			elif user.user_type=='Dealing-Admin':
 				dealing_admin=True
-
 			all_products=productlist.objects.filter(product_type="consumable").order_by("product_name")
 			noncon_product=productlist.objects.filter(product_type="non-consumable").order_by("product_name")
 			currentEmail = request.session['email']
@@ -471,6 +425,7 @@ def viewproduct(request):
 		}
 			return redirect('login')
 
+#
 def routeproduct(request):
 	logoutStatus=True
 	admin=False
@@ -489,7 +444,6 @@ def routeproduct(request):
 					admin = True
 			elif user.user_type == 'Dealing-Admin':
 				dealing_admin = True
-				print("fngfifdfjbnfg")
 			else:
 				context = {
 					'logoutStatus' : False,
@@ -502,35 +456,20 @@ def routeproduct(request):
 						}
 				return render(request,'home/base.html',context)
 			if request.method=='POST':
-				print("fhghgf")
 				old_name=request.POST.get('product_list')
-				print(old_name)
-
 				product_category=request.POST.get('product_category')
-				print(product_category)
 				product_type=request.POST.get('product_type')
 				available_quantity=request.POST.get('avail_quantity')
 				measure_unit=request.POST.get('measure_unit')
-
-				print("even here ppls")
-
 				feed=productlist.objects.filter(product_name=old_name).first()
-				print(feed.available_quantity)
-				print(available_quantity)
 				if int(feed.available_quantity) > int(available_quantity):
-					print("here")
 					new_data=int(feed.available_quantity) - int(available_quantity)
 					content= product_operationlogs(product_name=old_name,timestamp=datetime.datetime.now(tz=timezone.utc),operation="subtraction",quantity=new_data,initial_quantity=int(feed.available_quantity),final_quantity=available_quantity,issued_by=request.session['email'])
 					content.save()
-					print("done")
 				elif int(feed.available_quantity) < int(available_quantity):
-					print("here")
 					new_data= int(available_quantity)-int(feed.available_quantity)
 					content= product_operationlogs(product_name=old_name,timestamp=datetime.datetime.now(tz=timezone.utc),operation="addition",quantity=new_data,initial_quantity=int(feed.available_quantity),final_quantity=available_quantity,issued_by=request.session['email'])
 					content.save()
-					print("done2")
-
-
 				productlist.objects.filter(product_name=old_name).update(product_category=product_category,available_quantity=available_quantity,measure_unit=measure_unit,product_type=product_type)
 				message='Product details updated '
 				all_products=productlist.objects.filter(product_type="consumable").order_by("product_name")
@@ -548,16 +487,8 @@ def routeproduct(request):
 				now = datetime.datetime.now(tz=timezone.utc)
 				email=request.session['email']
 				accounts = product_transaction_logs(email =email,timestamp = now,message="Product details Updated For"+old_name)
-
 				accounts.save()
-
-
-
 				return render(request,'products/products.html',context)
-
-			else:
-				print("doool")
-
 	except:
 		try:
 			if request.session['email']:
