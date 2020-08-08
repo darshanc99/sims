@@ -35,7 +35,7 @@ class productlist(models.Model):
 
 class productlog(models.Model):
 	product_name=models.CharField(max_length=200)
-	email=models.CharField(max_length=200)
+	email=models.CharField(max_length=40)
 	quantity=models.BigIntegerField()
 	timestamp=models.DateTimeField(blank=True)
 	status=models.CharField(max_length=50)
@@ -46,9 +46,8 @@ class productlog(models.Model):
 
 class nonconsumable_productlog(models.Model):
 	product_name=models.CharField(max_length=200)
-
-	issued_to=models.CharField(max_length=200,blank=True)
-	issued_by=models.CharField(max_length=200,blank=True)
+	issued_to=models.CharField(max_length=40,blank=True)
+	issued_by=models.CharField(max_length=40,blank=True)
 	units=models.BigIntegerField(blank=True)
 	issue_date=models.DateTimeField(blank=True)
 	return_date=models.DateTimeField(blank=True,null=True)

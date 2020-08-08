@@ -28,7 +28,7 @@ class product_operationlogs(models.Model):
 	quantity = models.BigIntegerField()
 	initial_quantity = models.BigIntegerField()
 	final_quantity = models.BigIntegerField()
-	issued_by = models.CharField(max_length=100)
+	issued_by = models.CharField(max_length=40)
 
 	def __str__(self):
 		return self.product_name
