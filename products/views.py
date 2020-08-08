@@ -54,6 +54,7 @@ def addproduct(request):
 				prod=productlist(product_name,product_category,product_type,available_quantity,arrive,measure_unit,description)
 
 				try:
+				#product rejected if same name
 					if productlist.objects.get(product_name=product_name):
 						messages="Product is already present"
 						currentEmail = request.session['email']
@@ -72,7 +73,7 @@ def addproduct(request):
 							}
 						return render(request,'products/addproduct.html',context)
 				except:
-
+					# product accepted
 					prod.save()
 					all_products=productlist.objects.all().order_by("product_name")
 					messages="Product added successfully"
@@ -100,6 +101,7 @@ def addproduct(request):
 					content.save()
 					return render(request,'products/addproduct.html',context)
 			else:
+				#displaying the page
 				all_products=productlist.objects.all().order_by("product_name")
 				currentEmail = request.session['email']
 				all_units=master_units.objects.all()
@@ -140,6 +142,7 @@ def addproduct(request):
 			}
 				return redirect('home')
 		except:
+			#if user not logged in
 			message = "login first"
 			context = {
 			'messages' : message,
@@ -254,6 +257,7 @@ def removeproduct(request):
 			non_admin=False
 			dealing_admin=False
 			all_products=productlist.objects.all().order_by("product_name")
+			#storing all the product not used 
 			del_list=[]
 			for data in all_products:
 				content=productlog.objects.filter(product_name=data.product_name)
@@ -279,8 +283,8 @@ def removeproduct(request):
 						}
 				return render(request,'home/base.html',context)
 			if request.method=='POST':
+				# checking if  password matches
 				names=request.POST.get('product_list')
-
 				password=request.POST.get('pass')
 				password = hashlib.sha256(password.encode()).hexdigest()
 				if useraccounts.objects.get(email=request.session['email']):
@@ -305,6 +309,7 @@ def removeproduct(request):
 							product_operationlogs.objects.filter(product_name=names).delete()
 							return render(request,'products/removeproduct.html',context)
 						else:
+							#password did not match
 							messages = "Password do not match !"
 							all_products=productlist.objects.all().order_by("product_name")
 							context={
@@ -425,7 +430,7 @@ def viewproduct(request):
 		}
 			return redirect('login')
 
-#
+#Updating the product details(editing product)
 def routeproduct(request):
 	logoutStatus=True
 	admin=False
@@ -462,6 +467,7 @@ def routeproduct(request):
 				available_quantity=request.POST.get('avail_quantity')
 				measure_unit=request.POST.get('measure_unit')
 				feed=productlist.objects.filter(product_name=old_name).first()
+				#checking if entered quantity is same or different from given
 				if int(feed.available_quantity) > int(available_quantity):
 					new_data=int(feed.available_quantity) - int(available_quantity)
 					content= product_operationlogs(product_name=old_name,timestamp=datetime.datetime.now(tz=timezone.utc),operation="subtraction",quantity=new_data,initial_quantity=int(feed.available_quantity),final_quantity=available_quantity,issued_by=request.session['email'])
@@ -517,6 +523,7 @@ def routeproduct(request):
 		}
 			return redirect('login')
 
+#edit page for the selected product
 def edprod(request,name):
 	logoutStatus=True
 	admin=False
@@ -534,7 +541,6 @@ def edprod(request,name):
 					admin = True
 			elif user.user_type == 'Dealing-Admin':
 				dealing_admin = True
-				print("fngfifdfjbnfg")
 			else:
 				context = {
 					'logoutStatus' : False,
@@ -546,14 +552,9 @@ def edprod(request,name):
 					'name' : currentName
 						}
 				return render(request,'home/base.html',context)
-
-			print("doool")
 			all_products=productlist.objects.filter(product_name=name)
-
 			all_units=master_units.objects.all()
-
 			all_category=master_category.objects.all()
-
 			context={
 					'admin':admin,
 					'dealing_admin':dealing_admin,
@@ -564,8 +565,6 @@ def edprod(request,name):
 					'name':currentName,
 					'all_products':all_products
 				}
-
-
 			return render(request,'products/editproduct.html',context)
 	except:
 		try:
@@ -595,6 +594,7 @@ def edprod(request,name):
 		}
 			return redirect('login')
 
+# rendering the request product page
 def requestproduct(request):
 	admin=False
 	non_admin=False
@@ -609,16 +609,12 @@ def requestproduct(request):
 					admin = True
 			elif user.user_type == 'Non-Admin':
 				non_admin = True
-				print("fngfifdfjbnfg")
+				
 			else:
 				dealing_admin = True
-			print("grrieo")
-
 			if request.method=='POST':
-				print("ssaasarere")
 				product_name=request.POST.get('product_category')
 				quantity=request.POST.get('quantity')
-				print(int(quantity))
 				proddetails=productlist.objects.get(product_name=product_name)
 				if((int(quantity)>int(proddetails.available_quantity) or int(quantity)<=0) and user.verified):
 					context={
@@ -633,7 +629,6 @@ def requestproduct(request):
 							}
 					return render(request,'products/requestproduct.html',context)
 				else:
-					print("hersidmssdmind")
 					times=datetime.datetime.now(tz=timezone.utc)
 					datas=productlog(product_name=product_name,email=request.session['email'],quantity=quantity,timestamp=times,status='pending',approved_quantity=-1)
 					datas.save()
@@ -652,14 +647,6 @@ def requestproduct(request):
 					return render(request,'products/requestproduct.html',context)
 			else:
 				logoutStatus=False
-				print("heree")
-
-
-				print("also here")
-
-
-
-				print("ssosfndfnd")
 				context={
 				'admin':admin,
 				'non_admin':non_admin,
@@ -670,7 +657,6 @@ def requestproduct(request):
 				'name':currentName,
 				'logoutStatus':False
 					}
-
 				return render(request,'products/requestproduct.html',context)
 	except:
 		try:
@@ -701,7 +687,7 @@ def requestproduct(request):
 			return redirect('login')
 
 
-
+# rendering approve product page
 def approveproduct(request):
 	admin=False
 	non_admin=False
@@ -714,13 +700,12 @@ def approveproduct(request):
 			dealing_admin=False
 			all_products=productlist.objects.all().order_by("product_name")
 			user=useraccounts.objects.get(email=request.session['email'])
-
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 					admin = True
 			elif user.user_type == 'Dealing-Admin':
 				dealing_admin = True
-				print("fngfifdfjbnfg")
+				
 			else:
 				context = {
 					'logoutStatus' : False,
@@ -732,37 +717,25 @@ def approveproduct(request):
 					'name' : currentName
 						}
 				return render(request,'home/base.html',context)
-
-			print("djvdhucdie")
 			user=useraccounts.objects.get(email=request.session['email'])
 			currentName = user.first_name+" "+user.last_name
 			all_products=productlog.objects.filter(status='pending')
 			prodnew=productlist.objects.all().order_by("product_name")
 			rejprod=productlog.objects.filter(status='denied')
-
+			#calculating total requested quantity for all products
 			item_quant={}
 			for data in prodnew:
-				print("sdsd")
-
 				sum=0
 				content=productlog.objects.filter(status='pending').filter(product_name=data.product_name)
 				for con in content:
-					print(con.quantity)
 					sum=sum+con.quantity
 				if sum==0:
 					continue
 				else:
-					print(sum)
 					item_quant[data.product_name]=int(sum)
-			print(item_quant)
-
-
 			data2=productlog.objects.filter(status='approved').union(productlog.objects.filter(status='partially approved'))
-
 			data3=nonconsumable_productlog.objects.filter(return_status='true')
 			non_conprod=nonconsumable_productlog.objects.filter(return_status='false').filter(product_accepted='true')
-			non_accept=nonconsumable_productlog.objects.filter(return_status='false').filter(product_accepted='false')
-			print(all_products)
 			context={
 			'dealing_admin':dealing_admin,
 			'admin':admin,
@@ -779,19 +752,16 @@ def approveproduct(request):
 			'prodnew':prodnew,
 			'logoutStatus':False
 			}
-
-			print('now')
 			return render(request,'products/approveproduct.html',context)
 	except:
 		messages='login first'
 		context = {
 				'logoutStatus' : True,
-
 				'message' : messages,
-
 					}
 		return render(request,'authentication/login.html',context)
 
+# completely confirming the product
 def productconfirm(request,id):
 	admin=False
 	non_admin=False
@@ -809,7 +779,6 @@ def productconfirm(request,id):
 					admin = True
 			elif user.user_type == 'Dealing-Admin':
 				dealing_admin = True
-				print("fngfifdfjbnfg")
 			else:
 				context={
 					'logoutStatus' : False,
@@ -817,48 +786,32 @@ def productconfirm(request,id):
 					'non_admin' : True,
 					'verified':user.verified,
 					'dealing_admin' : dealing_admin,
-
 					'name' : currentName}
 				return render(request,'home/base.html',context)
-			print("ayaa")
-
 			dummy=productlog.objects.get(id=id)
-
-			print(dummy)
 			product_name=dummy.product_name
 			proddata=productlist.objects.get(product_name=dummy.product_name)
 			quantity=int(dummy.quantity)
 
 			if(quantity>proddata.available_quantity):
-
 				all_products=productlog.objects.filter(status='pending')
 				data2=productlog.objects.filter(status='approved').union(productlog.objects.filter(status='partially approved'))
 				rejprod=productlog.objects.filter(status='denied')
 				data3=nonconsumable_productlog.objects.filter(return_status='true')
 				non_conprod=nonconsumable_productlog.objects.filter(return_status='false')
-
 				prod=productlist.objects.get(product_name=product_name)
 				sizes=prod.available_quantity
 				prodnew=productlist.objects.all().order_by("product_name")
-
-
 				item_quant={}
 				for data in prodnew:
-					print("sdsd")
-
 					sum=0
 					content=productlog.objects.filter(status='pending').filter(product_name=data.product_name)
 					for con in content:
-						print(con.quantity)
 						sum=sum+con.quantity
 					if sum==0:
 						continue
 					else:
-						print(sum)
 						item_quant[data.product_name]=int(sum)
-
-				print(item_quant)
-				print(all_products)
 				context={
 				'dealing_admin':dealing_admin,
 				'admin':admin,
@@ -875,30 +828,23 @@ def productconfirm(request,id):
 				'prodnew':prodnew
 
 				}
-
-				print('now')
 				return render(request,'products/approveproduct.html',context)
-			print("here")
+			
 			email=dummy.email
 			if(proddata.product_type=='non-consumable'):
+				#generating the serial key for non-consumable product
 				ser_list=[]
 				comp_data=nonconsumable_productlog.objects.all()
 				for item in comp_data:
 					ser_list.append(item.product_serial_no)
-				print("heresss")
 				for i in range(quantity):
 					key=''
-					print("fdfd")
 					for k in range(2):
 						key+=random.choice(string.ascii_uppercase)
-						print(key)
 					for j in range(2):
 						key+=random.choice(string.digits)
-						print(key)
 					for l in range(2):
 						key+=random.choice(string.ascii_uppercase)
-					print(key)
-
 					while(True):
 						if key in ser_list:
 							key=''
@@ -913,62 +859,33 @@ def productconfirm(request,id):
 							adding.save()
 							ser_list.append(key)
 							break
-
-
-
-
-
-
-
-
-
-				# adding=nonconsumable_productlog(product_name=dummy.product_name,issued_to=email,issued_by=request.session['email'],units=quantity,issue_date=datetime.datetime.now(tz=timezone.utc),return_status='false',requested_quantity=dummy.quantity,return_request='false')
-				# adding.save()
-				print("accepted successfully waiting for client confirmation")
 			message="Product "+product_name+" "+ "with quantity" +"("+str(quantity)+")"+ " Completely approved to  "+email
-
-
 			productlog.objects.filter(id=id).update(status='approved',timestamp=datetime.datetime.now(tz=timezone.utc),approved_quantity=quantity,issued_by=request.session['email'])
-			print("ollaa")
-
-
-
-
 			all_products=productlog.objects.filter(status='pending')
 			data2=productlog.objects.filter(status='approved').union(productlog.objects.filter(status='partially approved'))
 			rejprod=productlog.objects.filter(status='denied')
 			data3=nonconsumable_productlog.objects.filter(return_status='true')
 			non_conprod=nonconsumable_productlog.objects.filter(return_status='false').filter(product_accepted='true')
 			non_accept=nonconsumable_productlog.objects.filter(return_status='false').filter(product_accepted='false')
-
 			prod=productlist.objects.get(product_name=product_name)
 			sizes=prod.available_quantity
 			prodnew=productlist.objects.all().order_by("product_name")
 			productlist.objects.filter(product_name=product_name).update(available_quantity=sizes-int(quantity))
-
 			element=product_operationlogs.objects.filter(product_name=product_name).order_by('timestamp').last()
-			print(element.final_quantity)
 			value=element.final_quantity - int(quantity)
 			content= product_operationlogs(product_name=product_name,timestamp=datetime.datetime.now(tz=timezone.utc),operation="subtraction",quantity=int(quantity),initial_quantity=int(element.final_quantity),final_quantity=value,issued_by=email)
 			content.save()
-
 			item_quant={}
 			for data in prodnew:
-				print("sdsd")
-
+				
 				sum=0
 				content=productlog.objects.filter(status='pending').filter(product_name=data.product_name)
 				for con in content:
-					print(con.quantity)
 					sum=sum+con.quantity
 				if sum==0:
 					continue
 				else:
-					print(sum)
 					item_quant[data.product_name]=int(sum)
-
-			print(item_quant)
-			print(all_products)
 			context={
 			'dealing_admin':dealing_admin,
 			'admin':admin,
@@ -990,10 +907,6 @@ def productconfirm(request,id):
 			emails=request.session['email']
 			accounts = product_transaction_logs(email =emails,timestamp = now,message=message)
 			accounts.save()
-
-
-
-			print('now')
 			return render(request,'products/approveproduct.html',context)
 
 	except:
@@ -1024,6 +937,7 @@ def productconfirm(request,id):
 		}
 			return redirect('login')
 
+#viewing your own product.
 def myproduct(request):
 	admin=False
 	non_admin=False
@@ -1044,9 +958,6 @@ def myproduct(request):
 
 				else:
 					non_admin=True
-
-
-
 				all_products=productlog.objects.filter(status='pending').filter(email=request.session['email'])
 				rejprod=productlog.objects.filter(status='denied').filter(email=request.session['email'])
 				non_conprod=nonconsumable_productlog.objects.filter(issued_to=request.session['email']).filter(return_status='false').filter(product_accepted='true')
@@ -1054,7 +965,6 @@ def myproduct(request):
 				ncproduct=nonconsumable_productlog.objects.filter(issued_to=request.session['email']).filter(return_status='true')
 				data2=productlog.objects.filter(status='approved').filter(email=request.session['email']).union(productlog.objects.filter(status='partially approved').filter(email=request.session['email']))
 				prodnew=productlist.objects.all().order_by("product_name")
-				print(all_products)
 				context={
 				'dealing_admin':dealing_admin,
 				'admin':admin,
@@ -1069,10 +979,7 @@ def myproduct(request):
 				'data2':data2,
 				'prodnew':prodnew,
 				'name':currentName
-
 				}
-
-				print('now')
 				return render(request,'products/listproduct.html',context)
 	except:
 		try:
@@ -1102,6 +1009,9 @@ def myproduct(request):
 		}
 			return redirect('login')
 
+
+# partially Approving the product
+
 def partialconfirm(request,id):
 	admin=False
 	non_admin=False
@@ -1118,7 +1028,6 @@ def partialconfirm(request,id):
 					admin = True
 			elif user.user_type == 'Dealing-Admin':
 				dealing_admin = True
-				print("fngfifdfjbnfg")
 			else:
 				context={
 					'logoutStatus' : False,
@@ -1126,49 +1035,36 @@ def partialconfirm(request,id):
 					'non_admin' : True,
 					'verified':user.verified,
 					'dealing_admin' : dealing_admin,
-
 					'name' : currentName}
 				return render(request,'home/base.html',context)
-
-
 			dummy=productlog.objects.get(id=id)
-
-			print(dummy)
 			product_name=dummy.product_name
 			prod_data=productlist.objects.get(product_name=dummy.product_name)
 			email=dummy.email
-			print(prod_data)
-
 			if request.method=='GET':
-
-
 				quantity=str(request.GET['quant'])
 				if(int(quantity)<=0 or int(quantity)>=dummy.quantity or int(quantity)>prod_data.available_quantity):
 					message="Enter the valid quantity to approve"
-
 				else:
 					message="Product "+product_name+ " "+"("+ quantity+")"+" partially approved to  "+email
-
 					if(prod_data.product_type=="non-consumable"):
-						print("gerere")
 						ser_list=[]
 						comp_data=nonconsumable_productlog.objects.all()
 						for item in comp_data:
 							ser_list.append(item.product_serial_no)
-						print("heresss")
+						
 						for i in range(int(quantity)):
 							key=''
-							print("fdfd")
+							
 							for k in range(2):
 								key+=random.choice(string.ascii_uppercase)
-								print(key)
+								
 							for j in range(2):
 								key+=random.choice(string.digits)
-								print(key)
+								
 							for l in range(2):
 								key+=random.choice(string.ascii_uppercase)
-							print(key)
-
+							
 							while(True):
 								if key in ser_list:
 									key=''
@@ -1183,20 +1079,11 @@ def partialconfirm(request,id):
 									adding.save()
 									ser_list.append(key)
 									break
-
-
-						# adding=nonconsumable_productlog(product_name=dummy.product_name,issued_to=email,issued_by=request.session['email'],units=quantity,issue_date=datetime.datetime.now(tz=timezone.utc),return_status='false',requested_quantity=dummy.quantity,return_request='false')
-						# adding.save()
-
-
-
 					productlog.objects.filter(id=id).update(status='partially approved',timestamp=datetime.datetime.now(tz=timezone.utc),approved_quantity=quantity,issued_by=request.session['email'])
 					prod=productlist.objects.get(product_name=product_name)
 					sizes=prod.available_quantity
 					productlist.objects.filter(product_name=product_name).update(available_quantity=sizes-int(quantity))
-
 					element=product_operationlogs.objects.filter(product_name=dummy.product_name).order_by('timestamp').last()
-					print(element.final_quantity)
 					value=element.final_quantity - int(quantity)
 					content= product_operationlogs(product_name=dummy.product_name,timestamp=datetime.datetime.now(tz=timezone.utc),operation="subtraction",quantity=int(quantity),initial_quantity=int(element.final_quantity),final_quantity=value,issued_by=email)
 					content.save()
@@ -1208,25 +1095,16 @@ def partialconfirm(request,id):
 			data3=nonconsumable_productlog.objects.filter(return_status='true')
 			non_conprod=nonconsumable_productlog.objects.filter(issued_to=request.session['email']).filter(return_status='false').filter(product_accepted='true')
 			non_accept=nonconsumable_productlog.objects.filter(return_status='false').filter(product_accepted='false')
-
 			item_quant={}
 			for data in prodnew:
-				print("sdsd")
-
 				sum=0
 				content=productlog.objects.filter(status='pending').filter(product_name=data.product_name)
 				for con in content:
-					print(con.quantity)
 					sum=sum+con.quantity
 				if sum==0:
 					continue
 				else:
-					print(sum)
 					item_quant[data.product_name]=int(sum)
-			print(item_quant)
-
-
-			print(all_products)
 
 			context={
 			'dealing_admin':dealing_admin,
@@ -1243,14 +1121,11 @@ def partialconfirm(request,id):
 			'all_products':all_products,
 			'data2':data2,
 			'prodnew':prodnew
-
 			}
 			now = datetime.datetime.now(tz=timezone.utc)
 			emails=request.session['email']
 			accounts = product_transaction_logs(email =emails,timestamp = now,message=message)
 			accounts.save()
-
-			print('now')
 			return render(request,'products/approveproduct.html',context)
 
 	except:
@@ -1281,7 +1156,7 @@ def partialconfirm(request,id):
 		}
 			return redirect('login')
 
-
+# rejecting product request
 def rejectproduct(request,id):
 	admin=False
 	non_admin=False
@@ -1299,7 +1174,6 @@ def rejectproduct(request,id):
 					admin = True
 			elif user.user_type == 'Dealing-Admin':
 				dealing_admin = True
-				print("fngfifdfjbnfg")
 			else:
 				context={
 					'logoutStatus' : False,
@@ -1310,51 +1184,26 @@ def rejectproduct(request,id):
 
 					'name' : currentName}
 				return render(request,'home/base.html',context)
-			print("ayaa")
-
 			dummy=productlog.objects.get(id=id)
-
-			print(dummy)
 			product_name=dummy.product_name
 			proddata=productlist.objects.get(product_name=dummy.product_name)
 			quantity=int(dummy.quantity)
-
-			email=dummy.email
-
-
 			productlog.objects.filter(id=id).update(status='denied',timestamp=datetime.datetime.now(tz=timezone.utc),approved_quantity=0)
-			print("ollaa")
-
-
-
-
 			all_products=productlog.objects.filter(status='pending')
 			data2=productlog.objects.filter(status='approved').union(productlog.objects.filter(status='partially approved'))
 			rejprod=productlog.objects.filter(status='denied')
-
-
 			prodnew=productlist.objects.all().order_by("product_name")
-
-
-
-
 			item_quant={}
 			for data in prodnew:
-				print("sdsd")
-
 				sum=0
 				content=productlog.objects.filter(status='pending').filter(product_name=data.product_name)
 				for con in content:
-					print(con.quantity)
 					sum=sum+con.quantity
 				if sum==0:
 					continue
 				else:
-					print(sum)
 					item_quant[data.product_name]=int(sum)
 
-			print(item_quant)
-			print(all_products)
 			context={
 			'dealing_admin':dealing_admin,
 			'rejprod' : rejprod,
@@ -1367,16 +1216,11 @@ def rejectproduct(request,id):
 			'all_products':all_products,
 			'data2':data2,
 			'prodnew':prodnew
-
 			}
 			now = datetime.datetime.now(tz=timezone.utc)
 			emails=request.session['email']
 			accounts = product_transaction_logs(email =emails,timestamp = now,message='request for '+product_name+' is denied')
 			accounts.save()
-
-
-
-			print('now')
 			return render(request,'products/approveproduct.html',context)
 
 	except:
@@ -1407,14 +1251,12 @@ def rejectproduct(request,id):
 		}
 			return redirect('login')
 
-
-
+# Redirecting to product approval page to check pending requests.
 def pendingprods(request):
 	admin=False
 	non_admin=False
 	dealing_admin=False
 	try:
-
 		if request.session['email']:
 				admin=False
 				non_admin=False
@@ -1426,29 +1268,19 @@ def pendingprods(request):
 						admin = True
 				elif user.user_type == 'Dealing-Admin':
 					dealing_admin = True
-
 				else:
 					non_admin=True
-
-
-
 				all_products=productlog.objects.filter(status='pending').filter(email=request.session['email'])
-
-				print(all_products)
 				context={
 				'dealing_admin':dealing_admin,
 				'admin':admin,
 				'non_admin':non_admin,
 				'name':currentName,
 				'verified':user.verified,
-
 				'all_products':all_products,
-
 				'name':currentName
 
 				}
-
-				print('now')
 				return render(request,'products/canceltransaction.html',context)
 	except:
 		try:
@@ -1478,6 +1310,7 @@ def pendingprods(request):
 		}
 			return redirect('login')
 
+#cancel product Transaction
 def canceltransaction(request,id):
 	admin=False
 	non_admin=False
@@ -1494,25 +1327,13 @@ def canceltransaction(request,id):
 					admin = True
 			elif user.user_type == 'Dealing-Admin':
 				dealing_admin = True
-				print("fngfifdfjbnfg")
+				
 			else:
 				non_admin=True
-
-
 			dummy=productlog.objects.get(id=id)
-
 			names=dummy.product_name
-
-			print(dummy)
-
 			productlog.objects.filter(id=id).filter(status='pending').delete()
-
-
 			all_products=productlog.objects.filter(status='pending')
-
-
-
-			print(all_products)
 			context={
 			'dealing_admin':dealing_admin,
 			'admin':admin,
@@ -1521,15 +1342,11 @@ def canceltransaction(request,id):
 			'verified':user.verified,
 			'messages':'The Transaction is cancelled',
 			'all_products':all_products
-
-
 			}
 			now = datetime.datetime.now(tz=timezone.utc)
 			emails=request.session['email']
 			accounts = product_transaction_logs(email =emails,timestamp = now,message="cancelled transaction for " + names)
 			accounts.save()
-
-			print('now')
 			return render(request,'products/canceltransaction.html',context)
 
 	except:
@@ -1560,7 +1377,7 @@ def canceltransaction(request,id):
 		}
 			return redirect('login')
 
-
+# redirecting to return product page
 def returnproduct(request):
 	admin=False
 	non_admin=False
@@ -1574,17 +1391,10 @@ def returnproduct(request):
 					admin = True
 			elif user.user_type == 'Non-Admin':
 				non_admin = True
-				print("fngfifdfjbnfg")
 			else:
 				dealing_admin = True
-			print("grrieo")
-
-
 			logoutStatus=False
-
 			productdata=nonconsumable_productlog.objects.filter(return_status='false').filter(issued_to=request.session['email']).filter(return_request='false').filter(product_accepted='true')
-
-			print("ssosfndfnd")
 			context={
 			'admin':admin,
 			'non_admin':non_admin,
@@ -1625,6 +1435,7 @@ def returnproduct(request):
 		}
 			return redirect('login')
 
+# confirm the product return
 def returnconfirm(request,id):
 	admin=False
 	non_admin=False
@@ -1638,21 +1449,13 @@ def returnconfirm(request,id):
 					admin = True
 			elif user.user_type == 'Non-Admin':
 				non_admin = True
-				print("fngfifdfjbnfg")
 			else:
 				dealing_admin = True
-			print("grrieo")
-
-
 			logoutStatus=False
 			currtime=datetime.datetime.now(tz=timezone.utc)
 			all_data=nonconsumable_productlog.objects.filter(id=id).first()
-
 			nonconsumable_productlog.objects.filter(id=id).update(return_date=currtime,return_status='false',return_request='true')
-
 			productdata=nonconsumable_productlog.objects.filter(return_status='false').filter(return_request='false').filter(issued_to=request.session['email']).filter(product_accepted='true')
-
-			print("returned")
 			now = datetime.datetime.now(tz=timezone.utc)
 			emails=request.session['email']
 			message="Product " + all_data.product_name+" return requested by "+request.session['email']
@@ -1671,8 +1474,6 @@ def returnconfirm(request,id):
 				}
 
 			return render(request,'products/returnproduct.html',context)
-
-
 	except:
 		try:
 			if request.session['email']:
@@ -1701,6 +1502,7 @@ def returnconfirm(request,id):
 		}
 			return redirect('login')
 
+#rendering the  page with non-consumable accepted products.
 def returnrequest(request):
 	admin=False
 	non_admin=False
@@ -1714,17 +1516,10 @@ def returnrequest(request):
 					admin = True
 			elif user.user_type == 'Non-Admin':
 				non_admin = True
-				print("fngfifdfjbnfg")
 			else:
 				dealing_admin = True
-			print("grrieo")
-
-
 			logoutStatus=False
-
 			productdata=nonconsumable_productlog.objects.filter(return_status='false').filter(issued_to=request.session['email']).filter(return_request='true').filter(product_accepted='true')
-
-			print("ssosfndfnd")
 			context={
 			'admin':admin,
 			'non_admin':non_admin,
@@ -1735,7 +1530,6 @@ def returnrequest(request):
 			'name':currentName,
 			'logoutStatus':False
 				}
-
 			return render(request,'products/returnrequest.html',context)
 	except:
 		try:
@@ -1765,6 +1559,7 @@ def returnrequest(request):
 		}
 			return redirect('login')
 
+# confirming the return request for particular product
 def returnrequestconfirm(request,id):
 	admin=False
 	non_admin=False
@@ -1778,21 +1573,14 @@ def returnrequestconfirm(request,id):
 					admin = True
 			elif user.user_type == 'Non-Admin':
 				non_admin = True
-				print("fngfifdfjbnfg")
 			else:
 				dealing_admin = True
-			print("grrieo")
-
-
 			logoutStatus=False
 			currtime=datetime.datetime.now(tz=timezone.utc)
 			dummy=nonconsumable_productlog.objects.get(id=id)
-
 			nonconsumable_productlog.objects.filter(id=id).update(return_date=currtime,return_status='true')
-
 			productdata=nonconsumable_productlog.objects.filter(return_status='false').filter(return_request='true')
 			message="Product " + dummy.product_name+" return accepted by "+request.session['email']
-			print("returned")
 			now = datetime.datetime.now(tz=timezone.utc)
 			emails=request.session['email']
 			accounts = product_transaction_logs(email =emails,timestamp = now,message="Product " + dummy.product_name+" return accepted by "+request.session['email'])
@@ -1810,8 +1598,6 @@ def returnrequestconfirm(request,id):
 				}
 
 			return render(request,'products/returnrequest.html',context)
-
-
 	except:
 		try:
 			if request.session['email']:
@@ -1841,8 +1627,7 @@ def returnrequestconfirm(request,id):
 			return redirect('login')
 
 
-
-
+# rendering the measurement unit / category page.
 def proddb(request):
 	admin=False
 	non_admin=False
@@ -1852,7 +1637,6 @@ def proddb(request):
 			admin=False
 			non_admin=False
 			dealing_admin=False
-
 			all_products=productlist.objects.all().order_by("product_name")
 			measuredata=master_units.objects.all().order_by("measure_unit")
 			categorydata=master_category.objects.all().order_by("product_category")
@@ -1873,16 +1657,12 @@ def proddb(request):
 			for data in categorydata:
 				if data.product_category not in nondel_category:
 					categories.add(data.product_category)
-
-
 			user=useraccounts.objects.get(email=request.session['email'])
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 				admin = True
 			elif user.user_type=='Dealing-Admin':
 				dealing_admin=True
-
-
 			else:
 				context={
 					'logoutStatus' : False,
@@ -1895,8 +1675,6 @@ def proddb(request):
 					'name' : currentName}
 				return render(request,'home/base.html',context)
 
-
-			print("doing great")
 			context={
 					'logoutStatus' : False,
 					'admin' : admin,
@@ -1909,10 +1687,10 @@ def proddb(request):
 					'categories':categories,
 					'measurement':measurement,
 					'name' : currentName}
-			print("nice")
+			
 			return render(request,'products/edit_unit_category.html',context)
 		else:
-			print('nothing')
+			print('')
 	except:
 		try:
 			if request.session['email']:
@@ -1941,6 +1719,7 @@ def proddb(request):
 		}
 			return redirect('login')
 
+#adding measurement unit
 def add_measure(request):
 	admin=False
 	non_admin=False
@@ -1988,13 +1767,9 @@ def add_measure(request):
 				return render(request,'home/base.html',context)
 
 			if request.method=='POST':
-				print("fine")
 				names=request.POST.get('measure')
-
-				print(names)
 				try:
 					if master_units.objects.get(measure_unit=names):
-
 						context={
 					    'logoutStatus' : False,
 					    'admin' : admin,
@@ -2007,16 +1782,13 @@ def add_measure(request):
 						'nondel_category':nondel_category,
 						'categories':categories,
 						'measurement':measurement,
-						'name' : currentName}
-						print("nice")
+						'name' : currentName
+						}
 						return render(request,'products/edit_unit_category.html',context)
 				except:
-					print("also herrre")
 					data=master_units(measure_unit=names)
 					data.save()
-					print("macho")
 					measurement.add(names)
-
 					context={
 					    'logoutStatus' : False,
 					    'admin' : admin,
@@ -2030,14 +1802,11 @@ def add_measure(request):
 						'categories':categories,
 						'measurement':measurement,
 						'name' : currentName}
-					print("nice111")
 					now = datetime.datetime.now(tz=timezone.utc)
 					accounts = product_transaction_logs(email =request.session['email'],timestamp = now,message="Measure unit " + names+" added by "+request.session['email'])
 					accounts.save()
-
 					return render(request,'products/edit_unit_category.html',context)
 			else:
-
 				context={
 					    'logoutStatus' : False,
 					    'admin' : admin,
@@ -2051,7 +1820,6 @@ def add_measure(request):
 						'dealing_admin' : dealing_admin,
 						'measurement':measurement,
 						'name' : currentName}
-				print("nice")
 				return render(request,'products/edit_unit_category.html',context)
 
 
@@ -2083,7 +1851,7 @@ def add_measure(request):
 		}
 			return redirect('login')
 
-
+#adding the category
 def add_category(request):
 	admin=False
 	non_admin=False
@@ -2129,16 +1897,10 @@ def add_category(request):
 
 					'name' : currentName}
 				return render(request,'home/base.html',context)
-
 			if request.method=='POST':
-				print("fine")
 				names=request.POST.get('category')
-
-				print(names)
 				try:
 					if master_category.objects.get(product_category=names):
-
-
 						context={
 					    'logoutStatus' : False,
 					    'admin' : admin,
@@ -2152,15 +1914,11 @@ def add_category(request):
 						'nondel_category':nondel_category,
 						'nondel_measure':nondel_measure,
 						'name' : currentName}
-						print("nice")
 						return render(request,'products/edit_unit_category.html',context)
 				except:
-					print("also herrre")
 					data=master_category(product_category=names)
 					data.save()
 					categories.add(names)
-					print("macho")
-
 					context={
 					    'logoutStatus' : False,
 					    'admin' : admin,
@@ -2174,7 +1932,6 @@ def add_category(request):
 						'dealing_admin' : dealing_admin,
 						'measurement':measurement,
 						'name' : currentName}
-					print("nice111")
 					now = datetime.datetime.now(tz=timezone.utc)
 					accounts = product_transaction_logs(email =request.session['email'],timestamp = now,message="Product Category " + names+" added by "+request.session['email'])
 					accounts.save()
@@ -2192,11 +1949,9 @@ def add_category(request):
 						'verified':user.verified,
 						'dealing_admin' : dealing_admin,
 						'measurement':measurement,
-						'name' : currentName}
-				print("nice")
+						'name' : currentName
+						}
 				return render(request,'products/edit_unit_category.html',context)
-
-
 	except:
 		try:
 			if request.session['email']:
@@ -2225,6 +1980,7 @@ def add_category(request):
 		}
 			return redirect('login')
 
+# deleting the measure unit
 def del_unit(request,name):
 	admin=False
 	non_admin=False
@@ -2272,7 +2028,6 @@ def del_unit(request,name):
 				return render(request,'home/base.html',context)
 			master_units.objects.filter(measure_unit=name).delete()
 			measurement.discard(name)
-
 			context={
 					  'logoutStatus' : False,
 					   'admin' : admin,
@@ -2286,15 +2041,12 @@ def del_unit(request,name):
 						'dealing_admin' : dealing_admin,
 						'measurement':measurement,
 						'name' : currentName}
-			print("nice111")
 			now = datetime.datetime.now(tz=timezone.utc)
 			accounts = product_transaction_logs(email =request.session['email'],timestamp = now,message="Measure unit " + name+" removed by "+request.session['email'])
 			accounts.save()
 			return render(request,'products/edit_unit_category.html',context)
-
 		else:
-			print("nothing")
-
+			print("")
 	except:
 		try:
 			if request.session['email']:
@@ -2323,6 +2075,7 @@ def del_unit(request,name):
 		}
 			return redirect('login')
 
+# deleting particular category
 def del_category(request,name):
 	admin=False
 	non_admin=False
@@ -2368,10 +2121,8 @@ def del_category(request,name):
 
 					'name' : currentName}
 				return render(request,'home/base.html',context)
-
 			master_category.objects.filter(product_category=name).delete()
 			categories.discard(name)
-
 			context={
 					  'logoutStatus' : False,
 					   'admin' : admin,
@@ -2385,14 +2136,13 @@ def del_category(request,name):
 						'dealing_admin' : dealing_admin,
 						'measurement':measurement,
 						'name' : currentName}
-			print("nice111")
 			now = datetime.datetime.now(tz=timezone.utc)
 			accounts = product_transaction_logs(email =request.session['email'],timestamp = now,message="Category " + name+" Removed by "+request.session['email'])
 			accounts.save()
 			return render(request,'products/edit_unit_category.html',context)
 
 		else:
-			print("nothing")
+			print("")
 
 	except:
 		try:
@@ -2422,6 +2172,7 @@ def del_category(request,name):
 		}
 			return redirect('login')
 
+#displaying the logs
 def pd_logs(request):
 	admin = False
 	non_admin = False
@@ -2445,7 +2196,6 @@ def pd_logs(request):
 				admin = True
 				all_logs = product_transaction_logs.objects.all().order_by('timestamp').reverse()
 				verified = user.verified
-				print("fdhfdh")
 				context = {
 							'name' : name,
 							'admin' : admin,
@@ -2456,7 +2206,6 @@ def pd_logs(request):
 							'msg_count' : msg_count,
 							'verified' : verified
 				}
-				print("heredamn")
 				return render(request,'products/pd_logs.html',context)
 			elif user.user_type == 'Non-Admin':
 				non_admin = True
@@ -2498,19 +2247,17 @@ def pd_logs(request):
 				return render(request,'products/pd_logs.html',context)
 	except:
 				#If user not logged in
-		print("herere")
 		return redirect('login')
 
+#rendering the accepted non-consumable products page
 def accept_route(request):
-	print("here")
+	
 	admin=False
 	non_admin=False
 	dealing_admin=False
 	try:
 
 		if request.session['email']:
-
-
 				user=useraccounts.objects.get(email=request.session['email'])
 				currentName = user.first_name+" "+user.last_name
 				if user.user_type == 'Admin':
@@ -2520,30 +2267,15 @@ def accept_route(request):
 
 				else:
 					non_admin=True
-
-
-
-
-
 				non_accept=nonconsumable_productlog.objects.filter(return_status='false').filter(product_accepted='false').filter(issued_to=request.session['email'])
-
-
 				context={
 				'dealing_admin':dealing_admin,
 				'admin':admin,
 				'non_admin':non_admin,
 				'non_accept':non_accept,
-
 				'name':currentName,
-
 				'verified':user.verified,
-
-
-
-
 				}
-
-				print('now')
 				return render(request,'products/product_accepted.html',context)
 	except:
 		try:
@@ -2573,32 +2305,25 @@ def accept_route(request):
 		}
 			return redirect('login')
 
+#accepting the non-consumable product by user
 def product_accept(request,id):
-	print("ffg")
 	admin=False
 	non_admin=False
 	dealing_admin=False
 	try:
-
 		if request.session['email']:
-
-
 				user=useraccounts.objects.get(email=request.session['email'])
 				currentName = user.first_name+" "+user.last_name
 				if user.user_type == 'Admin':
 						admin = True
 				elif user.user_type == 'Dealing-Admin':
 					dealing_admin = True
-
 				else:
 					non_admin=True
-
 				if request.method=='GET':
 					data=request.GET['serial']
-					print(data)
 					content=nonconsumable_productlog.objects.filter(id=id).first()
 					if data==content.product_serial_no:
-
 						messages="product "+content.product_name+"(" +data + ")"+"accepted by "+request.session['email']
 						nonconsumable_productlog.objects.filter(id=id).update(product_accepted='true')
 						now = datetime.datetime.now(tz=timezone.utc)
@@ -2606,10 +2331,6 @@ def product_accept(request,id):
 						accounts.save()
 					else:
 						messages="please enter the right serial no."
-
-
-
-
 				all_products=productlog.objects.filter(status='pending').filter(email=request.session['email'])
 				rejprod=productlog.objects.filter(status='denied').filter(email=request.session['email'])
 				non_conprod=nonconsumable_productlog.objects.filter(issued_to=request.session['email']).filter(return_status='false').filter(product_accepted='true')
@@ -2617,7 +2338,6 @@ def product_accept(request,id):
 				ncproduct=nonconsumable_productlog.objects.filter(issued_to=request.session['email']).filter(return_status='true')
 				data2=productlog.objects.filter(status='approved').filter(email=request.session['email']).union(productlog.objects.filter(status='partially approved').filter(email=request.session['email']))
 				prodnew=productlist.objects.all().order_by("product_name")
-				print(all_products)
 				context={
 				'dealing_admin':dealing_admin,
 				'admin':admin,
@@ -2633,11 +2353,7 @@ def product_accept(request,id):
 				'prodnew':prodnew,
 				'messages':messages,
 				'name':currentName
-
 				}
-
-
-				print('now')
 				return render(request,'products/listproduct.html',context)
 	except:
 		try:
