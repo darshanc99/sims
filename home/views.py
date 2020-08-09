@@ -572,7 +572,7 @@ def deleteusertype(request,usertype):
 				try:
 					type = master_user_types.objects.get(user_type=usertype)
 					#If deletable
-					if type.delete:
+					if type.deletestatus:
 						type.delete()
 						message = "Removed " + usertype + " from the master_user_types."
 						now = datetime.datetime.now(tz=timezone.utc)
