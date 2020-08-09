@@ -257,7 +257,7 @@ def removeproduct(request):
 			non_admin=False
 			dealing_admin=False
 			all_products=productlist.objects.all().order_by("product_name")
-			#storing all the product not used 
+			#storing all the product not used
 			del_list=[]
 			for data in all_products:
 				content=productlog.objects.filter(product_name=data.product_name)
@@ -609,7 +609,7 @@ def requestproduct(request):
 					admin = True
 			elif user.user_type == 'Non-Admin':
 				non_admin = True
-				
+
 			else:
 				dealing_admin = True
 			if request.method=='POST':
@@ -705,7 +705,7 @@ def approveproduct(request):
 					admin = True
 			elif user.user_type == 'Dealing-Admin':
 				dealing_admin = True
-				
+
 			else:
 				context = {
 					'logoutStatus' : False,
@@ -829,7 +829,7 @@ def productconfirm(request,id):
 
 				}
 				return render(request,'products/approveproduct.html',context)
-			
+
 			email=dummy.email
 			if(proddata.product_type=='non-consumable'):
 				#generating the serial key for non-consumable product
@@ -877,7 +877,7 @@ def productconfirm(request,id):
 			content.save()
 			item_quant={}
 			for data in prodnew:
-				
+
 				sum=0
 				content=productlog.objects.filter(status='pending').filter(product_name=data.product_name)
 				for con in content:
@@ -1011,7 +1011,6 @@ def myproduct(request):
 
 
 # partially Approving the product
-
 def partialconfirm(request,id):
 	admin=False
 	non_admin=False
@@ -1052,19 +1051,19 @@ def partialconfirm(request,id):
 						comp_data=nonconsumable_productlog.objects.all()
 						for item in comp_data:
 							ser_list.append(item.product_serial_no)
-						
+
 						for i in range(int(quantity)):
 							key=''
-							
+
 							for k in range(2):
 								key+=random.choice(string.ascii_uppercase)
-								
+
 							for j in range(2):
 								key+=random.choice(string.digits)
-								
+
 							for l in range(2):
 								key+=random.choice(string.ascii_uppercase)
-							
+
 							while(True):
 								if key in ser_list:
 									key=''
@@ -1327,7 +1326,7 @@ def canceltransaction(request,id):
 					admin = True
 			elif user.user_type == 'Dealing-Admin':
 				dealing_admin = True
-				
+
 			else:
 				non_admin=True
 			dummy=productlog.objects.get(id=id)
@@ -1687,7 +1686,7 @@ def proddb(request):
 					'categories':categories,
 					'measurement':measurement,
 					'name' : currentName}
-			
+
 			return render(request,'products/edit_unit_category.html',context)
 		else:
 			print('')
@@ -2251,7 +2250,7 @@ def pd_logs(request):
 
 #rendering the accepted non-consumable products page
 def accept_route(request):
-	
+
 	admin=False
 	non_admin=False
 	dealing_admin=False
