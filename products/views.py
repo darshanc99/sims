@@ -695,9 +695,7 @@ def approveproduct(request):
 	logoutStatus=True
 	try:
 		if request.session['email']:
-			admin=False
-			non_admin=False
-			dealing_admin=False
+			print("hereee")
 			all_products=productlist.objects.all().order_by("product_name")
 			user=useraccounts.objects.get(email=request.session['email'])
 			currentName = user.first_name+" "+user.last_name
@@ -713,7 +711,6 @@ def approveproduct(request):
 					'non_admin' : True,
 					'verified':user.verified,
 					'dealing_admin' : dealing_admin,
-
 					'name' : currentName
 						}
 				return render(request,'home/base.html',context)
@@ -723,6 +720,7 @@ def approveproduct(request):
 			prodnew=productlist.objects.all().order_by("product_name")
 			rejprod=productlog.objects.filter(status='denied')
 			#calculating total requested quantity for all products
+			print("here")
 			item_quant={}
 			for data in prodnew:
 				sum=0
@@ -733,9 +731,11 @@ def approveproduct(request):
 					continue
 				else:
 					item_quant[data.product_name]=int(sum)
+			print("hereeee")		
 			data2=productlog.objects.filter(status='approved').union(productlog.objects.filter(status='partially approved'))
 			data3=nonconsumable_productlog.objects.filter(return_status='true')
 			non_conprod=nonconsumable_productlog.objects.filter(return_status='false').filter(product_accepted='true')
+			non_accept=nonconsumable_productlog.objects.filter(return_status='false').filter(product_accepted='false')
 			context={
 			'dealing_admin':dealing_admin,
 			'admin':admin,
@@ -754,13 +754,32 @@ def approveproduct(request):
 			}
 			return render(request,'products/approveproduct.html',context)
 	except:
-		messages='login first'
-		context = {
-				'logoutStatus' : True,
-				'message' : messages,
-					}
-		return render(request,'authentication/login.html',context)
-
+		try:
+			if request.session['email']:
+				user=useraccounts.objects.get(email=request.session['email'])
+				if user.user_type=='Admin':
+					admin=True
+				elif user.user_type=='Dealing-Admin':
+					dealing_admin=True
+				else :
+					non_admin=True
+				message='something went wrong'
+				context={
+				'admin':admin,
+				'dealing_admin':dealing_admin,
+				'non_admin':non_admin,
+				'verified':user.verified,
+				'message':message,
+				'logoutStatus':False
+			}
+				return redirect('home')
+		except:
+			message = "login first"
+			context = {
+			'messages' : message,
+			'logoutStatus':logoutStatus
+		}
+			return redirect('login')
 # completely confirming the product
 def productconfirm(request,id):
 	admin=False
@@ -2171,82 +2190,7 @@ def del_category(request,name):
 		}
 			return redirect('login')
 
-#displaying the logs
-def pd_logs(request):
-	admin = False
-	non_admin = False
-	dealing_admin = False
-	logoutStatus = True
-	try:
-		if request.session['email']:
-			email = request.session['email']
-			user = useraccounts.objects.get(email=email)
 
-			name=user.first_name + " " + user.last_name
-			logoutStatus = False
-
-			all_msg = simmessage.objects.all()
-			msg_count = 0
-			for msgs in all_msg:
-				if msgs.receiver == request.session['email'] and msgs.read == False:
-							msg_count+=1
-
-			if user.user_type == 'Admin':
-				admin = True
-				all_logs = product_transaction_logs.objects.all().order_by('timestamp').reverse()
-				verified = user.verified
-				context = {
-							'name' : name,
-							'admin' : admin,
-							'non_admin' : non_admin,
-							'dealing_admin' : dealing_admin,
-							'logoutStatus' : logoutStatus,
-							'all_logs' : all_logs,
-							'msg_count' : msg_count,
-							'verified' : verified
-				}
-				return render(request,'products/pd_logs.html',context)
-			elif user.user_type == 'Non-Admin':
-				non_admin = True
-				verified = user.verified
-				all_logs = product_transaction_logs.objects.all().order_by('timestamp').reverse()
-				my_logs = []
-				for log in all_logs:
-					if log.email == request.session['email']:
-								my_logs.append(log)
-				context = {
-							'name' : name,
-							'admin' : admin,
-							'non_admin' : non_admin,
-							'dealing_admin' : dealing_admin,
-							'verified' : verified,
-							'logoutStatus' : logoutStatus,
-							'all_logs' : my_logs,
-							'msg_count' : msg_count
-				}
-				return render(request,'products/pd_logs.html',context)
-			elif user.user_type == 'Dealing-Admin':
-				dealing_admin = True
-				verified = user.verified
-				all_logs = product_transaction_logs.objects.all().order_by('timestamp').reverse()
-				my_logs = []
-				for log in all_logs:
-					if log.email == request.session['email']:
-						my_logs.append(log)
-				context = {
-							'name' : name,
-							'admin' : admin,
-							'non_admin' : non_admin,
-							'dealing_admin' : dealing_admin,
-							'logoutStatus' : logoutStatus,
-							'all_logs' : my_logs,
-							'msg_count' : msg_count,
-							'verified' : verified
-				}
-				return render(request,'products/pd_logs.html',context)
-	except:
-				#If user not logged in
-		return redirect('login')
 
 #rendering the accepted non-consumable products page
 def accept_route(request):
