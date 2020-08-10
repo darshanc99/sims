@@ -10,7 +10,6 @@ import string
 import hashlib
 
 # Create your views here.
-
 #Add product
 def addproduct(request):
 	logoutStatus= True
@@ -695,7 +694,6 @@ def approveproduct(request):
 	logoutStatus=True
 	try:
 		if request.session['email']:
-			print("hereee")
 			all_products=productlist.objects.all().order_by("product_name")
 			user=useraccounts.objects.get(email=request.session['email'])
 			currentName = user.first_name+" "+user.last_name
@@ -720,7 +718,6 @@ def approveproduct(request):
 			prodnew=productlist.objects.all().order_by("product_name")
 			rejprod=productlog.objects.filter(status='denied')
 			#calculating total requested quantity for all products
-			print("here")
 			item_quant={}
 			for data in prodnew:
 				sum=0
@@ -730,8 +727,7 @@ def approveproduct(request):
 				if sum==0:
 					continue
 				else:
-					item_quant[data.product_name]=int(sum)
-			print("hereeee")		
+					item_quant[data.product_name]=int(sum)	
 			data2=productlog.objects.filter(status='approved').union(productlog.objects.filter(status='partially approved'))
 			data3=nonconsumable_productlog.objects.filter(return_status='true')
 			non_conprod=nonconsumable_productlog.objects.filter(return_status='false').filter(product_accepted='true')
@@ -1209,9 +1205,12 @@ def rejectproduct(request,id):
 			quantity=int(dummy.quantity)
 			productlog.objects.filter(id=id).update(status='denied',timestamp=datetime.datetime.now(tz=timezone.utc),approved_quantity=0)
 			all_products=productlog.objects.filter(status='pending')
-			data2=productlog.objects.filter(status='approved').union(productlog.objects.filter(status='partially approved'))
 			rejprod=productlog.objects.filter(status='denied')
 			prodnew=productlist.objects.all().order_by("product_name")
+			data2=productlog.objects.filter(status='approved').union(productlog.objects.filter(status='partially approved'))
+			data3=nonconsumable_productlog.objects.filter(return_status='true')
+			non_conprod=nonconsumable_productlog.objects.filter(issued_to=request.session['email']).filter(return_status='false').filter(product_accepted='true')
+			non_accept=nonconsumable_productlog.objects.filter(return_status='false').filter(product_accepted='false')
 			item_quant={}
 			for data in prodnew:
 				sum=0
@@ -1234,6 +1233,9 @@ def rejectproduct(request,id):
 			'messages':'The product is Rejected',
 			'all_products':all_products,
 			'data2':data2,
+			'non_conprod':non_conprod,
+			'non_accept':non_accept,
+			'data3':data3,
 			'prodnew':prodnew
 			}
 			now = datetime.datetime.now(tz=timezone.utc)
@@ -1521,7 +1523,7 @@ def returnconfirm(request,id):
 		}
 			return redirect('login')
 
-#rendering the  page with non-consumable accepted products.
+#rendering the  page with non-consumable accepted products with return request.
 def returnrequest(request):
 	admin=False
 	non_admin=False
@@ -1533,12 +1535,9 @@ def returnrequest(request):
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 					admin = True
-			elif user.user_type == 'Non-Admin':
-				non_admin = True
-			else:
-				dealing_admin = True
+			
 			logoutStatus=False
-			productdata=nonconsumable_productlog.objects.filter(return_status='false').filter(issued_to=request.session['email']).filter(return_request='true').filter(product_accepted='true')
+			productdata=nonconsumable_productlog.objects.filter(return_status='false').filter(return_request='true').filter(product_accepted='true')
 			context={
 			'admin':admin,
 			'non_admin':non_admin,
@@ -1680,9 +1679,11 @@ def proddb(request):
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 				admin = True
-			elif user.user_type=='Dealing-Admin':
-				dealing_admin=True
 			else:
+				if user.user_type=='Dealing-Admin':
+					dealing_admin=True
+				else:
+					non_admin=True
 				context={
 					'logoutStatus' : False,
 					'admin' : admin,
@@ -1690,9 +1691,10 @@ def proddb(request):
 					'dealing_admin':dealing_admin,
 					'verified':user.verified,
 					'dealing_admin' : dealing_admin,
-
-					'name' : currentName}
-				return render(request,'home/base.html',context)
+					'messages':'Access Not Allowed',
+					'name' : currentName
+					}
+				return redirect('home')
 
 			context={
 					'logoutStatus' : False,
@@ -2033,8 +2035,12 @@ def del_unit(request,name):
 			user=useraccounts.objects.get(email=request.session['email'])
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
-					admin = True
+				admin = True
 			else:
+				if user.user_type=='Dealing-Admin':
+					dealing_admin=True
+				else:
+					non_admin=True
 				context={
 					'logoutStatus' : False,
 					'admin' : admin,
@@ -2043,26 +2049,33 @@ def del_unit(request,name):
 					'verified':user.verified,
 					'dealing_admin' : dealing_admin,
 
-					'name' : currentName}
-				return render(request,'home/base.html',context)
-			master_units.objects.filter(measure_unit=name).delete()
-			measurement.discard(name)
+					'name' : currentName
+					}
+				return redirect('home')
+			if name not in nondel_measure:
+				master_units.objects.filter(measure_unit=name).delete()
+				measurement.discard(name)
+				message='measure_unit deleted successfully'
+				now = datetime.datetime.now(tz=timezone.utc)
+				accounts = product_transaction_logs(email =request.session['email'],timestamp = now,message="Measure unit " + name+" removed by "+request.session['email'])
+				accounts.save()
+			else:
+				message="Measure unit is being used cannot be deleted"
 			context={
 					  'logoutStatus' : False,
 					   'admin' : admin,
 						'non_admin' : non_admin,
-						'message':'measure_unit deleted successfully',
+						'message':message,
 						'nondel_measure':nondel_measure,
 						'nondel_category':nondel_category,
 						'categories':categories,
 						'dealing_admin':dealing_admin,
 						'verified':user.verified,
-						'dealing_admin' : dealing_admin,
 						'measurement':measurement,
-						'name' : currentName}
-			now = datetime.datetime.now(tz=timezone.utc)
-			accounts = product_transaction_logs(email =request.session['email'],timestamp = now,message="Measure unit " + name+" removed by "+request.session['email'])
-			accounts.save()
+						'name' : currentName
+						}
+			
+			
 			return render(request,'products/edit_unit_category.html',context)
 		else:
 			print("")
@@ -2128,25 +2141,37 @@ def del_category(request,name):
 			user=useraccounts.objects.get(email=request.session['email'])
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
-					admin = True
+				admin = True
+
 			else:
+				if user.user_type=='Dealing_admin':
+					dealing_admin=True
+				else:
+					non_admin=True
 				context={
 					'logoutStatus' : False,
 					'admin' : admin,
 					'non_admin' : non_admin,
-					'dealing_admin':dealing_admin,
+					'message' :'Not Allowed',
 					'verified':user.verified,
 					'dealing_admin' : dealing_admin,
 
 					'name' : currentName}
-				return render(request,'home/base.html',context)
-			master_category.objects.filter(product_category=name).delete()
-			categories.discard(name)
+				return redirect('home')
+			if name not in nondel_category:
+				master_category.objects.filter(product_category=name).delete()
+				categories.discard(name)
+				message='Product Category deleted successfully'
+				now = datetime.datetime.now(tz=timezone.utc)
+				accounts = product_transaction_logs(email =request.session['email'],timestamp = now,message="Category " + name+" removed by "+request.session['email'])
+				accounts.save()
+			else:
+				message='Product Category is bieng used cannot be deleted'
 			context={
 					  'logoutStatus' : False,
 					   'admin' : admin,
 						'non_admin' : non_admin,
-						'message':'Product Category deleted successfully',
+						'message':message,
 						'nondel_category':nondel_category,
 						'nondel_measure':nondel_measure,
 						'categories':categories,
@@ -2154,10 +2179,9 @@ def del_category(request,name):
 						'verified':user.verified,
 						'dealing_admin' : dealing_admin,
 						'measurement':measurement,
-						'name' : currentName}
-			now = datetime.datetime.now(tz=timezone.utc)
-			accounts = product_transaction_logs(email =request.session['email'],timestamp = now,message="Category " + name+" Removed by "+request.session['email'])
-			accounts.save()
+						'name' : currentName
+						}
+			
 			return render(request,'products/edit_unit_category.html',context)
 
 		else:

@@ -262,6 +262,9 @@
 					{% if log.status == "partially approved" %}
 						<th scope="row" style="color:purple">{{log.status}}</th>
 					{% endif %}
+					{% if log.status == "denied" %}
+						<th scope="row" style="color:orange">{{log.status}}</th>
+					{% endif %}
 					</tr>
 				{% endfor %}
 			</tbody>

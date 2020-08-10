@@ -325,7 +325,7 @@
                 <a href="#" class="nav-link">
                   <i class="nav-icon fas fa-tasks"></i>
                   <p style="color:lightpink">
-                    Inventory
+                    Products
                     <i class="right fas fa-angle-left"></i>
                   </p>
                 </a>
@@ -448,7 +448,7 @@
                   <li class="nav-item">
                     <a href="{% url 'viewproduct' %}" class="nav-link">
                       <i class="fas fa-pen nav-icon"></i>
-                      <p style="color:lightblue">View/Edit Product</p>
+                      <p style="color:lightblue">View Products</p>
                     </a>
                   </li>
                    <li class="nav-item">
@@ -457,17 +457,13 @@
                         <p style="color:lightblue">My Inventory</p>
                       </a>
                     </li>
+                    
                   <li class="nav-item">
                     <a href="{%url 'requestproduct' %}" class="nav-link">
                       <i class="fas fa-plus nav-icon"></i>
                       <p style="color:lightblue">Request Inventory</p>
                     </a>
                   </li>
-                  <li class="nav-item">
-                    <a href="{% url 'accept_route' %}" class="nav-link">
-                      <i class="fas fa-pen nav-icon"></i>
-                      <p style="color:lightblue">Confirm My product</p>
-                    </a>
                    <li class="nav-item">
                       <a href="{% url 'pendingprods' %}" class="nav-link">
                         <i class="fas fa-trash nav-icon"></i>
@@ -477,14 +473,13 @@
                    <li class="nav-item">
                     <a href="{% url 'approveproduct' %}" class="nav-link">
                       <i class="fas fa-pen nav-icon"></i>
-                      <p style="color:lightblue">View/Approve product request</p>
+                      <p style="color:lightblue">Approve product request</p>
                     </a>
-                  </li>
                   <li class="nav-item">
-                    <a href="{% url 'returnrequest' %}" class="nav-link">
+                    <a href="{% url 'accept_route' %}" class="nav-link">
                       <i class="fas fa-pen nav-icon"></i>
-                      <p style="color:lightblue">Approve return request</p>
-                    </a>
+                      <p style="color:lightblue">Confirm My product</p>
+                    </a> 
                   </li>
                     <li class="nav-item">
                     <a href="{% url 'returnproduct' %}" class="nav-link">
