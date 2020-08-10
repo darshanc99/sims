@@ -1784,7 +1784,7 @@ def add_measure(request):
 					'dealing_admin' : dealing_admin,
 
 					'name' : currentName}
-				return render(request,'home/base.html',context)
+				return redirect('home')
 
 			if request.method=='POST':
 				names=request.POST.get('measure')
@@ -1916,7 +1916,7 @@ def add_category(request):
 					'dealing_admin' : dealing_admin,
 
 					'name' : currentName}
-				return render(request,'home/base.html',context)
+				return redirect('home')
 			if request.method=='POST':
 				names=request.POST.get('category')
 				try:
@@ -2051,7 +2051,7 @@ def del_unit(request,name):
 					'name' : currentName
 					}
 				return redirect('home')
-			if name not in nondel_measure:
+			if name not in nondel_measure and name in measurement:
 				master_units.objects.filter(measure_unit=name).delete()
 				measurement.discard(name)
 				message='measure_unit deleted successfully'
@@ -2059,7 +2059,7 @@ def del_unit(request,name):
 				accounts = product_transaction_logs(email =request.session['email'],timestamp = now,message="Measure unit " + name+" removed by "+request.session['email'])
 				accounts.save()
 			else:
-				message="Measure unit is being used cannot be deleted"
+				message="Measure unit is being used or cannot be found"
 			context={
 					  'logoutStatus' : False,
 					   'admin' : admin,
@@ -2157,7 +2157,7 @@ def del_category(request,name):
 
 					'name' : currentName}
 				return redirect('home')
-			if name not in nondel_category:
+			if name not in nondel_category and name in categories:
 				master_category.objects.filter(product_category=name).delete()
 				categories.discard(name)
 				message='Product Category deleted successfully'
@@ -2165,7 +2165,7 @@ def del_category(request,name):
 				accounts = product_transaction_logs(email =request.session['email'],timestamp = now,message="Category " + name+" removed by "+request.session['email'])
 				accounts.save()
 			else:
-				message='Product Category is bieng used cannot be deleted'
+				message='Product Category cannot be deleted as its used or cannot be found'
 			context={
 					  'logoutStatus' : False,
 					   'admin' : admin,
@@ -2214,16 +2214,12 @@ def del_category(request,name):
 		}
 			return redirect('login')
 
-
-
 #rendering the accepted non-consumable products page
 def accept_route(request):
-
 	admin=False
 	non_admin=False
 	dealing_admin=False
 	try:
-
 		if request.session['email']:
 				user=useraccounts.objects.get(email=request.session['email'])
 				currentName = user.first_name+" "+user.last_name
