@@ -56,5 +56,6 @@ class nonconsumable_productlog(models.Model):
 	return_request=models.CharField(max_length=50,null=True,blank=True)
 	product_serial_no=models.CharField(max_length=20,null=True)
 	product_accepted=models.CharField(max_length=20,null=True)
+	product_condition=models.CharField(max_length=20,null=True,default=None)
 	def __str__(self):
 		return self.product_name+"-"+self.issue_date

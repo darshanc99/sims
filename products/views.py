@@ -196,6 +196,20 @@ def addquantity(request):
 				names=request.POST.get('product_category')
 				quantity=request.POST.get('quantity')
 				details=productlist.objects.get(product_name=names)
+
+				if(int(quantity)<=0):
+					all_products=productlist.objects.all().order_by("product_name")
+					context = {
+					'admin':admin,
+					'dealing_admin':dealing_admin,
+					'non_admin':non_admin,
+					'messages':'Enter the right quantity',
+					'name' : currentName,
+					'verified':user.verified,
+					'all_products':all_products
+					}
+					return render(request,'products/addquantity.html',context)
+
 				ans=int(details.available_quantity)+int(quantity)
 				all_products=productlist.objects.all().order_by("product_name")
 				productlist.objects.filter(product_name=names).update(available_quantity=ans)
@@ -917,32 +931,10 @@ def productconfirm(request,id):
 			email=dummy.email
 			if(proddata.product_type=='non-consumable'):
 				#generating the serial key for non-consumable product
-				ser_list=[]
-				comp_data=nonconsumable_productlog.objects.all()
-				for item in comp_data:
-					ser_list.append(item.product_serial_no)
 				for i in range(quantity):
-					key=''
-					for k in range(2):
-						key+=random.choice(string.ascii_uppercase)
-					for j in range(2):
-						key+=random.choice(string.digits)
-					for l in range(2):
-						key+=random.choice(string.ascii_uppercase)
-					while(True):
-						if key in ser_list:
-							key=''
-							for k in range(0,2):
-								key+=random.choice(string.ascii_uppercase)
-							for j in range(0,2):
-								key+=random.choice(string.digits)
-							for l in range(0,2):
-								key+=random.choice(string.ascii_uppercase)
-						else:
-							adding=nonconsumable_productlog(product_name=dummy.product_name,issued_to=email,issued_by=request.session['email'],units=1,issue_date=datetime.datetime.now(tz=timezone.utc),return_status='false',requested_quantity=1,return_request='false',product_serial_no=key,product_accepted='false')
-							adding.save()
-							ser_list.append(key)
-							break
+					adding=nonconsumable_productlog(product_name=dummy.product_name,issued_to=email,issued_by=request.session['email'],units=1,issue_date=datetime.datetime.now(tz=timezone.utc),return_status='false',requested_quantity=1,return_request='false',product_serial_no="-",product_accepted='false')
+					adding.save()
+							
 			message="Product "+product_name+" "+ "with quantity" +"("+str(quantity)+")"+ " Completely approved to  "+email
 			productlog.objects.filter(id=id).update(status='approved',timestamp=datetime.datetime.now(tz=timezone.utc),approved_quantity=quantity,issued_by=request.session['email'])
 			all_products=productlog.objects.filter(status='pending')
@@ -1142,43 +1134,16 @@ def partialconfirm(request,id):
 			email=dummy.email
 			if request.method=='GET':
 				quantity=str(request.GET['quant'])
+
 				if(int(quantity)<=0 or int(quantity)>=dummy.quantity or int(quantity)>prod_data.available_quantity):
 					message="Enter the valid quantity to approve"
 				else:
 					message="Product "+product_name+ " "+"("+ quantity+")"+" partially approved to  "+email
 					if(prod_data.product_type=="non-consumable"):
-						ser_list=[]
-						comp_data=nonconsumable_productlog.objects.all()
-						for item in comp_data:
-							ser_list.append(item.product_serial_no)
-
 						for i in range(int(quantity)):
-							key=''
-
-							for k in range(2):
-								key+=random.choice(string.ascii_uppercase)
-
-							for j in range(2):
-								key+=random.choice(string.digits)
-
-							for l in range(2):
-								key+=random.choice(string.ascii_uppercase)
-
-							while(True):
-								if key in ser_list:
-									key=''
-									for k in range(0,2):
-										key+=random.choice(string.ascii_uppercase)
-									for j in range(0,2):
-										key+=random.choice(string.digits)
-									for l in range(0,2):
-										key+=random.choice(string.ascii_uppercase)
-								else:
-									adding=nonconsumable_productlog(product_name=dummy.product_name,issued_to=email,issued_by=request.session['email'],units=1,issue_date=datetime.datetime.now(tz=timezone.utc),return_status='false',requested_quantity=1,return_request='false',product_serial_no=key,product_accepted='false')
-									adding.save()
-									ser_list.append(key)
-									break
-					productlog.objects.filter(id=id).update(status='partially approved',timestamp=datetime.datetime.now(tz=timezone.utc),approved_quantity=quantity,issued_by=request.session['email'])
+							adding=nonconsumable_productlog(product_name=dummy.product_name,issued_to=email,issued_by=request.session['email'],units=1,issue_date=datetime.datetime.now(tz=timezone.utc),return_status='false',requested_quantity=1,return_request='false',product_serial_no='-',product_accepted='false')
+							adding.save()
+					productlog.objects.filter(id=id).update(status='partially approved',timestamp=datetime.datetime.now(tz=timezone.utc),approved_quantity=int(quantity),issued_by=request.session['email'])
 					prod=productlist.objects.get(product_name=product_name)
 					sizes=prod.available_quantity
 					productlist.objects.filter(product_name=product_name).update(available_quantity=sizes-int(quantity))
@@ -1295,7 +1260,7 @@ def rejectproduct(request,id):
 			product_name=dummy.product_name
 			proddata=productlist.objects.get(product_name=dummy.product_name)
 			quantity=int(dummy.quantity)
-			productlog.objects.filter(id=id).update(status='denied',timestamp=datetime.datetime.now(tz=timezone.utc),approved_quantity=0)
+			productlog.objects.filter(id=id).update(status='denied',timestamp=datetime.datetime.now(tz=timezone.utc),approved_quantity=0,issued_by=request.session['email'])
 			all_products=productlog.objects.filter(status='pending')
 			rejprod=productlog.objects.filter(status='denied')
 			prodnew=productlist.objects.all().order_by("product_name")
@@ -1597,28 +1562,32 @@ def returnconfirm(request,id):
 			else:
 				dealing_admin = True
 			logoutStatus=False
-			currtime=datetime.datetime.now(tz=timezone.utc)
-			all_data=nonconsumable_productlog.objects.filter(id=id).first()
-			nonconsumable_productlog.objects.filter(id=id).update(return_date=currtime,return_status='false',return_request='true')
-			productdata=nonconsumable_productlog.objects.filter(return_status='false').filter(return_request='false').filter(issued_to=request.session['email']).filter(product_accepted='true')
-			now = datetime.datetime.now(tz=timezone.utc)
-			emails=request.session['email']
-			message="Product " + all_data.product_name+" return requested by "+request.session['email']
-			accounts = product_transaction_logs(email =emails,timestamp = now,message="Product " + all_data.product_name+" return requested by "+request.session['email'])
-			accounts.save()
-			context={
-			'admin':admin,
-			'non_admin':non_admin,
-			'dealing_admin':dealing_admin,
-			'all_products':all_products,
-			'verified':user.verified,
-			'productdata':productdata,
-			'messages':message,
-			'name':currentName,
-			'logoutStatus':False
-				}
+			if request.method=='GET':
+				cond_data=str(request.GET['condition'])
+				currtime=datetime.datetime.now(tz=timezone.utc)
+				all_data=nonconsumable_productlog.objects.filter(id=id).first()
+				nonconsumable_productlog.objects.filter(id=id).update(return_date=currtime,return_status='false',return_request='true',product_condition=cond_data)
+				productdata=nonconsumable_productlog.objects.filter(return_status='false').filter(return_request='false').filter(issued_to=request.session['email']).filter(product_accepted='true')
+				now = datetime.datetime.now(tz=timezone.utc)
+				emails=request.session['email']
+				message="Product " + all_data.product_name+" return requested by "+request.session['email']
+				accounts = product_transaction_logs(email =emails,timestamp = now,message="Product " + all_data.product_name+" return requested by "+request.session['email'])
+				accounts.save()
+				context={
+				'admin':admin,
+				'non_admin':non_admin,
+				'dealing_admin':dealing_admin,
+				'all_products':all_products,
+				'verified':user.verified,
+				'productdata':productdata,
+				'messages':message,
+				'name':currentName,
+				'logoutStatus':False
+					}
 
-			return render(request,'products/returnproduct.html',context)
+				return render(request,'products/returnproduct.html',context)
+			else:
+				return redirect('home')
 	except:
 		try:
 			if request.session['email']:
@@ -1736,9 +1705,24 @@ def returnrequestconfirm(request,id):
 			logoutStatus=False
 			currtime=datetime.datetime.now(tz=timezone.utc)
 			dummy=nonconsumable_productlog.objects.get(id=id)
+			details=productlist.objects.filter(product_name=dummy.product_name).first()
+			cond= dummy.product_condition
+			if cond=='good':
+				ans=int(details.available_quantity)+1
+				productlist.objects.filter(product_name=dummy.product_name).update(available_quantity=ans)
+				now = datetime.datetime.now(tz=timezone.utc)
+				email=request.session['email']
+				data=product_operationlogs.objects.filter(product_name=dummy.product_name).order_by('timestamp').last()
+				
+				value=1+data.final_quantity
+				content= product_operationlogs(product_name=dummy.product_name,timestamp=now,operation="addition",quantity=1,initial_quantity=int(data.final_quantity),final_quantity=value,issued_by=email)
+				content.save()
+				print("gg")	
+				message="Product " + dummy.product_name+" return accepted and added to inventory  by "+request.session['email']
+			else:
+				message="Product " + dummy.product_name+" return accepted and not added to inventory by "+request.session['email']
 			nonconsumable_productlog.objects.filter(id=id).update(return_date=currtime,return_status='true')
 			productdata=nonconsumable_productlog.objects.filter(return_status='false').filter(return_request='true')
-			message="Product " + dummy.product_name+" return accepted by "+request.session['email']
 			now = datetime.datetime.now(tz=timezone.utc)
 			emails=request.session['email']
 			accounts = product_transaction_logs(email =emails,timestamp = now,message="Product " + dummy.product_name+" return accepted by "+request.session['email'])
@@ -2488,14 +2472,11 @@ def product_accept(request,id):
 				if request.method=='GET':
 					data=request.GET['serial']
 					content=nonconsumable_productlog.objects.filter(id=id).first()
-					if data==content.product_serial_no:
-						messages="product "+content.product_name+"(" +data + ")"+"accepted by "+request.session['email']
-						nonconsumable_productlog.objects.filter(id=id).update(product_accepted='true')
-						now = datetime.datetime.now(tz=timezone.utc)
-						accounts = product_transaction_logs(email =request.session['email'],timestamp = now,message=messages)
-						accounts.save()
-					else:
-						messages="please enter the right serial no."
+					messages="product "+content.product_name+"(" +data + ")"+"accepted by "+request.session['email']
+					nonconsumable_productlog.objects.filter(id=id).update(product_accepted='true',product_serial_no=data)
+					now = datetime.datetime.now(tz=timezone.utc)
+					accounts = product_transaction_logs(email =request.session['email'],timestamp = now,message=messages)
+					accounts.save()
 				all_products=productlog.objects.filter(status='pending').filter(email=request.session['email'])
 				rejprod=productlog.objects.filter(status='denied').filter(email=request.session['email'])
 				non_conprod=nonconsumable_productlog.objects.filter(issued_to=request.session['email']).filter(return_status='false').filter(product_accepted='true')

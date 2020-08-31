@@ -42,8 +42,16 @@
                     <b>Return status</b> <a class="float-right">{{content.return_status}}</a>
                   </li>
                 </ul>
-
-                <a href="/product/returnconfirm/{{content.id}}" type="submit" class="btn btn-link btn-block" ><b>Return Product</b></a>
+                <form action="/product/returnconfirm/{{content.id}}" method="GET">
+                   <label style="color:red">Select the condition of product</label>
+              <select id="inputState" class="form-control" name="condition" required=" ">
+               <option disabled selected value="">select</option>
+                  <option>good</option>
+                  <option>not-good</option>
+                 
+              </select>
+                <button type="submit" class="btn btn-link btn-block" ><b>Return Product</b></button>
+              </form>
               </div>
               <!-- /.card-body -->
             </div>
