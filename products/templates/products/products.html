@@ -13,7 +13,7 @@
 
 
     <table class="table table-responsive" style="max-height:500px ;max-width: 80%;margin-bottom: 5%">
-      <thead class="table-dark">
+      <thead class="thead-light">
         <tr>
           <th scope="col">PRODUCT NAME</th>
           <th scope="col">PRODUCT TYPE</th>
@@ -25,11 +25,11 @@
       <tbody>
        {%for data in all_products %}
           <tr>
-            <th scope="row"><h5><b>{{data.product_name}}</b></h5></th>
-            <th scope="row"><h5><b>{{data.product_type}}</b></h5></th>
-            <th scope="row" style="color:red"><h5><b>{{data.available_quantity}}</b></h5></th>
-            <th scope="row"><h5><b>{{data.product_category}}</b></h5></th>
-            <th scope="row"> <a href="/product/edprod/{{data.product_name}}" class="btn btn-link btn-block" ><i class="fa fa-edit" style="margin-right: 10px"></i><b>Edit</b></a></th>
+            <th scope="row" style="font-weight:normal;"><h5>{{data.product_name}}</h5></th>
+            <th scope="row" style="font-weight:normal;"><h5>{{data.product_type}}</h5></th>
+            <th scope="row" style="color:red;font-weight:normal;"><h5>{{data.available_quantity}}</h5></th>
+            <th scope="row" style="font-weight:normal;"><h5>{{data.product_category}}</h5></th>
+            <th scope="row" style="font-weight:normal;"> <a href="/product/edprod/{{data.product_name}}" class="btn btn-link btn-block" ><i class="fa fa-edit" style="margin-right: 10px"></i><b>Edit</b></a></th>
           </tr>
         {% endfor %}
       </tbody>
@@ -39,7 +39,7 @@
 
 
     <table class="table table-responsive" style="max-height:500px ;max-width: 80%">
-      <thead class="table-dark">
+      <thead class="thead-light">
         <tr>
           <th scope="col">PRODUCT NAME</th>
           <th scope="col">PRODUCT TYPE</th>
@@ -51,11 +51,11 @@
       <tbody>
        {%for data in noncon_product %}
           <tr>
-            <th scope="row"><h5><b>{{data.product_name}}</b></h5></th>
-            <th scope="row"><h5><b>{{data.product_type}}</b></h5></th>
-            <th scope="row" style="color:red"><h5><b>{{data.available_quantity}}</b></h5></th>
-            <th scope="row"><h5><b>{{data.product_category}}</b></h5></th>
-            <th scope="row"> <a href="/product/edprod/{{data.product_name}}" class="btn btn-link btn-block" ><i class="fa fa-edit" style="margin-right: 10px"></i><b>Edit</b></a></th>
+            <th scope="row" style="font-weight:normal;"><h5>{{data.product_name}}</h5></th>
+            <th scope="row" style="font-weight:normal;"><h5>{{data.product_type}}</h5></th>
+            <th scope="row" style="color:red;font-weight:normal;"><h5>{{data.available_quantity}}</h5></th>
+            <th scope="row" style="font-weight:normal;"><h5>{{data.product_category}}</h5></th>
+            <th scope="row" style="font-weight:normal;"> <a href="/product/edprod/{{data.product_name}}" class="btn btn-link btn-block" ><i class="fa fa-edit" style="margin-right: 10px"></i><b>Edit</b></a></th>
           </tr>
         {% endfor %}
       </tbody>
@@ -77,23 +77,23 @@
 
 
     <table class="table table-responsive" style="max-height:500px ;max-width: 80%;margin-bottom: 5%">
-      <thead class="table-dark">
+      <thead class="thead-light">
         <tr>
           <th scope="col">PRODUCT NAME</th>
           <th scope="col">PRODUCT TYPE</th>
           <th scope="col">AVAILABLE QUANTITY</th>
           <th scope="col">PRODUCT CATEGORY</th>
-          
+
         </tr>
       </thead>
       <tbody>
        {%for data in all_products %}
           <tr>
-            <th scope="row"><h5><b>{{data.product_name}}</b></h5></th>
-            <th scope="row"><h5><b>{{data.product_type}}</b></h5></th>
-            <th scope="row" style="color:red"><h5><b>{{data.available_quantity}}</b></h5></th>
-            <th scope="row"><h5><b>{{data.product_category}}</b></h5></th>
-            
+            <th scope="row" style="font-weight:normal;"><h5>{{data.product_name}}</h5></th>
+            <th scope="row" style="font-weight:normal;"><h5>{{data.product_type}}</h5></th>
+            <th scope="row" style="color:red;font-weight:normal;"><h5>{{data.available_quantity}}</h5></th>
+            <th scope="row" style="font-weight:normal;"><h5>{{data.product_category}}</h5></th>
+
           </tr>
         {% endfor %}
       </tbody>
@@ -103,23 +103,23 @@
 
 
     <table class="table table-responsive" style="max-height:500px ;max-width: 80%">
-      <thead class="table-dark">
+      <thead class="thead-light">
         <tr>
           <th scope="col">PRODUCT NAME</th>
           <th scope="col">PRODUCT TYPE</th>
           <th scope="col">AVAILABLE QUANTITY</th>
           <th scope="col">PRODUCT CATEGORY</th>
-          
+
         </tr>
       </thead>
       <tbody>
        {%for data in noncon_product %}
           <tr>
-            <th scope="row"><h5><b>{{data.product_name}}</b></h5></th>
-            <th scope="row"><h5><b>{{data.product_type}}</b></h5></th>
-            <th scope="row" style="color:red"><h5><b>{{data.available_quantity}}</b></h5></th>
-            <th scope="row"><h5><b>{{data.product_category}}</b></h5></th>
-            
+            <th scope="row" style="font-weight:normal;"><h5>{{data.product_name}}</h5></th>
+            <th scope="row" style="font-weight:normal;"><h5>{{data.product_type}}</h5></th>
+            <th scope="row" style="color:red;font-weight:normal;"><h5>{{data.available_quantity}}</h5></th>
+            <th scope="row" style="font-weight:normal;"><h5>{{data.product_category}}</h5></th>
+
           </tr>
         {% endfor %}
       </tbody>
@@ -134,4 +134,3 @@
 {% endif %}
 {% endif %}
         {% endblock %}
-      

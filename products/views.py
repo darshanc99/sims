@@ -25,6 +25,10 @@ def addproduct(request):
 			all_units=master_units.objects.all()
 			all_category=master_category.objects.all()
 			user=useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 					admin = True
@@ -124,6 +128,10 @@ def addproduct(request):
 		try:
 			if request.session['email']:
 				user=useraccounts.objects.get(email=request.session['email'])
+				#If user has been logged out or freezed by the admin
+				if user.loginstatus == False or user.accountstatus == False:
+					return redirect('logout')
+
 				if user.user_type=='Admin':
 					admin=True
 				elif user.user_type=='Dealing-Admin':
@@ -162,6 +170,10 @@ def addquantity(request):
 			dealing_admin=False
 			all_products=productlist.objects.all().order_by("product_name")
 			user=useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 					admin = True
@@ -219,6 +231,10 @@ def addquantity(request):
 		try:
 			if request.session['email']:
 				user=useraccounts.objects.get(email=request.session['email'])
+				#If user has been logged out or freezed by the admin
+				if user.loginstatus == False or user.accountstatus == False:
+					return redirect('logout')
+
 				if user.user_type=='Admin':
 					admin=True
 				elif user.user_type=='Dealing-Admin':
@@ -265,6 +281,10 @@ def removeproduct(request):
 				else:
 					del_list.append(data.product_name)
 			user=useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 					admin = True
@@ -349,6 +369,10 @@ def removeproduct(request):
 		try:
 			if request.session['email']:
 				user=useraccounts.objects.get(email=request.session['email'])
+				#If user has been logged out or freezed by the admin
+				if user.loginstatus == False or user.accountstatus == False:
+					return redirect('logout')
+
 				if user.user_type=='Admin':
 					admin=True
 				elif user.user_type=='Dealing-Admin':
@@ -382,6 +406,10 @@ def viewproduct(request):
 	try:
 		if request.session['email']:
 			user=useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			if user.user_type=='Admin':
 				admin=True
 			elif user.user_type=='Dealing-Admin':
@@ -405,6 +433,10 @@ def viewproduct(request):
 		try:
 			if request.session['email']:
 				user=useraccounts.objects.get(email=request.session['email'])
+				#If user has been logged out or freezed by the admin
+				if user.loginstatus == False or user.accountstatus == False:
+					return redirect('logout')
+
 				if user.user_type=='Admin':
 					admin=True
 				elif user.user_type=='Dealing-Admin':
@@ -443,6 +475,10 @@ def routeproduct(request):
 			all_products=productlist.objects.filter(product_type="consumable").order_by("product_name")
 			noncon_product=productlist.objects.filter(product_type="non-consumable").order_by("product_name")
 			user=useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 					admin = True
@@ -498,6 +534,10 @@ def routeproduct(request):
 		try:
 			if request.session['email']:
 				user=useraccounts.objects.get(email=request.session['email'])
+				#If user has been logged out or freezed by the admin
+				if user.loginstatus == False or user.accountstatus == False:
+					return redirect('logout')
+
 				if user.user_type=='Admin':
 					admin=True
 				elif user.user_type=='Dealing-Admin':
@@ -535,6 +575,10 @@ def edprod(request,name):
 			dealing_admin=False
 			all_products=productlist.objects.all().order_by("product_name")
 			user=useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 					admin = True
@@ -569,6 +613,10 @@ def edprod(request,name):
 		try:
 			if request.session['email']:
 				user=useraccounts.objects.get(email=request.session['email'])
+				#If user has been logged out or freezed by the admin
+				if user.loginstatus == False or user.accountstatus == False:
+					return redirect('logout')
+
 				if user.user_type=='Admin':
 					admin=True
 				elif user.user_type=='Dealing-Admin':
@@ -603,6 +651,10 @@ def requestproduct(request):
 		if request.session['email']:
 			all_products=productlist.objects.all().order_by("product_name")
 			user=useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 					admin = True
@@ -661,6 +713,10 @@ def requestproduct(request):
 		try:
 			if request.session['email']:
 				user=useraccounts.objects.get(email=request.session['email'])
+				#If user has been logged out or freezed by the admin
+				if user.loginstatus == False or user.accountstatus == False:
+					return redirect('logout')
+
 				if user.user_type=='Admin':
 					admin=True
 				elif user.user_type=='Dealing-Admin':
@@ -696,6 +752,10 @@ def approveproduct(request):
 		if request.session['email']:
 			all_products=productlist.objects.all().order_by("product_name")
 			user=useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 					admin = True
@@ -727,7 +787,7 @@ def approveproduct(request):
 				if sum==0:
 					continue
 				else:
-					item_quant[data.product_name]=int(sum)	
+					item_quant[data.product_name]=int(sum)
 			data2=productlog.objects.filter(status='approved').union(productlog.objects.filter(status='partially approved'))
 			data3=nonconsumable_productlog.objects.filter(return_status='true')
 			non_conprod=nonconsumable_productlog.objects.filter(return_status='false').filter(product_accepted='true')
@@ -753,6 +813,10 @@ def approveproduct(request):
 		try:
 			if request.session['email']:
 				user=useraccounts.objects.get(email=request.session['email'])
+				#If user has been logged out or freezed by the admin
+				if user.loginstatus == False or user.accountstatus == False:
+					return redirect('logout')
+
 				if user.user_type=='Admin':
 					admin=True
 				elif user.user_type=='Dealing-Admin':
@@ -789,6 +853,10 @@ def productconfirm(request,id):
 			dealing_admin=False
 			all_products=productlist.objects.all().order_by("product_name")
 			user=useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 					admin = True
@@ -928,6 +996,10 @@ def productconfirm(request,id):
 		try:
 			if request.session['email']:
 				user=useraccounts.objects.get(email=request.session['email'])
+				#If user has been logged out or freezed by the admin
+				if user.loginstatus == False or user.accountstatus == False:
+					return redirect('logout')
+
 				if user.user_type=='Admin':
 					admin=True
 				elif user.user_type=='Dealing-Admin':
@@ -965,6 +1037,10 @@ def myproduct(request):
 				dealing_admin=False
 				all_products=productlist.objects.all().order_by("product_name")
 				user=useraccounts.objects.get(email=request.session['email'])
+				#If user has been logged out or freezed by the admin
+				if user.loginstatus == False or user.accountstatus == False:
+					return redirect('logout')
+
 				currentName = user.first_name+" "+user.last_name
 				if user.user_type == 'Admin':
 						admin = True
@@ -1000,6 +1076,10 @@ def myproduct(request):
 		try:
 			if request.session['email']:
 				user=useraccounts.objects.get(email=request.session['email'])
+				#If user has been logged out or freezed by the admin
+				if user.loginstatus == False or user.accountstatus == False:
+					return redirect('logout')
+
 				if user.user_type=='Admin':
 					admin=True
 				elif user.user_type=='Dealing-Admin':
@@ -1037,6 +1117,10 @@ def partialconfirm(request,id):
 			dealing_admin=False
 			all_products=productlist.objects.all().order_by("product_name")
 			user=useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 					admin = True
@@ -1146,6 +1230,10 @@ def partialconfirm(request,id):
 		try:
 			if request.session['email']:
 				user=useraccounts.objects.get(email=request.session['email'])
+				#If user has been logged out or freezed by the admin
+				if user.loginstatus == False or user.accountstatus == False:
+					return redirect('logout')
+
 				if user.user_type=='Admin':
 					admin=True
 				elif user.user_type=='Dealing-Admin':
@@ -1183,6 +1271,10 @@ def rejectproduct(request,id):
 			dealing_admin=False
 			all_products=productlist.objects.all().order_by("product_name")
 			user=useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 					admin = True
@@ -1247,6 +1339,10 @@ def rejectproduct(request,id):
 		try:
 			if request.session['email']:
 				user=useraccounts.objects.get(email=request.session['email'])
+				#If user has been logged out or freezed by the admin
+				if user.loginstatus == False or user.accountstatus == False:
+					return redirect('logout')
+
 				if user.user_type=='Admin':
 					admin=True
 				elif user.user_type=='Dealing-Admin':
@@ -1283,6 +1379,10 @@ def pendingprods(request):
 				dealing_admin=False
 				all_products=productlist.objects.all().order_by("product_name")
 				user=useraccounts.objects.get(email=request.session['email'])
+				#If user has been logged out or freezed by the admin
+				if user.loginstatus == False or user.accountstatus == False:
+					return redirect('logout')
+
 				currentName = user.first_name+" "+user.last_name
 				if user.user_type == 'Admin':
 						admin = True
@@ -1306,6 +1406,10 @@ def pendingprods(request):
 		try:
 			if request.session['email']:
 				user=useraccounts.objects.get(email=request.session['email'])
+				#If user has been logged out or freezed by the admin
+				if user.loginstatus == False or user.accountstatus == False:
+					return redirect('logout')
+
 				if user.user_type=='Admin':
 					admin=True
 				elif user.user_type=='Dealing-Admin':
@@ -1342,6 +1446,10 @@ def canceltransaction(request,id):
 			dealing_admin=False
 			all_products=productlist.objects.all().order_by("product_name")
 			user=useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 					admin = True
@@ -1373,6 +1481,10 @@ def canceltransaction(request,id):
 		try:
 			if request.session['email']:
 				user=useraccounts.objects.get(email=request.session['email'])
+				#If user has been logged out or freezed by the admin
+				if user.loginstatus == False or user.accountstatus == False:
+					return redirect('logout')
+
 				if user.user_type=='Admin':
 					admin=True
 				elif user.user_type=='Dealing-Admin':
@@ -1406,6 +1518,10 @@ def returnproduct(request):
 		if request.session['email']:
 			all_products=productlist.objects.all().order_by("product_name")
 			user=useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 					admin = True
@@ -1431,6 +1547,10 @@ def returnproduct(request):
 		try:
 			if request.session['email']:
 				user=useraccounts.objects.get(email=request.session['email'])
+				#If user has been logged out or freezed by the admin
+				if user.loginstatus == False or user.accountstatus == False:
+					return redirect('logout')
+
 				if user.user_type=='Admin':
 					admin=True
 				elif user.user_type=='Dealing-Admin':
@@ -1464,6 +1584,10 @@ def returnconfirm(request,id):
 		if request.session['email']:
 			all_products=productlist.objects.all().order_by("product_name")
 			user=useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 					admin = True
@@ -1498,6 +1622,10 @@ def returnconfirm(request,id):
 		try:
 			if request.session['email']:
 				user=useraccounts.objects.get(email=request.session['email'])
+				#If user has been logged out or freezed by the admin
+				if user.loginstatus == False or user.accountstatus == False:
+					return redirect('logout')
+
 				if user.user_type=='Admin':
 					admin=True
 				elif user.user_type=='Dealing-Admin':
@@ -1531,10 +1659,14 @@ def returnrequest(request):
 		if request.session['email']:
 			all_products=productlist.objects.all().order_by("product_name")
 			user=useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 					admin = True
-			
+
 			logoutStatus=False
 			productdata=nonconsumable_productlog.objects.filter(return_status='false').filter(return_request='true').filter(product_accepted='true')
 			context={
@@ -1552,6 +1684,10 @@ def returnrequest(request):
 		try:
 			if request.session['email']:
 				user=useraccounts.objects.get(email=request.session['email'])
+				#If user has been logged out or freezed by the admin
+				if user.loginstatus == False or user.accountstatus == False:
+					return redirect('logout')
+
 				if user.user_type=='Admin':
 					admin=True
 				elif user.user_type=='Dealing-Admin':
@@ -1585,6 +1721,10 @@ def returnrequestconfirm(request,id):
 		if request.session['email']:
 			all_products=productlist.objects.all().order_by("product_name")
 			user=useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 					admin = True
@@ -1619,6 +1759,10 @@ def returnrequestconfirm(request,id):
 		try:
 			if request.session['email']:
 				user=useraccounts.objects.get(email=request.session['email'])
+				#If user has been logged out or freezed by the admin
+				if user.loginstatus == False or user.accountstatus == False:
+					return redirect('logout')
+
 				if user.user_type=='Admin':
 					admin=True
 				elif user.user_type=='Dealing-Admin':
@@ -1651,6 +1795,11 @@ def proddb(request):
 	dealing_admin=False
 	try:
 		if request.session['email']:
+			user = useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			admin=False
 			non_admin=False
 			dealing_admin=False
@@ -1715,6 +1864,10 @@ def proddb(request):
 		try:
 			if request.session['email']:
 				user=useraccounts.objects.get(email=request.session['email'])
+				#If user has been logged out or freezed by the admin
+				if user.loginstatus == False or user.accountstatus == False:
+					return redirect('logout')
+
 				if user.user_type=='Admin':
 					admin=True
 				elif user.user_type=='Dealing-Admin':
@@ -1746,6 +1899,11 @@ def add_measure(request):
 	dealing_admin=False
 	try:
 		if request.session['email']:
+			user = useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			admin=False
 			non_admin=False
 			dealing_admin=False
@@ -1847,6 +2005,10 @@ def add_measure(request):
 		try:
 			if request.session['email']:
 				user=useraccounts.objects.get(email=request.session['email'])
+				#If user has been logged out or freezed by the admin
+				if user.loginstatus == False or user.accountstatus == False:
+					return redirect('logout')
+
 				if user.user_type=='Admin':
 					admin=True
 				elif user.user_type=='Dealing-Admin':
@@ -1878,6 +2040,11 @@ def add_category(request):
 	dealing_admin=False
 	try:
 		if request.session['email']:
+			user = useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			admin=False
 			non_admin=False
 			dealing_admin=False
@@ -1976,6 +2143,10 @@ def add_category(request):
 		try:
 			if request.session['email']:
 				user=useraccounts.objects.get(email=request.session['email'])
+				#If user has been logged out or freezed by the admin
+				if user.loginstatus == False or user.accountstatus == False:
+					return redirect('logout')
+
 				if user.user_type=='Admin':
 					admin=True
 				elif user.user_type=='Dealing-Admin':
@@ -2007,6 +2178,11 @@ def del_unit(request,name):
 	dealing_admin=False
 	try:
 		if request.session['email']:
+			user = useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			admin=False
 			non_admin=False
 			dealing_admin=False
@@ -2073,8 +2249,8 @@ def del_unit(request,name):
 						'measurement':measurement,
 						'name' : currentName
 						}
-			
-			
+
+
 			return render(request,'products/edit_unit_category.html',context)
 		else:
 			print("")
@@ -2082,6 +2258,10 @@ def del_unit(request,name):
 		try:
 			if request.session['email']:
 				user=useraccounts.objects.get(email=request.session['email'])
+				#If user has been logged out or freezed by the admin
+				if user.loginstatus == False or user.accountstatus == False:
+					return redirect('logout')
+
 				if user.user_type=='Admin':
 					admin=True
 				elif user.user_type=='Dealing-Admin':
@@ -2113,6 +2293,11 @@ def del_category(request,name):
 	dealing_admin=False
 	try:
 		if request.session['email']:
+			user = useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			admin=False
 			non_admin=False
 			dealing_admin=False
@@ -2180,7 +2365,7 @@ def del_category(request,name):
 						'measurement':measurement,
 						'name' : currentName
 						}
-			
+
 			return render(request,'products/edit_unit_category.html',context)
 
 		else:
@@ -2190,6 +2375,10 @@ def del_category(request,name):
 		try:
 			if request.session['email']:
 				user=useraccounts.objects.get(email=request.session['email'])
+				#If user has been logged out or freezed by the admin
+				if user.loginstatus == False or user.accountstatus == False:
+					return redirect('logout')
+
 				if user.user_type=='Admin':
 					admin=True
 				elif user.user_type=='Dealing-Admin':
@@ -2222,6 +2411,10 @@ def accept_route(request):
 	try:
 		if request.session['email']:
 				user=useraccounts.objects.get(email=request.session['email'])
+				#If user has been logged out or freezed by the admin
+				if user.loginstatus == False or user.accountstatus == False:
+					return redirect('logout')
+
 				currentName = user.first_name+" "+user.last_name
 				if user.user_type == 'Admin':
 						admin = True
@@ -2244,6 +2437,10 @@ def accept_route(request):
 		try:
 			if request.session['email']:
 				user=useraccounts.objects.get(email=request.session['email'])
+				#If user has been logged out or freezed by the admin
+				if user.loginstatus == False or user.accountstatus == False:
+					return redirect('logout')
+
 				if user.user_type=='Admin':
 					admin=True
 				elif user.user_type=='Dealing-Admin':
@@ -2276,6 +2473,10 @@ def product_accept(request,id):
 	try:
 		if request.session['email']:
 				user=useraccounts.objects.get(email=request.session['email'])
+				#If user has been logged out or freezed by the admin
+				if user.loginstatus == False or user.accountstatus == False:
+					return redirect('logout')
+
 				currentName = user.first_name+" "+user.last_name
 				if user.user_type == 'Admin':
 						admin = True
@@ -2322,6 +2523,10 @@ def product_accept(request,id):
 		try:
 			if request.session['email']:
 				user=useraccounts.objects.get(email=request.session['email'])
+				#If user has been logged out or freezed by the admin
+				if user.loginstatus == False or user.accountstatus == False:
+					return redirect('logout')
+
 				if user.user_type=='Admin':
 					admin=True
 				elif user.user_type=='Dealing-Admin':

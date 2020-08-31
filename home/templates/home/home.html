@@ -38,7 +38,7 @@
 	<div class="container">
 	<h4><b>Session Logs</b></h4>
 		<table class="table table-responsive" style="max-height:200px;">
-		  <thead class="table-dark">
+		  <thead class="thead-light">
 		    <tr>
 		      <th scope="col">Email</th>
 		      <th scope="col">Timestamp</th>
@@ -48,16 +48,16 @@
 		  <tbody>
 		    {% for log in all_logs %}
 		      <tr>
-		        <th scope="row"><a href="mailto: {{log.email}}">{{log.email}}</a></th>
-		        <th scope="row">{{log.timestamp}}</th>
-		        <th scope="row" style="color:red">{{log.message}}</th>
+		        <th scope="row" style="font-weight:normal;"><a href="mailto: {{log.email}}">{{log.email}}</a></th>
+		        <th scope="row" style="font-weight:normal;">{{log.timestamp}}</th>
+		        <th scope="row" style="color:red;font-weight:normal;">{{log.message}}</th>
 		      </tr>
 		    {% endfor %}
 		  </tbody>
 		</table>
 		<h4><b>Request Logs</b></h4>
 			<table class="table table-responsive" style="max-height:200px;">
-			  <thead class="table-dark">
+			  <thead class="thead-light">
 			    <tr>
 			      <th scope="col">Email</th>
 			      <th scope="col">Product Name</th>
@@ -70,26 +70,26 @@
 			  <tbody>
 			    {% for log in product_requests %}
 			      <tr>
-			        <th scope="row"><a href="mailto: {{log.email}}">{{log.email}}</a></th>
-			        <th scope="row">{{log.product_name}}</th>
-							<th scope="row">{{log.quantity}}</th>
+			        <th scope="row" style="font-weight:normal;"><a href="mailto: {{log.email}}">{{log.email}}</a></th>
+			        <th scope="row" style="font-weight:normal;">{{log.product_name}}</th>
+							<th scope="row" style="font-weight:normal;">{{log.quantity}}</th>
 		         {% if log.status == "pending" %}
-								<th scope="row">-</th>
+								<th scope="row" style="font-weight:normal;">-</th>
 						{% else %}
-								<th scope="row">{{log.approved_quantity}}</th>
+								<th scope="row" style="font-weight:normal;">{{log.approved_quantity}}</th>
 						{% endif %}
-							<th scope="row">{{log.timestamp}}</th>
+							<th scope="row" style="font-weight:normal;">{{log.timestamp}}</th>
 						{% if log.status == "pending" %}
-			        <th scope="row" style="color:red">{{log.status}}</th>
+			        <th scope="row" style="color:red;font-weight:normal;">{{log.status}}</th>
 						{% endif %}
 						{% if log.status == "approved" %}
-							<th scope="row" style="color:green">{{log.status}}</th>
+							<th scope="row" style="color:green;font-weight:normal;">{{log.status}}</th>
 						{% endif %}
 						{% if log.status == "partially approved" %}
-							<th scope="row" style="color:purple">{{log.status}}</th>
+							<th scope="row" style="color:purple;font-weight:normal;">{{log.status}}</th>
 						{% endif %}
 						{% if log.status == "denied" %}
-						<th scope="row" style="color:red">{{log.status}}</th>
+						<th scope="row" style="color:red;font-weight:normal;">{{log.status}}</th>
 						{% endif %}
 			      </tr>
 			    {% endfor %}
@@ -97,7 +97,7 @@
 			</table>
 			<h4><b>Product Logs</b></h4>
 				<table class="table table-responsive" style="max-height:200px;">
-				  <thead class="table-dark">
+				  <thead class="thead-light">
 				    <tr>
 				      <th scope="col">Email</th>
 				      <th scope="col">Timestamp</th>
@@ -107,9 +107,9 @@
 				  <tbody>
 				    {% for log in product_logs %}
 				      <tr>
-				        <th scope="row"><a href="mailto: {{log.email}}">{{log.email}}</a></th>
-				        <th scope="row">{{log.timestamp}}</th>
-				        <th scope="row" style="color:red">{{log.message}}</th>
+				        <th scope="row" style="font-weight:normal;"><a href="mailto: {{log.email}}">{{log.email}}</a></th>
+				        <th scope="row" style="font-weight:normal;">{{log.timestamp}}</th>
+				        <th scope="row" style="color:red;font-weight:normal;">{{log.message}}</th>
 				      </tr>
 				    {% endfor %}
 				  </tbody>
@@ -128,7 +128,7 @@
 		<div class="container">
 		<h4><b>Session Logs</b></h4>
 			<table class="table table-responsive" style="max-height:200px;">
-			  <thead class="table-dark">
+			  <thead class="thead-light">
 			    <tr>
 			      <th scope="col">Email</th>
 			      <th scope="col">Timestamp</th>
@@ -138,16 +138,16 @@
 			  <tbody>
 			    {% for log in all_logs %}
 			      <tr>
-			        <th scope="row"><a href="mailto: {{log.email}}">{{log.email}}</a></th>
-			        <th scope="row">{{log.timestamp}}</th>
-			        <th scope="row" style="color:red">{{log.message}}</th>
+			        <th scope="row" style="font-weight:normal;"><a href="mailto: {{log.email}}">{{log.email}}</a></th>
+			        <th scope="row" style="font-weight:normal;">{{log.timestamp}}</th>
+			        <th scope="row" style="color:red;font-weight:normal;">{{log.message}}</th>
 			      </tr>
 			    {% endfor %}
 			  </tbody>
 			</table>
 			<h4><b>Self Product Requests</b></h4>
 				<table class="table table-responsive" style="max-height:200px;">
-				  <thead class="table-dark">
+				  <thead class="thead-light">
 				    <tr>
 				      <th scope="col">Product Name</th>
 							<th scope="col">Product Requested</th>
@@ -159,22 +159,22 @@
 				  <tbody>
 				    {% for log in product_requests %}
 				      <tr>
-				        <th scope="row">{{log.product_name}}</th>
-								<th scope="row">{{log.quantity}}</th>
+				        <th scope="row" style="font-weight:normal;">{{log.product_name}}</th>
+								<th scope="row" style="font-weight:normal;">{{log.quantity}}</th>
 			         {% if log.status == "pending" %}
-									<th scope="row">-</th>
+									<th scope="row" style="font-weight:normal;">-</th>
 							{% else %}
-									<th scope="row">{{log.approved_quantity}}</th>
+									<th scope="row" style="font-weight:normal;">{{log.approved_quantity}}</th>
 							{% endif %}
-								<th scope="row">{{log.timestamp}}</th>
+								<th scope="row" style="font-weight:normal;">{{log.timestamp}}</th>
 							{% if log.status == "pending" %}
-				        <th scope="row" style="color:red">{{log.status}}</th>
+				        <th scope="row" style="color:red;font-weight:normal">{{log.status}}</th>
 							{% endif %}
 							{% if log.status == "approved" %}
-								<th scope="row" style="color:green">{{log.status}}</th>
+								<th scope="row" style="color:green;font-weight:normal">{{log.status}}</th>
 							{% endif %}
 							{% if log.status == "partially approved" %}
-								<th scope="row" style="color:purple">{{log.status}}</th>
+								<th scope="row" style="color:purple;font-weight:normal">{{log.status}}</th>
 							{% endif %}
 				      </tr>
 				    {% endfor %}
@@ -182,7 +182,7 @@
 				</table>
 				<h4><b>Product Logs</b></h4>
 					<table class="table table-responsive" style="max-height:200px;">
-					  <thead class="table-dark">
+					  <thead class="thead-light">
 					    <tr>
 					      <th scope="col">Email</th>
 					      <th scope="col">Timestamp</th>
@@ -192,9 +192,9 @@
 					  <tbody>
 					    {% for log in product_logs %}
 					      <tr>
-					        <th scope="row"><a href="mailto: {{log.email}}">{{log.email}}</a></th>
-					        <th scope="row">{{log.timestamp}}</th>
-					        <th scope="row" style="color:red">{{log.message}}</th>
+					        <th scope="row" style="font-weight:normal;"><a href="mailto: {{log.email}}">{{log.email}}</a></th>
+					        <th scope="row" style="font-weight:normal;">{{log.timestamp}}</th>
+					        <th scope="row" style="color:red;font-weight:normal;">{{log.message}}</th>
 					      </tr>
 					    {% endfor %}
 					  </tbody>
@@ -214,7 +214,7 @@
 	<div class="container">
 	<h4><b>Session Logs</b></h4>
 		<table class="table table-responsive" style="max-height:200px;">
-		  <thead class="table-dark">
+		  <thead class="thead-light">
 		    <tr>
 		      <th scope="col">Email</th>
 		      <th scope="col">Timestamp</th>
@@ -224,16 +224,16 @@
 		  <tbody>
 		    {% for log in all_logs %}
 		      <tr>
-		        <th scope="row"><a href="mailto: {{log.email}}">{{log.email}}</a></th>
-		        <th scope="row">{{log.timestamp}}</th>
-		        <th scope="row" style="color:red">{{log.message}}</th>
+		        <th scope="row" style="font-weight:normal;"><a href="mailto: {{log.email}}">{{log.email}}</a></th>
+		        <th scope="row" style="font-weight:normal;">{{log.timestamp}}</th>
+		        <th scope="row" style="color:red;font-weight:normal;">{{log.message}}</th>
 		      </tr>
 		    {% endfor %}
 		  </tbody>
 		</table>
 		<h4><b>Self Product Requests</b></h4>
 		<table class="table table-responsive" style="max-height:200px;">
-			<thead class="table-dark">
+			<thead class="thead-light">
 				<tr>
 					<th scope="col">Product Name</th>
 					<th scope="col">Product Requested</th>
@@ -245,25 +245,25 @@
 			<tbody>
 				{% for log in product_requests %}
 					<tr>
-						<th scope="row">{{log.product_name}}</th>
-						<th scope="row">{{log.quantity}}</th>
+						<th scope="row" style="font-weight:normal;">{{log.product_name}}</th>
+						<th scope="row" style="font-weight:normal;">{{log.quantity}}</th>
 					 {% if log.status == "pending" %}
-							<th scope="row">-</th>
+							<th scope="row" style="font-weight:normal;">-</th>
 					{% else %}
-							<th scope="row">{{log.approved_quantity}}</th>
+							<th scope="row" style="font-weight:normal;">{{log.approved_quantity}}</th>
 					{% endif %}
-						<th scope="row">{{log.timestamp}}</th>
+						<th scope="row" style="font-weight:normal;">{{log.timestamp}}</th>
 					{% if log.status == "pending" %}
-						<th scope="row" style="color:red">{{log.status}}</th>
+						<th scope="row" style="color:red;font-weight:normal;">{{log.status}}</th>
 					{% endif %}
 					{% if log.status == "approved" %}
-						<th scope="row" style="color:green">{{log.status}}</th>
+						<th scope="row" style="color:green;font-weight:normal;">{{log.status}}</th>
 					{% endif %}
 					{% if log.status == "partially approved" %}
-						<th scope="row" style="color:purple">{{log.status}}</th>
+						<th scope="row" style="color:purple;font-weight:normal;">{{log.status}}</th>
 					{% endif %}
 					{% if log.status == "denied" %}
-						<th scope="row" style="color:orange">{{log.status}}</th>
+						<th scope="row" style="color:orange;font-weight:normal;">{{log.status}}</th>
 					{% endif %}
 					</tr>
 				{% endfor %}
@@ -271,7 +271,7 @@
 		</table>
 			<h4><b>Product Logs</b></h4>
 				<table class="table table-responsive" style="max-height:200px;">
-				  <thead class="table-dark">
+				  <thead class="thead-light">
 				    <tr>
 				      <th scope="col">Email</th>
 				      <th scope="col">Timestamp</th>
@@ -281,9 +281,9 @@
 				  <tbody>
 				    {% for log in product_logs %}
 				      <tr>
-				        <th scope="row"><a href="mailto: {{log.email}}">{{log.email}}</a></th>
-				        <th scope="row">{{log.timestamp}}</th>
-				        <th scope="row" style="color:red">{{log.message}}</th>
+				        <th scope="row" style="font-weight:normal;"><a href="mailto: {{log.email}}">{{log.email}}</a></th>
+				        <th scope="row" style="font-weight:normal;">{{log.timestamp}}</th>
+				        <th scope="row" style="color:red;font-weight:normal">{{log.message}}</th>
 				      </tr>
 				    {% endfor %}
 				  </tbody>

@@ -18,7 +18,6 @@ auth_token = "cf4059a9461efced8fe78b355794fab3"
 client = Client(account_sid,auth_token)
 
 #Write your view here
-
 #Home Function
 def home(request):
 	admin = False
@@ -52,6 +51,10 @@ def home(request):
 				if request.session['email']:
 					email = request.session['email']
 					user = useraccounts.objects.get(email=email)
+
+					#If user has been logged out or freezed by the admin
+					if user.loginstatus == False or user.accountstatus == False:
+						return redirect('logout')
 
 					name=user.first_name + " " + user.last_name
 					logoutStatus = False
@@ -132,6 +135,9 @@ def filter(request):
 		#If user logged in
 		if request.session['email']:
 			user = useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
 			name = user.first_name + " " + user.last_name
 			logoutStatus = False
 			#Only if the user is a verified admin
@@ -214,7 +220,9 @@ def newuser(request):
 			logoutStatus = False
 			#Create the user object
 			currentUser = useraccounts.objects.get(email=request.session['email'])
-
+			#If user has been logged out or freezed by the admin
+			if currentUser.loginstatus == False or currentUser.accountstatus == False:
+				return redirect('logout')
 			name = currentUser.first_name + ' ' + currentUser.last_name
 
 			#Add user flexibility available only to a verifed admin
@@ -292,7 +300,9 @@ def userbase(request):
 		#If user logged in
 		if request.session['email']:
 			currentUser = useraccounts.objects.get(email=request.session['email'])
-
+			#If user has been logged out or freezed by the admin
+			if currentUser.loginstatus == False or currentUser.accountstatus == False:
+				return redirect('logout')
 			#If user is a verified Admin
 			if currentUser.user_type == 'Admin' and currentUser.verified:
 				admin = True
@@ -325,7 +335,9 @@ def offline(request,email):
 		if request.session['email']:
 			currentUser = useraccounts.objects.get(email=request.session['email'])
 			user = useraccounts.objects.get(email=email)
-
+			#If user has been logged out or freezed by the admin
+			if currentUser.loginstatus == False or currentUser.accountstatus == False:
+				return redirect('logout')
 			#If user is a verified admin
 			if currentUser.user_type == 'Admin' and currentUser.verified:
 
@@ -356,6 +368,10 @@ def verify(request,email):
 		if request.session['email']:
 			currentEmail = request.session['email']
 			user = useraccounts.objects.get(email=currentEmail)
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			#Check if the user is a verified Admin
 			if user.user_type == 'Admin' and user.verified:
 				try:
@@ -390,6 +406,10 @@ def deleteuser(request,email):
 		if request.session['email']:
 			currentEmail = request.session['email']
 			user = useraccounts.objects.get(email=currentEmail)
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			#Check if the user is a verifed Admin
 			if user.user_type == 'Admin' and user.verified:
 				try:
@@ -427,8 +447,12 @@ def freezeuser(request,email):
 		if request.session['email']:
 			currentEmail = request.session['email']
 			user = useraccounts.objects.get(email=currentEmail)
-			#If user is a verified Admin
-			if user.user_type == 'Admin' and user.verified:
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
+			#If user is a verified user
+			if user.verified:
 				try:
 					user = useraccounts.objects.get(email=email)
 					to = "+91"+str(user.phone)
@@ -460,6 +484,10 @@ def unfreezeuser(request,email):
 	try:
 		if request.session['email']:
 			user = useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			#If user is a verifed Admin
 			if user.user_type == 'Admin' and user.verified:
 				try:
@@ -498,6 +526,10 @@ def edituser(request,email):
 		if request.session['email']:
 			user = useraccounts.objects.get(email=request.session['email'])
 			name = user.first_name + ' ' + user.last_name
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			#If user is a verifed Admin
 			if user.user_type == 'Admin' and user.verified:
 				admin = True
@@ -519,6 +551,11 @@ def edituser(request,email):
 						user.user_type = user_type
 						user.userrole = userrole
 						user.save()
+
+						type = master_user_types.objects.get(user_type=user_type)
+						type.deletestatus = False
+						type.save()
+
 						logoutStatus = False
 						all_usertypes = master_user_types.objects.all().order_by('user_type')
 						context = {
@@ -567,6 +604,10 @@ def deleteusertype(request,usertype):
 	try:
 		if request.session['email']:
 			user = useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			#If user is a verified Admin
 			if user.user_type == 'Admin' and user.verified:
 				try:
@@ -597,6 +638,10 @@ def newusertype(request):
 		#If user is logged in
 		if request.session['email']:
 			currentUser = useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if currentUser.loginstatus == False or currentUser.accountstatus == False:
+				return redirect('logout')
+
 			#If user is a verified Admin
 			if currentUser.user_type == 'Admin' and currentUser.verified:
 				admin = True
@@ -644,6 +689,9 @@ def report(request):
 		if request.session['email']:
 			email = request.session['email']
 			user = useraccounts.objects.get(email=email)
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
 
 			name = user.first_name + ' ' + user.last_name
 			logoutStatus = False
@@ -801,6 +849,9 @@ def report(request):
 #Download Function no start and end date given
 def export(request):
 	user = useraccounts.objects.get(email=request.session['email'])
+	#If user has been logged out or freezed by the admin
+	if user.loginstatus == False or user.accountstatus == False:
+		return redirect('logout')
 	#Only for verified admin
 	try:
 		if user.user_type == 'Admin' and user.verified:
@@ -853,6 +904,10 @@ def exportcsv(request,start,end):
 	date = str(date)
 
 	user = useraccounts.objects.get(email=request.session['email'])
+	#If user has been logged out or freezed by the admin
+	if user.loginstatus == False or user.accountstatus == False:
+		return redirect('logout')
+
 	#Only for Verified Admin
 	try:
 		if user.user_type == 'Admin' and user.verified:

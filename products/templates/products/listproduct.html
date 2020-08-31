@@ -3,7 +3,7 @@
 
 {% if messages %}
   <div class="alert alert-info" role="alert">
-    {{messages}} 
+    {{messages}}
   </div>
   {% endif %}
   {% if verified %}
@@ -16,12 +16,10 @@
    <div class="row" style="padding-top: 20px;">
   {% for content in ncproduct %}
           <div class="col-md-3" style="margin-right: 15px;">
-
-            
             <div class="card card-primary card-outline">
               <div class="card-body box-profile">
                 <h3 class="profile-username text-center" style="color:brown"><b>{{content.product_name}}</b></h3>
-                
+
 
                 <ul class="list-group list-group-unbordered mb-3">
                   <li class="list-group-item">
@@ -48,14 +46,14 @@
                   </li>
                 </ul>
 
-               
+
               </div>
               <!-- /.card-body -->
             </div>
           </div>
- {% endfor %} 
+ {% endfor %}
  </div>
- 
+
   <p style="color:red;text-align: center;" >
     <b>
    PENDING REQUEST
@@ -65,11 +63,11 @@
   {% for content in all_products %}
           <div class="col-md-3" style="margin-right: 15px;">
 
-            
+
             <div class="card card-primary card-outline">
               <div class="card-body box-profile">
                 <h3 class="profile-username text-center" style="color:brown"><b>{{content.product_name}}</b></h3>
-                
+
 
                 <ul class="list-group list-group-unbordered mb-3">
                   <li class="list-group-item">
@@ -86,12 +84,12 @@
                   </li>
                 </ul>
 
-               
+
               </div>
               <!-- /.card-body -->
             </div>
           </div>
- {% endfor %} 
+ {% endfor %}
  </div>
   <p style="color:red;text-align: center;" >
     <b>
@@ -99,15 +97,15 @@
    </b>
    </p>
   <div class="row" style="padding-top: 20px;" >
-   
+
   {% for content in non_accept %}
           <div class="col-md-3" style="margin-right: 10px;">
 
-            
+
             <div class="card card-primary card-outline">
               <div class="card-body box-profile">
                 <h3 class="profile-username text-center" style="color:brown"><b>{{content.product_name}}</b></h3>
-                
+
 
                 <ul class="list-group list-group-unbordered mb-3">
                   <li class="list-group-item">
@@ -116,12 +114,12 @@
                   <li class="list-group-item">
                     <b>Quantity_Requested</b> <a class="float-right">{{content.units}}</a>
                   </li>
-                
+
 
                   <li class="list-group-item">
                     <b>Date</b> <a class="float-right">{{content.issue_date}}</a>
                   </li>
-                  
+
                   <li class="list-group-item">
                     <b>Product_accepted</b> <a class="float-right">{{content.product_accepted}}</a>
                   </li>
@@ -130,24 +128,24 @@
                   </li>
                 </ul>
 
-               
+
                 <form action="/product/product_accept/{{content.id}}" method="get" >
-                  
+
                   <div class="form-group">
                   <input type="text" class="form-control" placeholder="Enter the Serial NO." name="serial" required="">
                   </div>
                   <div class="form-group">
                 <button type="submit" class="btn btn-link btn-block"><b> Accept Product </b></button>
             </div>
-           
+
           </form>
               </div>
               <!-- /.card-body -->
             </div>
-          
- 
+
+
  </div>
- {% endfor %} 
+ {% endfor %}
  <!-- <div class="row" style="position:fixed;margin-left:60% "> -->
        </div>
  <p style="color: green; text-align: center;">
@@ -159,11 +157,11 @@
  {% for content in data2 %}
           <div class="col-md-3" style="margin-right: 15px;">
 
-            
+
             <div class="card card-primary card-outline">
               <div class="card-body box-profile">
                 <h3 class="profile-username text-center" style="color:brown"><b>{{content.product_name}}</b></h3>
-                
+
 
                 <ul class="list-group list-group-unbordered mb-3">
                   <li class="list-group-item">
@@ -179,19 +177,19 @@
                    <li class="list-group-item">
                     <b>Date</b> <a class="float-right">{{content.timestamp}}</a>
                   </li>
-                  
+
                   <li class="list-group-item">
                     <b>status</b> <a class="float-right">{{content.status}}</a>
                   </li>
                 </ul>
 
-              
+
               </div>
               <!-- /.card-body -->
             </div>
           </div>
- {% endfor %} 
-           
+ {% endfor %}
+
         </div>
         <p style="color:green;text-align: center;">
   <b>
@@ -203,11 +201,11 @@
  {% for content in non_conprod %}
           <div class="col-md-3" style="margin-right: 10px;">
 
-            
+
             <div class="card card-primary card-outline">
               <div class="card-body box-profile">
                 <h3 class="profile-username text-center" style="color:brown"><b>{{content.product_name}}</b></h3>
-                
+
 
                 <ul class="list-group list-group-unbordered mb-3">
                   <li class="list-group-item">
@@ -230,12 +228,12 @@
                   </li>
                 </ul>
 
-              
+
               </div>
               <!-- /.card-body -->
             </div>
           </div>
- {% endfor %} 
+ {% endfor %}
 </div>
 <p style="color: green; text-align: center;">
   <b>
@@ -246,11 +244,11 @@
  {% for content in rejprod %}
           <div class="col-md-3" style="margin-right: 15px;">
 
-            
+
             <div class="card card-primary card-outline">
               <div class="card-body box-profile">
                 <h3 class="profile-username text-center" style="color:brown"><b>{{content.product_name}}</b></h3>
-                
+
 
                 <ul class="list-group list-group-unbordered mb-3">
                   <li class="list-group-item">
@@ -266,19 +264,19 @@
                    <li class="list-group-item">
                     <b>Date</b> <a class="float-right">{{content.timestamp}}</a>
                   </li>
-                  
+
                   <li class="list-group-item">
                     <b>status</b> <a class="float-right">{{content.status}}</a>
                   </li>
                 </ul>
 
-              
+
               </div>
               <!-- /.card-body -->
             </div>
           </div>
- {% endfor %} 
-           
+ {% endfor %}
+
         </div>
 
       </div>
@@ -288,8 +286,8 @@
       In case of urgency, contact the Admin.<br><span style="color:black">Thank You for your co-operation!</span></b></h6>
     </div>
 
-    
-    
+
+
     {% endif %}
-    
-        {% endblock %}      
+
+        {% endblock %}

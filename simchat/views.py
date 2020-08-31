@@ -19,6 +19,10 @@ def compose(request):
 		if request.session['email']:
 			logoutStatus = False
 			user = useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			if user.verified == True:
 				verified = True
 			name = user.first_name + ' ' + user.last_name
@@ -126,6 +130,10 @@ def inbox(request):
 	try:
 		if request.session['email']:
 			user = useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			name = user.first_name + ' ' + user.last_name
 			if user.user_type == 'Admin' and user.verified == True:
 				admin = True
@@ -171,6 +179,10 @@ def sent(request):
 	try:
 		if request.session['email']:
 			user = useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			name = user.first_name + ' ' + user.last_name
 			if user.user_type == 'Admin' and user.verified == True:
 				admin = True
@@ -215,6 +227,10 @@ def inboxview(request,id):
 			dealing_admin = False
 			verified = False
 			user = useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			if user.verified:
 				verified = True
 				name = user.first_name + ' ' + user.last_name
@@ -261,6 +277,10 @@ def sentview(request,id):
 			dealing_admin = False
 			verified = False
 			user = useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			if user.verified:
 				verified = True
 				name = user.first_name + ' ' + user.last_name
@@ -299,6 +319,10 @@ def deleteinbox(request,id):
 	try:
 		if request.session['email']:
 			user = useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			msg = simmessage.objects.get(id=id)
 			if msg.receiver == request.session['email']:
 				msg.intrashed = True
@@ -319,6 +343,10 @@ def deleteoutbox(request,id):
 	try:
 		if request.session['email']:
 			user = useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			msg = simmessage.objects.get(id=id)
 			if msg.sender == request.session['email']:
 				msg.outtrashed = True
@@ -344,6 +372,10 @@ def replyin(request,id):
 	try:
 		if request.session['email']:
 			user = useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			if user.verified == True:
 				verified = True
 			msg = simmessage.objects.get(id=id)
@@ -399,6 +431,10 @@ def replyout(request,id):
 	try:
 		if request.session['email']:
 			user = useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
 			if user.verified == True:
 				verified = True
 			msg = simmessage.objects.get(id=id)

@@ -334,6 +334,9 @@ def profile(request):
 		if request.session['email']:
 			logoutStatus = False
 			user = useraccounts.objects.get(email=request.session['email'])
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
 
 			if user.user_type == 'Admin':
 				admin = True

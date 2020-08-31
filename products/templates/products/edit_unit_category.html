@@ -2,10 +2,10 @@
 {% block content %}
 {% if message %}
   <div class="alert alert-info" role="alert">
-    {{message}} 
+    {{message}}
   </div>
   {% endif %}
-  
+
 
 {% if admin %}
 {% if verified %}
@@ -46,7 +46,7 @@
 
 	<div class='col-md-10'>
 	<table class="table table-bordered"style="width: 30%; float: left;margin-top: 5%">
-	  <thead class="table-dark">
+	  <thead class="thead-light">
 	    <tr>
 	      <th scope="col">Measurement-Unit</th>
 				<th scope="col">Delete</th>
@@ -55,13 +55,13 @@
 	  <tbody>
 	  	 {%for data in nondel_measure%}
 	      <tr>
-					<th scope="row" style="color:green">{{data}}</th>
+					<th scope="row" style="color:green;font-weight:normal;">{{data}}</th>
 						      </tr>
 	    {% endfor %}
 	   {%for data in measurement%}
 	      <tr>
-					<th scope="row" style="color:green">{{data}}</th>
-					<th scope="row"><a href="/product/del_unit/{{data}}"><button type="submit" class="btn btn-sm btn-danger">Remove</button></a></th>
+					<th scope="row" style="color:green;font-weight:normal;">{{data}}</th>
+					<th scope="row" style="font-weight:normal;"><a href="/product/del_unit/{{data}}"><button type="submit" class="btn btn-sm btn-danger">Remove</button></a></th>
 	      </tr>
 	    {% endfor %}
 	  </tbody>
@@ -69,7 +69,7 @@
 </div>
 <div class='col-md-10'>
 	<table class="table table-bordered"style="width: 30%;float: right;margin-right: 6%;margin-top: 5%">
-	  <thead class="table-dark">
+	  <thead class="thead-light">
 	    <tr>
 	      <th scope="col">Product-Category</th>
 				<th scope="col">Delete</th>
@@ -83,8 +83,8 @@
 	    {% endfor %}
 	   {%for data in categories%}
 	      <tr>
-					<th scope="row" style="color:green">{{data}}</th>
-					<th scope="row"><a href="/product/del_category/{{data}}"><button type="submit" class="btn btn-sm btn-danger">Remove</button></a></th>
+					<th scope="row" style="color:green;font-weight:normal">{{data}}</th>
+					<th scope="row" style="font-weight:normal;"><a href="/product/del_category/{{data}}"><button type="submit" class="btn btn-sm btn-danger">Remove</button></a></th>
 	      </tr>
 	    {% endfor %}
 	  </tbody>
@@ -99,8 +99,8 @@
 			In case of urgency, contact the Admin.<br><span style="color:black">Thank You for your co-operation!</span></b></h6>
 		</div>
 
-    
-    
+
+
    	{% endif %}
    	{% endif %}
 {% if dealing_admin %}
@@ -141,7 +141,7 @@
 
 	<div class='col-md-10'>
 	<table class="table table-bordered"style="width: 30%; float: left;margin-top: 5%">
-	  <thead class="table-dark">
+	  <thead class="thead-light">
 	    <tr>
 	      <th scope="col">Measurement-Unit</th>
 				<th scope="col">Delete</th>
@@ -150,13 +150,13 @@
 	  <tbody>
 	  	 {%for data in nondel_measure%}
 	      <tr>
-					<th scope="row" style="color:green">{{data}}</th>
+					<th scope="row" style="color:green;font-weight:normal;">{{data}}</th>
 						      </tr>
 	    {% endfor %}
 	   {%for data in measurement%}
 	      <tr>
-					<th scope="row" style="color:green">{{data}}</th>
-					<th scope="row"><a href="/product/del_unit/{{data}}"><button type="submit" class="btn btn-sm btn-danger">Remove</button></a></th>
+					<th scope="row" style="color:green;font-weight:normal;">{{data}}</th>
+					<th scope="row" style="font-weight:normal;"><a href="/product/del_unit/{{data}}"><button type="submit" class="btn btn-sm btn-danger">Remove</button></a></th>
 	      </tr>
 	    {% endfor %}
 	  </tbody>
@@ -164,7 +164,7 @@
 </div>
 <div class='col-md-10'>
 	<table class="table table-bordered"style="width: 30%;float: right;margin-right: 6%;margin-top: 5%">
-	  <thead class="table-dark">
+	  <thead class="thead-normal">
 	    <tr>
 	      <th scope="col">Product-Category</th>
 				<th scope="col">Delete</th>
@@ -173,13 +173,13 @@
 	  <tbody>
 	  	{%for data in nondel_category%}
 	      <tr>
-					<th scope="row" style="color:green">{{data}}</th>
+					<th scope="row" style="color:green;font-weight:normal;">{{data}}</th>
 						      </tr>
 	    {% endfor %}
 	   {%for data in categories%}
 	      <tr>
-					<th scope="row" style="color:green">{{data}}</th>
-					<th scope="row"><a href="/product/del_category/{{data}}"><button type="submit" class="btn btn-sm btn-danger">Remove</button></a></th>
+					<th scope="row" style="color:green;font-weight:normal;">{{data}}</th>
+					<th scope="row" style="font-weight:normal;"><a href="/product/del_category/{{data}}"><button type="submit" class="btn btn-sm btn-danger">Remove</button></a></th>
 	      </tr>
 	    {% endfor %}
 	  </tbody>
@@ -195,8 +195,8 @@
 			In case of urgency, contact the Admin.<br><span style="color:black">Thank You for your co-operation!</span></b></h6>
 		</div>
 
-    
-    
+
+
    	{% endif %}
    	{% endif %}
 	{% endblock %}
