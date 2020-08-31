@@ -2,10 +2,10 @@
 {% block content %}
 {% if message %}
 	<div class="alert alert-info" role="alert">
-	  {{message}} 
+	  {{message}}
 	</div>
 {% endif %}
-  <br><br><br> 
+  <br><br><br>
 {% if non_admin %}
   <div class="container card">
     <div class="card-header">
@@ -20,7 +20,7 @@
           <select id="inputState" class="form-control" name="email" required>
               <option value="" disabled selected>Select</option>
               <option>Admin</option>
-              <option>Dealing-Admin</option>
+              <option>Dealing-Hand</option>
           </select>
         </div>
       </div>
@@ -31,7 +31,7 @@
       <div class = "form-group">
          <label for = "exampleInputEmail1">Message</label>
          <textarea type="textarea" maxlength="1000" minlength="20" title="Enter the Message" class="form-control" placeholder="Enter the Message" name="message" required></textarea>
-      </div>        
+      </div>
       <button type = "submit" class = "btn btn-primary">Send</button><br><br>
    </form>
   </div>
@@ -46,8 +46,8 @@
       <div class="form-group row">
         <label for="inputEmail3" class="col-sm-2 col-form-label">Send to: </label>
         <div class="col-sm-10">
-          <input type = "email" class = "form-control" 
-              id = "exampleInputEmail1" aria-describedby = "emailHelp" 
+          <input type = "email" class = "form-control"
+              id = "exampleInputEmail1" aria-describedby = "emailHelp"
               placeholder = "Enter your email" name="email" required>
         </div>
       </div>
@@ -58,7 +58,7 @@
       <div class = "form-group">
          <label for = "exampleInputEmail1">Message</label>
          <textarea type="textarea" maxlength="1000" minlength="20" title="Enter the Message" class="form-control" placeholder="Enter the Message" name="message" required></textarea>
-      </div>        
+      </div>
       <button type = "submit" class = "btn btn-primary">Send</button><br><br>
      </form>
   </div>

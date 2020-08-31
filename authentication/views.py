@@ -242,7 +242,7 @@ def login(request):
 
 						if user.user_type == 'Admin':
 							admin = True
-						elif user.user_type == 'Non-Admin':
+						elif user.user_type == 'User':
 							non_admin = True
 						else:
 							dealing_admin = True
@@ -340,9 +340,9 @@ def profile(request):
 
 			if user.user_type == 'Admin':
 				admin = True
-			if user.user_type == 'Non-Admin':
+			if user.user_type == 'User':
 				non_admin = True
-			if user.user_type == 'Dealing-Admin':
+			if user.user_type == 'Dealing-Hand':
 				dealing_admin = True
 			if user.verified == True:
 				verified = True

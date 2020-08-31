@@ -32,7 +32,7 @@ def addproduct(request):
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 					admin = True
-			elif user.user_type == 'Dealing-Admin':
+			elif user.user_type == 'Dealing-Hand':
 				dealing_admin = True
 			else:
 				context = {
@@ -113,6 +113,7 @@ def addproduct(request):
 
 				currentUser = useraccounts.objects.get(email=currentEmail)
 				currentName = currentUser.first_name+" "+currentUser.last_name
+				#print(all_units)
 				context = {
 					'admin':admin,
 					'dealing_admin':dealing_admin,
@@ -134,7 +135,7 @@ def addproduct(request):
 
 				if user.user_type=='Admin':
 					admin=True
-				elif user.user_type=='Dealing-Admin':
+				elif user.user_type=='Dealing-Hand':
 					dealing_admin=True
 				else :
 					non_admin=True
@@ -177,7 +178,7 @@ def addquantity(request):
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 					admin = True
-			elif user.user_type == 'Dealing-Admin':
+			elif user.user_type == 'Dealing-Hand':
 				dealing_admin = True
 			else:
 				context = {
@@ -237,7 +238,7 @@ def addquantity(request):
 
 				if user.user_type=='Admin':
 					admin=True
-				elif user.user_type=='Dealing-Admin':
+				elif user.user_type=='Dealing-Hand':
 					dealing_admin=True
 				else :
 					non_admin=True
@@ -288,7 +289,7 @@ def removeproduct(request):
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 					admin = True
-			elif user.user_type == 'Dealing-Admin':
+			elif user.user_type == 'Dealing-Hand':
 				dealing_admin = True
 			else:
 				context = {
@@ -375,7 +376,7 @@ def removeproduct(request):
 
 				if user.user_type=='Admin':
 					admin=True
-				elif user.user_type=='Dealing-Admin':
+				elif user.user_type=='Dealing-Hand':
 					dealing_admin=True
 				else :
 					non_admin=True
@@ -412,7 +413,7 @@ def viewproduct(request):
 
 			if user.user_type=='Admin':
 				admin=True
-			elif user.user_type=='Dealing-Admin':
+			elif user.user_type=='Dealing-Hand':
 				dealing_admin=True
 			all_products=productlist.objects.filter(product_type="consumable").order_by("product_name")
 			noncon_product=productlist.objects.filter(product_type="non-consumable").order_by("product_name")
@@ -439,7 +440,7 @@ def viewproduct(request):
 
 				if user.user_type=='Admin':
 					admin=True
-				elif user.user_type=='Dealing-Admin':
+				elif user.user_type=='Dealing-Hand':
 					dealing_admin=True
 				else :
 					non_admin=True
@@ -482,7 +483,7 @@ def routeproduct(request):
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 					admin = True
-			elif user.user_type == 'Dealing-Admin':
+			elif user.user_type == 'Dealing-Hand':
 				dealing_admin = True
 			else:
 				context = {
@@ -540,7 +541,7 @@ def routeproduct(request):
 
 				if user.user_type=='Admin':
 					admin=True
-				elif user.user_type=='Dealing-Admin':
+				elif user.user_type=='Dealing-Hand':
 					dealing_admin=True
 				else :
 					non_admin=True
@@ -582,7 +583,7 @@ def edprod(request,name):
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 					admin = True
-			elif user.user_type == 'Dealing-Admin':
+			elif user.user_type == 'Dealing-Hand':
 				dealing_admin = True
 			else:
 				context = {
@@ -619,7 +620,7 @@ def edprod(request,name):
 
 				if user.user_type=='Admin':
 					admin=True
-				elif user.user_type=='Dealing-Admin':
+				elif user.user_type=='Dealing-Hand':
 					dealing_admin=True
 				else :
 					non_admin=True
@@ -658,7 +659,7 @@ def requestproduct(request):
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 					admin = True
-			elif user.user_type == 'Non-Admin':
+			elif user.user_type == 'User':
 				non_admin = True
 
 			else:
@@ -719,7 +720,7 @@ def requestproduct(request):
 
 				if user.user_type=='Admin':
 					admin=True
-				elif user.user_type=='Dealing-Admin':
+				elif user.user_type=='Dealing-Hand':
 					dealing_admin=True
 				else :
 					non_admin=True
@@ -759,7 +760,7 @@ def approveproduct(request):
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 					admin = True
-			elif user.user_type == 'Dealing-Admin':
+			elif user.user_type == 'Dealing-Hand':
 				dealing_admin = True
 
 			else:
@@ -819,7 +820,7 @@ def approveproduct(request):
 
 				if user.user_type=='Admin':
 					admin=True
-				elif user.user_type=='Dealing-Admin':
+				elif user.user_type=='Dealing-Hand':
 					dealing_admin=True
 				else :
 					non_admin=True
@@ -860,7 +861,7 @@ def productconfirm(request,id):
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 					admin = True
-			elif user.user_type == 'Dealing-Admin':
+			elif user.user_type == 'Dealing-Hand':
 				dealing_admin = True
 			else:
 				context={
@@ -1002,7 +1003,7 @@ def productconfirm(request,id):
 
 				if user.user_type=='Admin':
 					admin=True
-				elif user.user_type=='Dealing-Admin':
+				elif user.user_type=='Dealing-Hand':
 					dealing_admin=True
 				else :
 					non_admin=True
@@ -1044,7 +1045,7 @@ def myproduct(request):
 				currentName = user.first_name+" "+user.last_name
 				if user.user_type == 'Admin':
 						admin = True
-				elif user.user_type == 'Dealing-Admin':
+				elif user.user_type == 'Dealing-Hand':
 					dealing_admin = True
 
 				else:
@@ -1082,7 +1083,7 @@ def myproduct(request):
 
 				if user.user_type=='Admin':
 					admin=True
-				elif user.user_type=='Dealing-Admin':
+				elif user.user_type=='Dealing-Hand':
 					dealing_admin=True
 				else :
 					non_admin=True
@@ -1124,7 +1125,7 @@ def partialconfirm(request,id):
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 					admin = True
-			elif user.user_type == 'Dealing-Admin':
+			elif user.user_type == 'Dealing-Hand':
 				dealing_admin = True
 			else:
 				context={
@@ -1236,7 +1237,7 @@ def partialconfirm(request,id):
 
 				if user.user_type=='Admin':
 					admin=True
-				elif user.user_type=='Dealing-Admin':
+				elif user.user_type=='Dealing-Hand':
 					dealing_admin=True
 				else :
 					non_admin=True
@@ -1278,7 +1279,7 @@ def rejectproduct(request,id):
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 					admin = True
-			elif user.user_type == 'Dealing-Admin':
+			elif user.user_type == 'Dealing-Hand':
 				dealing_admin = True
 			else:
 				context={
@@ -1345,7 +1346,7 @@ def rejectproduct(request,id):
 
 				if user.user_type=='Admin':
 					admin=True
-				elif user.user_type=='Dealing-Admin':
+				elif user.user_type=='Dealing-Hand':
 					dealing_admin=True
 				else :
 					non_admin=True
@@ -1386,7 +1387,7 @@ def pendingprods(request):
 				currentName = user.first_name+" "+user.last_name
 				if user.user_type == 'Admin':
 						admin = True
-				elif user.user_type == 'Dealing-Admin':
+				elif user.user_type == 'Dealing-Hand':
 					dealing_admin = True
 				else:
 					non_admin=True
@@ -1412,7 +1413,7 @@ def pendingprods(request):
 
 				if user.user_type=='Admin':
 					admin=True
-				elif user.user_type=='Dealing-Admin':
+				elif user.user_type=='Dealing-Hand':
 					dealing_admin=True
 				else :
 					non_admin=True
@@ -1453,7 +1454,7 @@ def canceltransaction(request,id):
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 					admin = True
-			elif user.user_type == 'Dealing-Admin':
+			elif user.user_type == 'Dealing-Hand':
 				dealing_admin = True
 
 			else:
@@ -1487,7 +1488,7 @@ def canceltransaction(request,id):
 
 				if user.user_type=='Admin':
 					admin=True
-				elif user.user_type=='Dealing-Admin':
+				elif user.user_type=='Dealing-Hand':
 					dealing_admin=True
 				else :
 					non_admin=True
@@ -1525,7 +1526,7 @@ def returnproduct(request):
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 					admin = True
-			elif user.user_type == 'Non-Admin':
+			elif user.user_type == 'User':
 				non_admin = True
 			else:
 				dealing_admin = True
@@ -1553,7 +1554,7 @@ def returnproduct(request):
 
 				if user.user_type=='Admin':
 					admin=True
-				elif user.user_type=='Dealing-Admin':
+				elif user.user_type=='Dealing-Hand':
 					dealing_admin=True
 				else :
 					non_admin=True
@@ -1591,7 +1592,7 @@ def returnconfirm(request,id):
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 					admin = True
-			elif user.user_type == 'Non-Admin':
+			elif user.user_type == 'User':
 				non_admin = True
 			else:
 				dealing_admin = True
@@ -1628,7 +1629,7 @@ def returnconfirm(request,id):
 
 				if user.user_type=='Admin':
 					admin=True
-				elif user.user_type=='Dealing-Admin':
+				elif user.user_type=='Dealing-Hand':
 					dealing_admin=True
 				else :
 					non_admin=True
@@ -1690,7 +1691,7 @@ def returnrequest(request):
 
 				if user.user_type=='Admin':
 					admin=True
-				elif user.user_type=='Dealing-Admin':
+				elif user.user_type=='Dealing-Hand':
 					dealing_admin=True
 				else :
 					non_admin=True
@@ -1728,7 +1729,7 @@ def returnrequestconfirm(request,id):
 			currentName = user.first_name+" "+user.last_name
 			if user.user_type == 'Admin':
 					admin = True
-			elif user.user_type == 'Non-Admin':
+			elif user.user_type == 'User':
 				non_admin = True
 			else:
 				dealing_admin = True
@@ -1765,7 +1766,7 @@ def returnrequestconfirm(request,id):
 
 				if user.user_type=='Admin':
 					admin=True
-				elif user.user_type=='Dealing-Admin':
+				elif user.user_type=='Dealing-Hand':
 					dealing_admin=True
 				else :
 					non_admin=True
@@ -1828,7 +1829,7 @@ def proddb(request):
 			if user.user_type == 'Admin':
 				admin = True
 			else:
-				if user.user_type=='Dealing-Admin':
+				if user.user_type=='Dealing-Hand':
 					dealing_admin=True
 				else:
 					non_admin=True
@@ -1870,7 +1871,7 @@ def proddb(request):
 
 				if user.user_type=='Admin':
 					admin=True
-				elif user.user_type=='Dealing-Admin':
+				elif user.user_type=='Dealing-Hand':
 					dealing_admin=True
 				else :
 					non_admin=True
@@ -2011,7 +2012,7 @@ def add_measure(request):
 
 				if user.user_type=='Admin':
 					admin=True
-				elif user.user_type=='Dealing-Admin':
+				elif user.user_type=='Dealing-Hand':
 					dealing_admin=True
 				else :
 					non_admin=True
@@ -2149,7 +2150,7 @@ def add_category(request):
 
 				if user.user_type=='Admin':
 					admin=True
-				elif user.user_type=='Dealing-Admin':
+				elif user.user_type=='Dealing-Hand':
 					dealing_admin=True
 				else :
 					non_admin=True
@@ -2212,7 +2213,7 @@ def del_unit(request,name):
 			if user.user_type == 'Admin':
 				admin = True
 			else:
-				if user.user_type=='Dealing-Admin':
+				if user.user_type=='Dealing-Hand':
 					dealing_admin=True
 				else:
 					non_admin=True
@@ -2264,7 +2265,7 @@ def del_unit(request,name):
 
 				if user.user_type=='Admin':
 					admin=True
-				elif user.user_type=='Dealing-Admin':
+				elif user.user_type=='Dealing-Hand':
 					dealing_admin=True
 				else :
 					non_admin=True
@@ -2381,7 +2382,7 @@ def del_category(request,name):
 
 				if user.user_type=='Admin':
 					admin=True
-				elif user.user_type=='Dealing-Admin':
+				elif user.user_type=='Dealing-Hand':
 					dealing_admin=True
 				else :
 					non_admin=True
@@ -2418,7 +2419,7 @@ def accept_route(request):
 				currentName = user.first_name+" "+user.last_name
 				if user.user_type == 'Admin':
 						admin = True
-				elif user.user_type == 'Dealing-Admin':
+				elif user.user_type == 'Dealing-Hand':
 					dealing_admin = True
 
 				else:
@@ -2443,7 +2444,7 @@ def accept_route(request):
 
 				if user.user_type=='Admin':
 					admin=True
-				elif user.user_type=='Dealing-Admin':
+				elif user.user_type=='Dealing-Hand':
 					dealing_admin=True
 				else :
 					non_admin=True
@@ -2480,7 +2481,7 @@ def product_accept(request,id):
 				currentName = user.first_name+" "+user.last_name
 				if user.user_type == 'Admin':
 						admin = True
-				elif user.user_type == 'Dealing-Admin':
+				elif user.user_type == 'Dealing-Hand':
 					dealing_admin = True
 				else:
 					non_admin=True
@@ -2529,7 +2530,7 @@ def product_accept(request,id):
 
 				if user.user_type=='Admin':
 					admin=True
-				elif user.user_type=='Dealing-Admin':
+				elif user.user_type=='Dealing-Hand':
 					dealing_admin=True
 				else :
 					non_admin=True

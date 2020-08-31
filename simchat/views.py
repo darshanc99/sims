@@ -31,12 +31,12 @@ def compose(request):
 			if request.method == "POST":
 				if user.user_type == 'Admin':
 					admin = True
-				elif user.user_type == 'Dealing-Admin':
+				elif user.user_type == 'Dealing-Hand':
 					dealing_admin = True
 
 				email = request.POST.get('email')
 
-				if user.user_type == 'Non-Admin':
+				if user.user_type == 'User':
 					non_admin = True
 					adminmail = email
 					dealingmail = email
@@ -47,14 +47,14 @@ def compose(request):
 						if i.user_type == 'Admin':
 							adminmail = i.email
 							acount = True
-						elif i.user_type == 'Dealing-Admin':
+						elif i.user_type == 'Dealing-Hand':
 							dealingmail = i.email
 							bcount = True
 						if acount == True and bcount == True:
 							break
 					if email == 'Admin':
 						email = adminmail
-					if email == 'Dealing-Admin':
+					if email == 'Dealing-Hand':
 						email = dealingmail
 
 				subject = request.POST.get('subject')
@@ -88,7 +88,7 @@ def compose(request):
 						'verified' : verified
 					}
 					return render(request,'simchat/compose.html',context)
-				elif user.user_type == 'Dealing-Admin' and user.verified == True:
+				elif user.user_type == 'Dealing-Hand' and user.verified == True:
 					dealing_admin = True
 					context = {
 						'admin' : admin,
@@ -99,7 +99,7 @@ def compose(request):
 						'verified' : verified
 					}
 					return render(request,'simchat/compose.html',context)
-				elif user.user_type == 'Non-Admin' and user.verified == True:
+				elif user.user_type == 'User' and user.verified == True:
 					non_admin = True
 					context = {
 						'admin' : admin,
@@ -137,9 +137,9 @@ def inbox(request):
 			name = user.first_name + ' ' + user.last_name
 			if user.user_type == 'Admin' and user.verified == True:
 				admin = True
-			elif user.user_type == 'Dealing-Admin' and user.verified == True:
+			elif user.user_type == 'Dealing-Hand' and user.verified == True:
 				dealing_admin = True
-			elif user.user_type == 'Non-Admin' and user.verified == True:
+			elif user.user_type == 'User' and user.verified == True:
 				non_admin = True
 
 			if user.verified == True:
@@ -186,9 +186,9 @@ def sent(request):
 			name = user.first_name + ' ' + user.last_name
 			if user.user_type == 'Admin' and user.verified == True:
 				admin = True
-			elif user.user_type == 'Dealing-Admin' and user.verified == True:
+			elif user.user_type == 'Dealing-Hand' and user.verified == True:
 				dealing_admin = True
-			elif user.user_type == 'Non-Admin' and user.verified == True:
+			elif user.user_type == 'User' and user.verified == True:
 				non_admin = True
 
 			if user.verified == True:
@@ -238,7 +238,7 @@ def inboxview(request,id):
 				if msg.receiver == request.session['email']:
 					if user.user_type == 'Admin':
 						admin = True
-					elif user.user_type == 'Dealing-Admin':
+					elif user.user_type == 'Dealing-Hand':
 						dealing_admin = True
 					else:
 						non_admin = True
@@ -288,7 +288,7 @@ def sentview(request,id):
 				if msg.sender == request.session['email']:
 					if user.user_type == 'Admin':
 						admin = True
-					elif user.user_type == 'Dealing-Admin':
+					elif user.user_type == 'Dealing-Hand':
 						dealing_admin = True
 					else:
 						non_admin = True
@@ -382,7 +382,7 @@ def replyin(request,id):
 			if user.email == msg.receiver:
 				if user.user_type == 'Admin':
 					admin = True
-				elif user.user_type == 'Non-Admin':
+				elif user.user_type == 'User':
 					non_admin = True
 				else:
 					dealing_admin = True
@@ -441,7 +441,7 @@ def replyout(request,id):
 			if user.email == msg.sender:
 				if user.user_type == 'Admin':
 					admin = True
-				elif user.user_type == 'Non-Admin':
+				elif user.user_type == 'User':
 					non_admin = True
 				else:
 					dealing_admin = True

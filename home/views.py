@@ -84,7 +84,7 @@ def home(request):
 							'verified' : verified
 						}
 						return render(request,'home/home.html',context)
-					elif user.user_type == 'Non-Admin':
+					elif user.user_type == 'User':
 						non_admin = True
 						verified = user.verified
 						all_logs = sessionlogs.objects.filter(email=user.email).order_by('timestamp').reverse()
@@ -103,7 +103,7 @@ def home(request):
 							'msg_count' : msg_count
 						}
 						return render(request,'home/home.html',context)
-					elif user.user_type == 'Dealing-Admin':
+					elif user.user_type == 'Dealing-Hand':
 						dealing_admin = True
 						verified = user.verified
 						all_logs = sessionlogs.objects.filter(email=user.email).order_by('timestamp').reverse()
