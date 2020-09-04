@@ -56,6 +56,22 @@
                 <button type="submit" class="btn btn-primary btn-block"> Update  </button>
             </div> <!-- form-group// -->
         </form>
+				<hr>
+				<form action="/edituserpassword/{{user.email}}" method="post">
+          {% csrf_token %}
+          <div class="form-group">
+            <label>New Password</label>
+            <input type="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" placeholder="Enter New Password for {{user.first_name}} {{user.last_name}}" title = "Enter New Password" class="form-control" name="newpassword" required>
+          </div> <!-- form-group end.// -->
+          <div class="form-group">
+            <label>Your Password</label>
+            <input type="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" placeholder="Enter Your Password" title="Enter Your Password" class="form-control" name="yourpassword" required>
+          </div> <!-- form-group end.// -->
+          <!-- form-group end.// -->
+            <div class="form-group">
+                <button type="submit" class="btn btn-danger btn-block" onclick="return confirm('Are you sure you want to reset password for {{user.first_name}} {{user.last_name}}.')">Reset Password</button>
+            </div> <!-- form-group// -->
+        </form>
       </div>
     </div>
   </div>

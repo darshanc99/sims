@@ -598,6 +598,57 @@ def edituser(request,email):
 		#If not logged in
 		return redirect('login')
 
+#Edit User Password
+def edituserpassword(request,email):
+	print("Editing",email,"password.")
+	logoutStatus = True
+	admin, dealing_admin, non_admin = False, False, False
+	try:
+		if request.session['email']:
+			logoutStatus = False
+			currentUser = useraccounts.objects.get(email=request.session['email'])
+			if currentUser.user_type == 'Admin':
+				admin = True
+			elif currentUser.user_type == 'Dealing-Hand':
+				dealing_admin = True
+			else:
+				non_admin = True
+			try:
+				#Reset Password POST Method
+				if request.method == 'POST':
+					newpassword = request.POST.get('newpassword')
+					newpassword = hashlib.sha256(newpassword.encode()).hexdigest()
+					yourpassword = request.POST.get('yourpassword')
+					yourpassword = hashlib.sha256(yourpassword.encode()).hexdigest()
+					currentUser = useraccounts.objects.get(email = request.session['email'])
+					if currentUser.userpassword == yourpassword and currentUser.user_type == 'Admin' and currentUser.verified:
+						user = useraccounts.objects.get(email=email)
+						user.userpassword = newpassword
+						user.save()
+						message = "Password Reset Successful."
+						all_usertypes = master_user_types.objects.all().order_by('user_type')
+						name = currentUser.first_name + ' ' + currentUser.last_name
+						context = {
+							'name' : name,
+							'logoutStatus' : logoutStatus,
+							'admin' : admin,
+							'user' : currentUser,
+							'verified' : currentUser.verified,
+							'dealing_admin' : dealing_admin,
+							'non_admin' : non_admin,
+							'all_usertypes' : all_usertypes,
+							'message' : message,
+						}
+						now = datetime.datetime.now(tz=timezone.utc)
+						message = "Password updated for "+email
+						session = sessionlogs(email=request.session['email'],timestamp=now,message=message)
+						session.save()
+						return render(request,'home/edituser.html',context)
+			except:
+				return redirect('userbase')
+	except:
+		return redirect('home')
+
 #Delete user type
 def deleteusertype(request,usertype):
 	#If logged in

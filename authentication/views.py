@@ -450,7 +450,7 @@ def forgotpassword(request):
 					request.session['forgototp'] = otp
 					request.session['forgotemail'] = email
 
-					message = 'Here is the reset password OTP:',otp
+					message = 'Here is the reset password OTP:' + str(body)
 					otp = str(body)
 					print(email,otp,end=" ")
 					phone = user.phone
