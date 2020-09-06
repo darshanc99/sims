@@ -1796,10 +1796,8 @@ def proddb(request):
 			nondel_measure=set()
 			nondel_category=set()
 			for data in all_products:
-				content=productlog.objects.filter(product_name=data.product_name)
-				if content:
-					nondel_category.add(data.product_category)
-					nondel_measure.add(data.measure_unit)
+				nondel_category.add(data.product_category)
+				nondel_measure.add(data.measure_unit)
 
 			for data in measuredata:
 				if data.measure_unit not in nondel_measure:
@@ -1900,10 +1898,8 @@ def add_measure(request):
 			nondel_measure=set()
 			nondel_category=set()
 			for data in all_products:
-				content=productlog.objects.filter(product_name=data.product_name)
-				if content:
-					nondel_category.add(data.product_category)
-					nondel_measure.add(data.measure_unit)
+				nondel_category.add(data.product_category)
+				nondel_measure.add(data.measure_unit)
 
 			for data in measuredata:
 				if data.measure_unit not in nondel_measure:
@@ -2041,8 +2037,6 @@ def add_category(request):
 			nondel_measure=set()
 			nondel_category=set()
 			for data in all_products:
-				content=productlog.objects.filter(product_name=data.product_name)
-				if content:
 					nondel_category.add(data.product_category)
 					nondel_measure.add(data.measure_unit)
 
@@ -2179,10 +2173,8 @@ def del_unit(request,name):
 			nondel_measure=set()
 			nondel_category=set()
 			for data in all_products:
-				content=productlog.objects.filter(product_name=data.product_name)
-				if content:
-					nondel_category.add(data.product_category)
-					nondel_measure.add(data.measure_unit)
+				nondel_category.add(data.product_category)
+				nondel_measure.add(data.measure_unit)
 
 			for data in measuredata:
 				if data.measure_unit not in nondel_measure:
@@ -2294,10 +2286,8 @@ def del_category(request,name):
 			nondel_measure=set()
 			nondel_category=set()
 			for data in all_products:
-				content=productlog.objects.filter(product_name=data.product_name)
-				if content:
-					nondel_category.add(data.product_category)
-					nondel_measure.add(data.measure_unit)
+				nondel_category.add(data.product_category)
+				nondel_measure.add(data.measure_unit)
 
 			for data in measuredata:
 				if data.measure_unit not in nondel_measure:
