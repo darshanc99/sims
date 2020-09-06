@@ -6,22 +6,10 @@ from logs.models import sessionlogs, product_transaction_logs, product_operation
 from products.models import productlog, nonconsumable_productlog, productlist
 import datetime, hashlib
 from django.utils import timezone
-from twilio.rest import Client
 from simchat.models import simmessage
 from itertools import chain
 import csv
 from django.http import HttpResponse
-import ast
-
-#Twilio credentials
-file = open("twilio.config", "r")
-contents = file.read()
-dictionary = ast.literal_eval(contents)
-account_sid = str(dictionary['account_sid'])
-auth_token = str(dictionary['auth_token'])
-sender = str(dictionary['phone'])
-file.close()
-client = Client(account_sid,auth_token)
 
 #Write your view here
 #Home Function
@@ -31,106 +19,84 @@ def home(request):
 	dealing_admin = False
 	logoutStatus = True
 	try:
-		#Sign up remains processing
-		if request.session['useremail']:
-			print("Sign up remains")
-			del request.session['otp']
-			del request.session['first_name']
-			del request.session['last_name']
-			del request.session['phone']
-			del request.session['user_type']
-			del request.session['password']
-			del request.session['user_role']
-			del request.session['useremail']
-			return redirect('home')
+		#If user logged in
+		if request.session['email']:
+			email = request.session['email']
+			user = useraccounts.objects.get(email=email)
+
+			#If user has been logged out or freezed by the admin
+			if user.loginstatus == False or user.accountstatus == False:
+				return redirect('logout')
+
+			name=user.first_name + " " + user.last_name
+			logoutStatus = False
+
+			all_msg = simmessage.objects.all()
+			msg_count = 0
+			for msgs in all_msg:
+				if msgs.receiver == request.session['email'] and msgs.read == False:
+					msg_count+=1
+
+			if user.user_type == 'Admin':
+				admin = True
+				all_logs = sessionlogs.objects.all().order_by('timestamp').reverse()
+				product_requests = productlog.objects.all().order_by('timestamp').reverse()
+				product_logs = product_transaction_logs.objects.all().order_by('timestamp').reverse()
+				verified = user.verified
+				context = {
+					'name' : name,
+					'admin' : admin,
+					'non_admin' : non_admin,
+					'dealing_admin' : dealing_admin,
+					'logoutStatus' : logoutStatus,
+					'all_logs' : all_logs,
+					'product_requests' : product_requests,
+					'product_logs' : product_logs,
+					'msg_count' : msg_count,
+					'verified' : verified
+				}
+				return render(request,'home/home.html',context)
+			elif user.user_type == 'User':
+				non_admin = True
+				verified = user.verified
+				all_logs = sessionlogs.objects.filter(email=user.email).order_by('timestamp').reverse()
+				product_requests = productlog.objects.filter(email=user.email).order_by('timestamp').reverse()
+				product_logs = product_transaction_logs.objects.filter(email=user.email).order_by('timestamp').reverse()
+				context = {
+					'name' : name,
+					'admin' : admin,
+					'non_admin' : non_admin,
+					'dealing_admin' : dealing_admin,
+					'verified' : verified,
+					'logoutStatus' : logoutStatus,
+					'all_logs' : all_logs,
+					'product_requests' : product_requests,
+					'product_logs' : product_logs,
+					'msg_count' : msg_count
+				}
+				return render(request,'home/home.html',context)
+			elif user.user_type == 'Dealing-Hand':
+				dealing_admin = True
+				verified = user.verified
+				all_logs = sessionlogs.objects.filter(email=user.email).order_by('timestamp').reverse()
+				product_requests = productlog.objects.filter(email=user.email).order_by('timestamp').reverse()
+				product_logs = product_transaction_logs.objects.filter(email=user.email).order_by('timestamp').reverse()
+				context = {
+					'name' : name,
+					'admin' : admin,
+					'non_admin' : non_admin,
+					'dealing_admin' : dealing_admin,
+					'logoutStatus' : logoutStatus,
+					'all_logs' : all_logs,
+					'product_requests' : product_requests,
+					'product_logs' : product_logs,
+					'msg_count' : msg_count,
+					'verified' : verified
+				}
+				return render(request,'home/home.html',context)
 	except:
-		try:
-			#Forgot password processing
-			if request.session['forgotemail']:
-				print("Forgot Password Remains")
-				del request.session['forgototp']
-				del request.session['forgotemail']
-				return redirect('home')
-		except:
-			try:
-				#If user logged in
-				if request.session['email']:
-					email = request.session['email']
-					user = useraccounts.objects.get(email=email)
-
-					#If user has been logged out or freezed by the admin
-					if user.loginstatus == False or user.accountstatus == False:
-						return redirect('logout')
-
-					name=user.first_name + " " + user.last_name
-					logoutStatus = False
-
-					all_msg = simmessage.objects.all()
-					msg_count = 0
-					for msgs in all_msg:
-						if msgs.receiver == request.session['email'] and msgs.read == False:
-							msg_count+=1
-
-					if user.user_type == 'Admin':
-						admin = True
-						all_logs = sessionlogs.objects.all().order_by('timestamp').reverse()
-						product_requests = productlog.objects.all().order_by('timestamp').reverse()
-						product_logs = product_transaction_logs.objects.all().order_by('timestamp').reverse()
-						verified = user.verified
-						context = {
-							'name' : name,
-							'admin' : admin,
-							'non_admin' : non_admin,
-							'dealing_admin' : dealing_admin,
-							'logoutStatus' : logoutStatus,
-							'all_logs' : all_logs,
-							'product_requests' : product_requests,
-							'product_logs' : product_logs,
-							'msg_count' : msg_count,
-							'verified' : verified
-						}
-						return render(request,'home/home.html',context)
-					elif user.user_type == 'User':
-						non_admin = True
-						verified = user.verified
-						all_logs = sessionlogs.objects.filter(email=user.email).order_by('timestamp').reverse()
-						product_requests = productlog.objects.filter(email=user.email).order_by('timestamp').reverse()
-						product_logs = product_transaction_logs.objects.filter(email=user.email).order_by('timestamp').reverse()
-						context = {
-							'name' : name,
-							'admin' : admin,
-							'non_admin' : non_admin,
-							'dealing_admin' : dealing_admin,
-							'verified' : verified,
-							'logoutStatus' : logoutStatus,
-							'all_logs' : all_logs,
-							'product_requests' : product_requests,
-							'product_logs' : product_logs,
-							'msg_count' : msg_count
-						}
-						return render(request,'home/home.html',context)
-					elif user.user_type == 'Dealing-Hand':
-						dealing_admin = True
-						verified = user.verified
-						all_logs = sessionlogs.objects.filter(email=user.email).order_by('timestamp').reverse()
-						product_requests = productlog.objects.filter(email=user.email).order_by('timestamp').reverse()
-						product_logs = product_transaction_logs.objects.filter(email=user.email).order_by('timestamp').reverse()
-						context = {
-							'name' : name,
-							'admin' : admin,
-							'non_admin' : non_admin,
-							'dealing_admin' : dealing_admin,
-							'logoutStatus' : logoutStatus,
-							'all_logs' : all_logs,
-							'product_requests' : product_requests,
-							'product_logs' : product_logs,
-							'msg_count' : msg_count,
-							'verified' : verified
-						}
-						return render(request,'home/home.html',context)
-			except:
-				#If user not logged in
-				return redirect('login')
+		#If user not logged in
+		return redirect('login')
 
 #The Filters
 def filter(request):
@@ -383,14 +349,7 @@ def verify(request,email):
 				try:
 					user = useraccounts.objects.get(email=email)
 					user.verified = True
-					to = "+91"+str(user.phone)
 					user.save()
-					message = "You are now a verified user. You can now enjoy the services of Smart Inventory Management System."
-					client.messages.create(
-						to = to,
-						from_ = sender,
-						body = message
-					)
 					now = datetime.datetime.now(tz=timezone.utc)
 					message = "Verified for "+email
 					session = sessionlogs(email=request.session['email'],timestamp=now,message=message)
@@ -424,12 +383,6 @@ def deleteuser(request,email):
 					if user.verified == False:
 						to = "+91"+str(user.phone)
 						user.delete()
-						message = "Your account with SIMS couldn't be verified, as your account details seemed suspicious. Your account is hence removed from the platform."
-						client.messages.create(
-							to = to,
-							from_ = sender,
-							body = message
-						)
 						now = datetime.datetime.now(tz=timezone.utc)
 						message = email + " deleted."
 						session = sessionlogs(email=request.session['email'],timestamp=now,message=message)
@@ -461,19 +414,12 @@ def freezeuser(request,email):
 			if user.verified:
 				try:
 					user = useraccounts.objects.get(email=email)
-					to = "+91"+str(user.phone)
 					user.accountstatus = False
 					user.save()
 					now = datetime.datetime.now(tz=timezone.utc)
 					message = "Account freezed for "+email
 					session = sessionlogs(email=request.session['email'],timestamp=now,message=message)
 					session.save()
-					message = "Your account with SIMS has been freezed. Please contact the Admin for further details."
-					client.messages.create(
-						to = to,
-						from_ = sender,
-						body = message
-					)
 					return redirect('userbase')
 				except:
 					return redirect('home')
@@ -498,19 +444,12 @@ def unfreezeuser(request,email):
 			if user.user_type == 'Admin' and user.verified:
 				try:
 					user = useraccounts.objects.get(email=email)
-					to = "+91"+str(user.phone)
 					user.accountstatus = True
 					user.save()
 					now = datetime.datetime.now(tz=timezone.utc)
 					message = "Account unfreezed for "+email
 					session = sessionlogs(email=request.session['email'],timestamp=now,message=message)
 					session.save()
-					message = "Your account with SIMS has been unfreezed. You can now use the services of SIMS seamlessly."
-					client.messages.create(
-						to = to,
-						from_ = sender,
-						body = message
-					)
 					return redirect('userbase')
 				except:
 					return redirect('home')

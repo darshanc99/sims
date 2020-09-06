@@ -11,7 +11,7 @@ class useraccounts(models.Model):
 	userrole = models.CharField(max_length=25,blank=True)
 	registered_at = models.DateTimeField(blank=True)
 	verified = models.BooleanField(default=False)
-	loginstatus = models.BooleanField(default=True)
+	loginstatus = models.BooleanField(default=False)
 	accountstatus = models.BooleanField(default=True)
 
 	def __str__(self):

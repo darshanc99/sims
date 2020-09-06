@@ -4,19 +4,7 @@ from .models import useraccounts, master_user_types
 from logs.models import sessionlogs
 import hashlib
 import os, random, datetime
-from twilio.rest import Client
 from django.utils import timezone
-import ast
-
-#Twilio credentials
-file = open("twilio.config", "r")
-contents = file.read()
-dictionary = ast.literal_eval(contents)
-account_sid = str(dictionary['account_sid'])
-auth_token = str(dictionary['auth_token'])
-sender = str(dictionary['phone'])
-file.close()
-client = Client(account_sid,auth_token)
 
 # Create your views here.
 
@@ -24,23 +12,9 @@ client = Client(account_sid,auth_token)
 def signup(request):
 	logoutStatus = True
 	try:
-		try:
-			#For user already exists or incomplete signup attempts,
-			#deleting the stored objects after refresh/redirect back to sign up by the user
-			if request.session['useremail']:
-				del request.session['otp']
-				del request.session['first_name']
-				del request.session['last_name']
-				del request.session['phone']
-				del request.session['user_type']
-				del request.session['password']
-				del request.session['user_role']
-				del request.session['useremail']
-				return redirect('signup')
-		except:
-			#If email logged in, redirect to home page
-			if request.session['email']:
-				return redirect('home')
+		#If email logged in, redirect to home page
+		if request.session['email']:
+			return redirect('home')
 	except:
 		#If POST method called on the sign up form
 		if request.method == 'POST':
@@ -56,21 +30,11 @@ def signup(request):
 			#Encode the password
 			password = hashlib.sha256(password.encode()).hexdigest()
 
-			#Set the fields in the request.session object for OTP processing
-			request.session['first_name'] = first_name
-			request.session['last_name'] = last_name
-			request.session['useremail'] = email
-			request.session['phone'] = phone
-			request.session['user_role'] = user_role
-			request.session['user_type'] = user_type
-			request.session['password'] = password
-
 			try:
 				#If User already exists
 				if useraccounts.objects.get(email=email):
 					message = "User Already exists!"
 					all_usertypes = master_user_types.objects.all().order_by('user_type')
-					print(message)
 					context = {
 						'message' : message,
 						'logoutStatus' : logoutStatus,
@@ -79,120 +43,33 @@ def signup(request):
 					return render(request,'authentication/signup.html',context)
 			except:
 				#If User does not exist, and all well, redirect to OTP page
-				body = random.randint(1000,9999)
-				print(request.session['useremail'],str(body) + " " + "+91"+str(phone))
-				otp = str(body)
-				request.session['otp'] = otp
-				message = "An OTP has been sent to your mobile. Kindly enter it to verify."
-				client.messages.create(
-					to = "+91"+str(phone),
-					from_ = sender,
-					body = otp
+				now = datetime.datetime.now()
+				user = useraccounts(first_name,
+					last_name,
+					email,
+					phone,
+					user_type,
+					password,
+					user_role,
+					now
 				)
+				user.save()
+				#Change the user_type delete status
+				usertype = master_user_types.objects.get(user_type=user_type)
+				usertype.deletestatus = False
+				usertype.save()
+
+				message = "Account created for " + str(first_name) + " " + str(last_name) + ". User Sent for verification."
 				context = {
 					'message' : message,
-					'logoutStatus' : logoutStatus,
-					'body' : str(body)
+					'logoutStatus' : logoutStatus
 				}
-				return render(request,'authentication/otp.html',context)
+
+				return render(request,'authentication/login.html',context)
 		else:
 			#If POST method is not called, just render the sign up page
 			all_usertypes = master_user_types.objects.all().order_by('user_type')
 			context = {
-				'logoutStatus' : logoutStatus,
-				'all_usertypes' : all_usertypes,
-			}
-			return render(request,'authentication/signup.html',context)
-
-#Function to confirm the OTP
-def otp(request):
-	logoutStatus = True
-	try:
-		#If some user already logged in, redirect to homepage
-		if request.session['email']:
-			return redirect('home')
-	except:
-		try:
-
-			#If a registration request exists in real
-			if request.session['useremail']:
-
-				#If a POST method exists
-				if request.method == 'POST':
-					#Get the Field
-					inputotp = request.POST.get('otp')
-					inputotp = str(inputotp)
-
-					#Check if the entered OTP is correct
-					if inputotp == request.session['otp']:
-						logoutStatus = False
-						message = "User Registered. User sent for Verification!"
-						now = datetime.datetime.now()
-
-						#Register the User with the portal
-						user = useraccounts(request.session['first_name'],
-							request.session['last_name'],
-							request.session['useremail'],
-							request.session['phone'],
-							request.session['user_type'],
-							request.session['password'],
-							request.session['user_role'],
-							now
-						)
-						user.save()
-
-						#Change the user_type delete status
-						usertype = master_user_types.objects.get(user_type=request.session['user_type'])
-						usertype.deletestatus = False
-						usertype.save()
-
-						#Delete the request objects except 'useremail' - as required, deleted later
-						del request.session['otp']
-						del request.session['first_name']
-						del request.session['last_name']
-						del request.session['phone']
-						del request.session['user_type']
-						del request.session['password']
-						del request.session['user_role']
-
-						#Create a Log entry
-						email = request.session['useremail']
-						user = useraccounts.objects.get(email=email)
-						name=user.first_name + " " + user.last_name
-						message = "User created for " + name
-						user.loginstatus = False
-						user.save()
-						del request.session['useremail']
-
-						logoutStatus = True
-						context = {
-							'logoutStatus' : logoutStatus,
-							'message' : message
-						}
-						return render(request,'authentication/login.html',context)
-					else:
-						#If incorrect OTP
-						logoutStatus = True
-						message = "Incorrect OTP. Please enter again."
-						context = {
-							'logoutStatus' : logoutStatus,
-							'message' : message
-						}
-						return render(request,'authentication/otp.html',context)
-				else:
-					#If no POST method, just render the OTP page
-					logoutStatus = True
-					context = {
-						'logoutStatus' : logoutStatus,
-					}
-					return render(request,'authentication/otp.html',context)
-		except:
-			#If some error occurs
-			logoutStatus = True
-			all_usertypes = master_user_types.objects.all().order_by('user_type')
-			message = "Some error occured."
-			context = {
-				'message' : message,
 				'logoutStatus' : logoutStatus,
 				'all_usertypes' : all_usertypes,
 			}
@@ -205,24 +82,9 @@ def login(request):
 	dealing_admin = False
 	logoutStatus = True
 	try:
-		try:
-			#If some user already logged in, redirect to the home page
-			if request.session['email']:
-				return redirect('home')
-		except:
-			#For incomplete signup attempts,
-			#deleting the stored objects after refresh/redirect back to log in by the user
-			if request.session['useremail']:
-				del request.session['otp']
-				del request.session['first_name']
-				del request.session['last_name']
-				del request.session['phone']
-				del request.session['user_type']
-				del request.session['password']
-				del request.session['user_role']
-				del request.session['useremail']
-				return redirect('login')
-
+		#If some user already logged in, redirect to the home page
+		if request.session['email']:
+			return redirect('home')
 	except:
 		#If POST request on the login page
 		if request.method == 'POST':
@@ -431,106 +293,3 @@ def profile(request):
 	except:
 		#If the user is not logged in, redirect to the log in page
 		return redirect('login')
-
-#Function to forgot password Handler
-def forgotpassword(request):
-	logoutStatus = True
-	try:
-		#If user logged in, redirect to the home page
-		if request.session['email']:
-			return redirect('home')
-	except:
-		#If POST request
-		if request.method == 'POST':
-			#Get the field
-			email = request.POST.get('email')
-
-			try:
-				#Check if the user exists in the userbase, and move to reset password function
-				if useraccounts.objects.get(email=email):
-					user = useraccounts.objects.get(email=email)
-					body = random.randint(1000,9999)
-					otp = str(body)
-
-					#Create two objects
-					request.session['forgototp'] = otp
-					request.session['forgotemail'] = email
-
-					message = 'Here is the reset password OTP:' + str(body)
-					otp = str(body)
-					print(email,otp,end=" ")
-					phone = user.phone
-					print("+91"+str(phone))
-					client.messages.create(
-						to = "+91"+str(phone),
-						from_ = sender,
-						body = message
-					)
-					context = {
-						'message' : "OTP sent to your phone. Kindly Enter it.",
-						'logoutStatus' : logoutStatus,
-						'body' : str(body)
-					}
-					return render(request,'authentication/forgotpassword2.html',context)
-			except:
-				#If user does not exists
-				message = 'There is no user registered with that email.'
-				context = {
-					'logoutStatus' : logoutStatus,
-					'message' : message
-				}
-				return render(request,'authentication/forgotpassword1.html',context)
-		else:
-			#If no POST request, just render the page
-			context = {
-				'logoutStatus' : logoutStatus
-			}
-			return render(request,'authentication/forgotpassword1.html',context)
-
-#Reset Password Function
-def resetpassword(request):
-	logoutStatus = True
-	try:
-		#If user logged in, redirect to the home page
-		if request.session['email']:
-			return redirect('home')
-	except:
-		#If POST request
-		if request.method == 'POST':
-			#Get the fields
-			email = request.session['forgotemail']
-			user = useraccounts.objects.get(email=email)
-			otp = request.POST.get('otp')
-			new_password = request.POST.get('new_password')
-			confirm_password = request.POST.get('confirm_password')
-
-			#Check if the OTP matches, and the new_password == confirm_password
-			if otp == request.session['forgototp'] and new_password == confirm_password:
-				#Set the password
-				new_password = hashlib.sha256(new_password.encode()).hexdigest()
-				user.userpassword = new_password
-				user.save()
-
-				del request.session['forgototp']
-				del request.session['forgotemail']
-
-				message = ["Your Password Reset is successful!"]
-				context = {
-					'logoutStatus' : logoutStatus,
-					'messages' : message,
-				}
-				return render(request,'authentication/login.html',context)
-			else:
-				#If verification issues
-				message = "The OTP or the passwords didn't match."
-				context = {
-					'message' : message,
-					'logoutStatus' : logoutStatus
-				}
-				return render(request,'authentication/forgotpassword2.html',context)
-		else:
-			#If no POST request, simply render the page
-			context = {
-				'logoutStatus' : logoutStatus
-			}
-			return render(request,'authentication/forgotpassword2.html',context)

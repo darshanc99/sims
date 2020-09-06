@@ -10,7 +10,4 @@ urlpatterns = [
     path('login/',views.login,name='login'),
     path('logout/',views.logout,name='logout'),
     path('profile/',views.profile,name='profile'),
-    path('otp/',views.otp,name='otp'),
-    path('forgotpassword/',views.forgotpassword,name='forgotpassword'),
-    path('resetpassword/',views.resetpassword,name='resetpassword'),
 ]
