@@ -11,10 +11,16 @@ from simchat.models import simmessage
 from itertools import chain
 import csv
 from django.http import HttpResponse
+import ast
 
-#Twilio creds
-account_sid = "ACa724704a972c70089e7af50aec381049"
-auth_token = "cf4059a9461efced8fe78b355794fab3"
+#Twilio credentials
+file = open("twilio.config", "r")
+contents = file.read()
+dictionary = ast.literal_eval(contents)
+account_sid = str(dictionary['account_sid'])
+auth_token = str(dictionary['auth_token'])
+sender = str(dictionary['phone'])
+file.close()
 client = Client(account_sid,auth_token)
 
 #Write your view here
@@ -382,7 +388,7 @@ def verify(request,email):
 					message = "You are now a verified user. You can now enjoy the services of Smart Inventory Management System."
 					client.messages.create(
 						to = to,
-						from_ = "+18502667962",
+						from_ = sender,
 						body = message
 					)
 					now = datetime.datetime.now(tz=timezone.utc)
@@ -421,7 +427,7 @@ def deleteuser(request,email):
 						message = "Your account with SIMS couldn't be verified, as your account details seemed suspicious. Your account is hence removed from the platform."
 						client.messages.create(
 							to = to,
-							from_ = "+18502667962",
+							from_ = sender,
 							body = message
 						)
 						now = datetime.datetime.now(tz=timezone.utc)
@@ -465,7 +471,7 @@ def freezeuser(request,email):
 					message = "Your account with SIMS has been freezed. Please contact the Admin for further details."
 					client.messages.create(
 						to = to,
-						from_ = "+18502667962",
+						from_ = sender,
 						body = message
 					)
 					return redirect('userbase')
@@ -502,7 +508,7 @@ def unfreezeuser(request,email):
 					message = "Your account with SIMS has been unfreezed. You can now use the services of SIMS seamlessly."
 					client.messages.create(
 						to = to,
-						from_ = "+18502667962",
+						from_ = sender,
 						body = message
 					)
 					return redirect('userbase')

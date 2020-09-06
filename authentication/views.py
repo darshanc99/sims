@@ -6,10 +6,16 @@ import hashlib
 import os, random, datetime
 from twilio.rest import Client
 from django.utils import timezone
+import ast
 
 #Twilio credentials
-account_sid = "ACa724704a972c70089e7af50aec381049"
-auth_token = "cf4059a9461efced8fe78b355794fab3"
+file = open("twilio.config", "r")
+contents = file.read()
+dictionary = ast.literal_eval(contents)
+account_sid = str(dictionary['account_sid'])
+auth_token = str(dictionary['auth_token'])
+sender = str(dictionary['phone'])
+file.close()
 client = Client(account_sid,auth_token)
 
 # Create your views here.
@@ -80,7 +86,7 @@ def signup(request):
 				message = "An OTP has been sent to your mobile. Kindly enter it to verify."
 				client.messages.create(
 					to = "+91"+str(phone),
-					from_ = "+18502667962",
+					from_ = sender,
 					body = otp
 				)
 				context = {
@@ -457,7 +463,7 @@ def forgotpassword(request):
 					print("+91"+str(phone))
 					client.messages.create(
 						to = "+91"+str(phone),
-						from_ = "+18502667962",
+						from_ = sender,
 						body = message
 					)
 					context = {
