@@ -415,6 +415,7 @@ def freezeuser(request,email):
 				try:
 					user = useraccounts.objects.get(email=email)
 					user.accountstatus = False
+					user.loginstatus = False
 					user.save()
 					now = datetime.datetime.now(tz=timezone.utc)
 					message = "Account freezed for "+email
