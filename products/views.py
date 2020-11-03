@@ -326,6 +326,13 @@ def removeproduct(request):
 							productlist.objects.filter(product_name=names).delete()
 							messages = "Product removed !"
 							all_products=productlist.objects.all().order_by("product_name")
+							
+							now = datetime.datetime.now(tz=timezone.utc)
+							email=request.session['email']
+							accounts = product_transaction_logs(email =email,timestamp = now,message="Product Removed ("+names+")")
+							accounts.save()
+							product_operationlogs.objects.filter(product_name=names).delete()
+							del_list.remove(names)
 							context={
 							'admin':admin,
 							'dealing_admin':dealing_admin,
@@ -336,11 +343,6 @@ def removeproduct(request):
 							'del_list':del_list,
 							'verified':user.verified
 							}
-							now = datetime.datetime.now(tz=timezone.utc)
-							email=request.session['email']
-							accounts = product_transaction_logs(email =email,timestamp = now,message="Product Removed ("+names+")")
-							accounts.save()
-							product_operationlogs.objects.filter(product_name=names).delete()
 							return render(request,'products/removeproduct.html',context)
 						else:
 							#password did not match
